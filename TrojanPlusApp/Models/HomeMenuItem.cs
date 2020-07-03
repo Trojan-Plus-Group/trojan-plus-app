@@ -6,7 +6,7 @@ namespace TrojanPlusApp.Models
 {
     public enum MenuItemType
     {
-        Browse,
+        AllHost,
         About
     }
     public class HomeMenuItem

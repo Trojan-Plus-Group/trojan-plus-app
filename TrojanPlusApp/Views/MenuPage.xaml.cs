@@ -12,16 +12,18 @@ namespace TrojanPlusApp.Views
     [DesignTimeVisible(false)]
     public partial class MenuPage : ContentPage
     {
-        MainPage RootPage { get => Application.Current.MainPage as MainPage; }
-        List<HomeMenuItem> menuItems;
+        public MainPage RootPage { get => Application.Current.MainPage as MainPage; }
+
+        public List<HomeMenuItem> menuItems;
+
         public MenuPage()
         {
             InitializeComponent();
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
-                new HomeMenuItem {Id = MenuItemType.About, Title="About" }
+                new HomeMenuItem {Id = MenuItemType.AllHost, Title = "Browse" },
+                new HomeMenuItem {Id = MenuItemType.About, Title = "About" }
             };
 
             ListViewMenu.ItemsSource = menuItems;

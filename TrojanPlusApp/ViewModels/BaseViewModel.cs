@@ -12,7 +12,7 @@ namespace TrojanPlusApp.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<HostModel> DataStore => DependencyService.Get<IDataStore<HostModel>>();
 
         bool isBusy = false;
         public bool IsBusy
@@ -28,8 +28,7 @@ namespace TrojanPlusApp.ViewModels
             set { SetProperty(ref title, value); }
         }
 
-        protected bool SetProperty<T>(ref T backingStore, T value,
-            [CallerMemberName] string propertyName = "",
+        protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "",
             Action onChanged = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))

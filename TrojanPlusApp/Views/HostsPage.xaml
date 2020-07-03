@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TrojanPlusApp.Views.HostsPage"
+			 xmlns:models="clr-namespace:TrojanPlusApp.Models"
+			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+			 Title="{Binding Title}"
+             x:Name="BrowseHostsPage">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="{x:Static resources:TextResource.Hosts_ToolbarAdd}" Clicked="AddItem_Clicked" />
+	</ContentPage.ToolbarItems>
+
+	<RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">
+		<CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}">
+			<d:CollectionView.ItemsSource>
+				<x:Array Type="{x:Type models:HostModel}">
+					<models:HostModel HostName="Host 1 Name" HostAddress="vpn.example.com" HostPort="443"/>
+					<models:HostModel HostName="Host 2 Name" HostAddress="vpn1.example.com" HostPort="465"/>
+				</x:Array>
+			</d:CollectionView.ItemsSource>
+			<CollectionView.ItemTemplate>
+				<DataTemplate>
+					<StackLayout Padding="5" Orientation="Horizontal">
+						<BoxView HeightRequest="50" WidthRequest="5" Color="Gray"/>
+						<Grid HorizontalOptions="FillAndExpand">
+							<Grid.RowDefinitions>
+								<RowDefinition/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+
+							<Label Text="{Binding HostName}" Grid.Row="0"
+                                LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
+                                FontSize="30" />
+
+							<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
+										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" />
+
+							<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
+                                LineBreakMode="NoWrap" HorizontalOptions="StartAndExpand" Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="Medium" />
+						</Grid>
+						<StackLayout.GestureRecognizers>
+							<TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnItemSelected"></TapGestureRecognizer>
+						</StackLayout.GestureRecognizers>
+					</StackLayout>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</RefreshView>
+</ContentPage>

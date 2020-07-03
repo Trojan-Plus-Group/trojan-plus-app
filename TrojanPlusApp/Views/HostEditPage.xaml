@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TrojanPlusApp.Views.HostEditPage"
+             Title="Edit Host"
+			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+			 xmlns:local="clr-namespace:TrojanPlusApp.Models">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="{x:Static resources:TextResource.New_ToolbarCancel}" Clicked="Cancel_Clicked" />
+		<ToolbarItem Text="{x:Static resources:TextResource.New_ToolbarSave}" Clicked="Save_Clicked" />
+	</ContentPage.ToolbarItems>
+
+	<ContentPage.Content>
+		<StackLayout Spacing="10" Padding="10">
+			<Label Text="{x:Static resources:TextResource.New_HostNameTitle}" FontSize="Medium" />
+			<Entry Text="{Binding Item.HostName}" Placeholder="{x:Static resources:TextResource.New_HostNameHolder}" FontSize="Small" IsEnabled="{Binding EnableEditHostName}"/>
+
+			<Label Text="{x:Static resources:TextResource.New_HostAddressTitle}" FontSize="Medium" />
+			<Entry Text="{Binding Item.HostAddress}" Placeholder="{x:Static resources:TextResource.New_HostAddressHolder}" FontSize="Small" />
+
+			<Label Text="{x:Static resources:TextResource.New_HostPortTitle}" FontSize="Medium" />
+			<Entry Text="{Binding Item.HostPort}" Placeholder="{x:Static resources:TextResource.New_HostPortHolder}" FontSize="Small">
+				<Entry.Behaviors>
+					<local:PortNumValidation/>
+				</Entry.Behaviors>
+			</Entry>
+
+			<Label Text="{x:Static resources:TextResource.New_HostPasswordTitle}" FontSize="Medium" />
+			<Entry IsPassword="True" Text="{Binding Item.Password}" Placeholder="{x:Static resources:TextResource.New_HostPasswordHolder}" FontSize="Small" />
+
+			<Label Text="{x:Static resources:TextResource.New_HostExperimentalTitle}" FontSize="Large" />
+
+			<Grid Margin="0,10,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="0.5*" />
+					<ColumnDefinition Width="0.5*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Label Text="{x:Static resources:TextResource.New_HostSSLVerify}" VerticalOptions="Center"  FontSize="Medium" />
+				<Switch IsToggled="{Binding Item.SSLVerify}" Grid.Column="1" VerticalOptions="Center" />
+			</Grid>
+			<Label Text="{x:Static resources:TextResource.New_HostSSLVerifyDetail}" FontSize="Small" />
+
+			<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
+
+			<Grid Margin="0,10,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="0.5*" />
+					<ColumnDefinition Width="0.5*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Label Text="{x:Static resources:TextResource.New_HostEnablePipeline}" VerticalOptions="Center"  FontSize="Medium" />
+				<Switch IsToggled="{Binding Item.EnablePipeline}" Grid.Column="1" VerticalOptions="Center" />
+			</Grid>
+			<Label Text="{x:Static resources:TextResource.New_HostEnablePipelineDetail}" FontSize="Small" />
+			<Button Text="{x:Static resources:TextResource.New_HostDeleteText}" Clicked="OnDeleteBtnClicked" IsVisible="{Binding ShowDeleteBtn}"
+					BackgroundColor="Red" TextColor="White"/>
+		</StackLayout>
+	</ContentPage.Content>
+
+</ContentPage>
