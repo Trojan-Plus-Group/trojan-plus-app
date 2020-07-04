@@ -138,11 +138,23 @@
   <data name="Common_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="HostsView_Title" xml:space="preserve">
+  <data name="Menu_AboutTitle" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Menu_HostsToolbarAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Menu_HostsViewTitle" xml:space="preserve">
     <value>All Hosts</value>
   </data>
-  <data name="Hosts_ToolbarAdd" xml:space="preserve">
-    <value>Add</value>
+  <data name="New_AddHostTitle" xml:space="preserve">
+    <value>Add Host</value>
+  </data>
+  <data name="New_AskDuplicatePrompt" xml:space="preserve">
+    <value>Please input a name for new host:</value>
+  </data>
+  <data name="New_EditHostTitle" xml:space="preserve">
+    <value>Edit Host</value>
   </data>
   <data name="New_HostAddressHolder" xml:space="preserve">
     <value>vpn.example.com</value>
@@ -155,6 +167,9 @@
   </data>
   <data name="New_HostDeleteText" xml:space="preserve">
     <value>Delete This Host</value>
+  </data>
+  <data name="New_HostDuplicateText" xml:space="preserve">
+    <value>Duplicate This Host</value>
   </data>
   <data name="New_HostEnablePipeline" xml:space="preserve">
     <value>Enable Pipeline Mode</value>

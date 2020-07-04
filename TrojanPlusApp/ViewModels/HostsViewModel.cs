@@ -15,7 +15,7 @@ namespace TrojanPlusApp.ViewModels
 
         public HostsViewModel()
         {
-            Title = Resx.TextResource.HostsView_Title;
+            Title = Resx.TextResource.Menu_HostsViewTitle;
             Items = new ObservableCollection<HostModel>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 

@@ -138,11 +138,23 @@
   <data name="Common_Yes" xml:space="preserve">
     <value>好的</value>
   </data>
-  <data name="HostsView_Title" xml:space="preserve">
+  <data name="Menu_AboutTitle" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="Menu_HostsToolbarAdd" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="Menu_HostsViewTitle" xml:space="preserve">
     <value>所有主机</value>
   </data>
-  <data name="Hosts_ToolbarAdd" xml:space="preserve">
-    <value>新增</value>
+  <data name="New_AddHostTitle" xml:space="preserve">
+    <value>新增主机</value>
+  </data>
+  <data name="New_AskDuplicatePrompt" xml:space="preserve">
+    <value>请给这个主机输入一个新的名字:</value>
+  </data>
+  <data name="New_EditHostTitle" xml:space="preserve">
+    <value>编辑主机</value>
   </data>
   <data name="New_HostAddressHolder" xml:space="preserve">
     <value>vpn.example.com</value>
@@ -155,6 +167,9 @@
   </data>
   <data name="New_HostDeleteText" xml:space="preserve">
     <value>删除这个主机</value>
+  </data>
+  <data name="New_HostDuplicateText" xml:space="preserve">
+    <value>复制这个主机</value>
   </data>
   <data name="New_HostEnablePipeline" xml:space="preserve">
     <value>开启Pipeline模式</value>

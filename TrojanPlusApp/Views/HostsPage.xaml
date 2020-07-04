@@ -11,7 +11,7 @@
              x:Name="BrowseHostsPage">
 
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="{x:Static resources:TextResource.Hosts_ToolbarAdd}" Clicked="AddItem_Clicked" />
+		<ToolbarItem Text="{x:Static resources:TextResource.Menu_HostsToolbarAdd}" Clicked="AddItem_Clicked" />
 	</ContentPage.ToolbarItems>
 
 	<RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">

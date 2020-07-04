@@ -124,20 +124,56 @@ namespace TrojanPlusApp.Resx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string Menu_AboutTitle {
+            get {
+                return ResourceManager.GetString("Menu_AboutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
-        public static string Hosts_ToolbarAdd {
+        public static string Menu_HostsToolbarAdd {
             get {
-                return ResourceManager.GetString("Hosts_ToolbarAdd", resourceCulture);
+                return ResourceManager.GetString("Menu_HostsToolbarAdd", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to All Hosts.
         /// </summary>
-        public static string HostsView_Title {
+        public static string Menu_HostsViewTitle {
             get {
-                return ResourceManager.GetString("HostsView_Title", resourceCulture);
+                return ResourceManager.GetString("Menu_HostsViewTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Host.
+        /// </summary>
+        public static string New_AddHostTitle {
+            get {
+                return ResourceManager.GetString("New_AddHostTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please input a name for new host:.
+        /// </summary>
+        public static string New_AskDuplicatePrompt {
+            get {
+                return ResourceManager.GetString("New_AskDuplicatePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Host.
+        /// </summary>
+        public static string New_EditHostTitle {
+            get {
+                return ResourceManager.GetString("New_EditHostTitle", resourceCulture);
             }
         }
         
@@ -174,6 +210,15 @@ namespace TrojanPlusApp.Resx {
         public static string New_HostDeleteText {
             get {
                 return ResourceManager.GetString("New_HostDeleteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate This Host.
+        /// </summary>
+        public static string New_HostDuplicateText {
+            get {
+                return ResourceManager.GetString("New_HostDuplicateText", resourceCulture);
             }
         }
         

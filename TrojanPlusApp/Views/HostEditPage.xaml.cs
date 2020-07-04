@@ -12,12 +12,19 @@ namespace TrojanPlusApp.Views
     [DesignTimeVisible(false)]
     public partial class HostEditPage : ContentPage
     {
+        private readonly HostsViewModel hostsModel;
+        private readonly bool addedOrEdit;
+
         public HostModel Item { get; set; }
         public bool ShowDeleteBtn { get; set; }
         public bool EnableEditHostName { get; set; }
-
-        private readonly HostsViewModel hostsModel;
-        private readonly bool addedOrEdit;
+        public string PageTitle
+        {
+            get
+            {
+                return addedOrEdit ? Resx.TextResource.New_AddHostTitle : Resx.TextResource.New_EditHostTitle;
+            }
+        }
 
         public HostEditPage(HostsViewModel viewModel, HostModel editHost)
         {
@@ -66,6 +73,11 @@ namespace TrojanPlusApp.Views
             await Navigation.PopModalAsync();
         }
 
+        public async void Cancel_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PopModalAsync();
+        }
+
         public async void OnDeleteBtnClicked(object sender, EventArgs e)
         {
             bool response = await DisplayAlert(
@@ -81,9 +93,9 @@ namespace TrojanPlusApp.Views
             }
         }
 
-        public async void Cancel_Clicked(object sender, EventArgs e)
+        public async void OnDuplicateBtnClicked(object sender, EventArgs e)
         {
-            await Navigation.PopModalAsync();
+
         }
     }
 }

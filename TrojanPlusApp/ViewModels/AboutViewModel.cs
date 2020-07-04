@@ -9,7 +9,7 @@ namespace TrojanPlusApp.ViewModels
     {
         public AboutViewModel()
         {
-            Title = "About";
+            Title = Resx.TextResource.Menu_AboutTitle;
             OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://xamarin.com"));
         }
 

@@ -22,8 +22,8 @@ namespace TrojanPlusApp.Views
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.AllHost, Title = "Browse" },
-                new HomeMenuItem {Id = MenuItemType.About, Title = "About" }
+                new HomeMenuItem {Id = MenuItemType.AllHost, Title = Resx.TextResource.Menu_HostsViewTitle },
+                new HomeMenuItem {Id = MenuItemType.About, Title = Resx.TextResource.Menu_AboutTitle }
             };
 
             ListViewMenu.ItemsSource = menuItems;
@@ -32,7 +32,9 @@ namespace TrojanPlusApp.Views
             ListViewMenu.ItemSelected += async (sender, e) =>
             {
                 if (e.SelectedItem == null)
+                {
                     return;
+                }
 
                 var id = (int)((HomeMenuItem)e.SelectedItem).Id;
                 await RootPage.NavigateFromMenu(id);
