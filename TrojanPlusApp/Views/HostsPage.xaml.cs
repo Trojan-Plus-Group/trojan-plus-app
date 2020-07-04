@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using Xamarin.Forms;
-using TrojanPlusApp.ViewModels;
 using TrojanPlusApp.Models;
+using TrojanPlusApp.ViewModels;
+using Xamarin.Forms;
 
 namespace TrojanPlusApp.Views
 {
@@ -16,15 +16,14 @@ namespace TrojanPlusApp.Views
         public HostsPage()
         {
             InitializeComponent();
-
             BindingContext = viewModel = new HostsViewModel();
         }
 
-        public async void OnItemSelected(object sender, EventArgs args)
+        public void OnItemSelected(object sender, EventArgs args)
         {
-            //var layout = (BindableObject)sender;
-            //var item = (HostModel)layout.BindingContext;
-            //await Navigation.PushModalAsync(new NavigationPage(new HostEditPage(viewModel, item)));
+            var layout = (BindableObject)sender;
+            var item = (HostModel)layout.BindingContext;
+            viewModel.SelectedHostItem(item.HostName);
         }
 
         public async void OnItemEdit(object sender, EventArgs args)
@@ -37,14 +36,6 @@ namespace TrojanPlusApp.Views
         public async void AddItem_Clicked(object sender, EventArgs e)
         {
             await Navigation.PushModalAsync(new NavigationPage(new HostEditPage(viewModel, null)));
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            if (viewModel.Items.Count == 0)
-                viewModel.IsBusy = true;
         }
     }
 }

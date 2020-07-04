@@ -14,45 +14,45 @@
 		<ToolbarItem Text="{x:Static resources:TextResource.Menu_HostsToolbarAdd}" Clicked="AddItem_Clicked" />
 	</ContentPage.ToolbarItems>
 
-	<RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">
-		<CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}">
-			<d:CollectionView.ItemsSource>
-				<x:Array Type="{x:Type models:HostModel}">
-					<models:HostModel HostName="Host 1 Name" HostAddress="vpn.example.com" HostPort="443"/>
-					<models:HostModel HostName="Host 2 Name" HostAddress="vpn1.example.com" HostPort="465"/>
-				</x:Array>
-			</d:CollectionView.ItemsSource>
-			<CollectionView.ItemTemplate>
-				<DataTemplate>
-					<StackLayout Padding="5" Orientation="Horizontal">
-						<BoxView HeightRequest="50" WidthRequest="5" Color="Gray"/>
-						<Grid HorizontalOptions="FillAndExpand">
-							<Grid.RowDefinitions>
-								<RowDefinition/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition Width="Auto"/>
-							</Grid.ColumnDefinitions>
+	<CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}">
+		<d:CollectionView.ItemsSource>
+			<x:Array Type="{x:Type models:HostModel}">
+				<models:HostModel HostName="Host 1 Name" HostAddress="vpn.example.com" HostPort="443"/>
+				<models:HostModel HostName="Host 2 Name" HostAddress="vpn1.example.com" HostPort="465"/>
+			</x:Array>
+		</d:CollectionView.ItemsSource>
+		<CollectionView.ItemTemplate>
+			<DataTemplate>
+				<StackLayout Padding="5" Orientation="Horizontal">
+					<BoxView WidthRequest="5" Color="{Binding UI_SelectedColor}"/>
+					<Grid HorizontalOptions="FillAndExpand">
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition Height="1"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
 
-							<Label Text="{Binding HostName}" Grid.Row="0"
+						<Label Text="{Binding HostName}" Grid.Row="0"
                                 LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="30" />
 
-							<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
+						<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
 										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" />
 
-							<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
+						<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
                                 LineBreakMode="NoWrap" HorizontalOptions="StartAndExpand" Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="Medium" />
-						</Grid>
-						<StackLayout.GestureRecognizers>
-							<TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnItemSelected"></TapGestureRecognizer>
-						</StackLayout.GestureRecognizers>
-					</StackLayout>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
-	</RefreshView>
+                                FontSize="20" VerticalOptions="Center" />
+						<BoxView Grid.Row="2" Color="Gray" Grid.ColumnSpan="2" HeightRequest="1"/>
+					</Grid>
+					<StackLayout.GestureRecognizers>
+						<TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnItemSelected"></TapGestureRecognizer>
+					</StackLayout.GestureRecognizers>
+				</StackLayout>
+			</DataTemplate>
+		</CollectionView.ItemTemplate>
+	</CollectionView>
 </ContentPage>

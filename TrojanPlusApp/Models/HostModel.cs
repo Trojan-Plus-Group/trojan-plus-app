@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Xamarin.Forms;
 
 namespace TrojanPlusApp.Models
 {
-    public class HostModel
+    public class HostModel : NotificationModel
     {
         public enum RouteType
         {
@@ -39,6 +38,27 @@ namespace TrojanPlusApp.Models
 
                 return res;
             }
+        }
+
+        private bool uiSelected = false;
+        public bool UI_Selected
+        {
+            get { return uiSelected; }
+            set
+            {
+                SetProperty(ref uiSelected, value, "UI_SelectedColor");
+            }
+        }
+
+        public Color UI_SelectedColor => UI_Selected ? Color.Green : Color.LightGray;
+
+        // Utils 
+        public HostModel Duplicate(string newHostName)
+        {
+            var newOne = (HostModel)MemberwiseClone();
+            newOne.HostName = newHostName;
+            newOne.uiSelected = false;
+            return newOne;
         }
     }
 }

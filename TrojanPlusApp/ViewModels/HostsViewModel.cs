@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using TrojanPlusApp.Models;
 using TrojanPlusApp.Views;
@@ -11,13 +12,12 @@ namespace TrojanPlusApp.ViewModels
     public class HostsViewModel : BaseViewModel
     {
         public ObservableCollection<HostModel> Items { get; set; }
-        public Command LoadItemsCommand { get; set; }
+        public int CurrSelectHostIdx { get; set; }
 
         public HostsViewModel()
         {
             Title = Resx.TextResource.Menu_HostsViewTitle;
             Items = new ObservableCollection<HostModel>();
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
             MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (obj, item) =>
             {
@@ -31,6 +31,12 @@ namespace TrojanPlusApp.ViewModels
                 }
 
                 Items.Add(newItem);
+
+                if (Items.Count == 1)
+                {
+                    SelectedHostItem(newItem.HostName);
+                }
+
                 await DataStore.AddItemAsync(newItem);
             });
 
@@ -46,6 +52,15 @@ namespace TrojanPlusApp.ViewModels
                 }
 
                 Items.RemoveAll(i => i.HostName.Equals(deleteItem.HostName));
+
+                if (deleteItem.UI_Selected)
+                {
+                    if (Items.Count > 0)
+                    {
+                        SelectedHostItem(Items[0].HostName);
+                    }
+                }
+
                 await DataStore.DeleteItemAsync(deleteItem.HostName);
             });
 
@@ -73,26 +88,19 @@ namespace TrojanPlusApp.ViewModels
             });
         }
 
-        public async Task ExecuteLoadItemsCommand()
+        public void SelectedHostItem(string hostName)
         {
-            IsBusy = true;
-
-            try
+            for (int i = 0; i < Items.Count; i++)
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                if (Items[i].HostName.Equals(hostName))
                 {
-                    Items.Add(item);
+                    CurrSelectHostIdx = i;
+                    Items[i].UI_Selected = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            finally
-            {
-                IsBusy = false;
+                else
+                {
+                    Items[i].UI_Selected = false;
+                }
             }
         }
     }

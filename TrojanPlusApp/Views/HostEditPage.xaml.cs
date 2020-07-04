@@ -95,7 +95,30 @@ namespace TrojanPlusApp.Views
 
         public async void OnDuplicateBtnClicked(object sender, EventArgs e)
         {
+            string name = await DisplayPromptAsync(
+                Resx.TextResource.Common_AskTitle,
+                Resx.TextResource.New_AskDuplicatePrompt,
+                Resx.TextResource.Common_OK,
+                Resx.TextResource.Common_Cancel,
+                initialValue: Item.HostName + " 1");
 
+            if (name == null)
+            {
+                return;
+            }
+
+            if (hostsModel.DataStore.HasHost(name))
+            {
+                await DisplayAlert(
+                    Resx.TextResource.Common_ErrorTitle,
+                    string.Format(Resx.TextResource.New_HostHasBeenAdded, name),
+                    Resx.TextResource.Common_OK);
+
+                return;
+            }
+
+            MessagingCenter.Send(this, "AddItem", Item.Duplicate(name));
+            await Navigation.PopModalAsync();
         }
     }
 }
