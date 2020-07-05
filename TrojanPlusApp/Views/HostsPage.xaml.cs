@@ -37,5 +37,10 @@ namespace TrojanPlusApp.Views
         {
             await Navigation.PushModalAsync(new NavigationPage(new HostEditPage(viewModel, null)));
         }
+
+        public async void OnConnectBtnClicked(object sender, EventArgs e)
+        {
+
+        }
     }
 }

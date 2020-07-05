@@ -14,6 +14,14 @@ namespace TrojanPlusApp.ViewModels
         public ObservableCollection<HostModel> Items { get; set; }
         public int CurrSelectHostIdx { get; set; }
 
+        public string ConnectBtnText
+        {
+            get
+            {
+                return "Connect";
+            }
+        }
+
         public HostsViewModel()
         {
             Title = Resx.TextResource.Menu_HostsViewTitle;
