@@ -40,6 +40,25 @@ namespace TrojanPlusApp.Droid
             {
                 activity.starter.Start();
             }
+
+            public string GetAppVersion()
+            {
+                var context = Application.Context;
+
+                PackageManager manager = context.PackageManager;
+                PackageInfo info = manager.GetPackageInfo(context.PackageName, 0);
+
+                return info.VersionName;
+            }
+
+            public int GetAppBuild()
+            {
+                var context = Application.Context;
+                PackageManager manager = context.PackageManager;
+                PackageInfo info = manager.GetPackageInfo(context.PackageName, 0);
+
+                return info.VersionCode;
+            }
         }
 
         App app;

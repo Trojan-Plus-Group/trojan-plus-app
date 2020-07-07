@@ -15,6 +15,16 @@ namespace TrojanPlusApp.iOS
     {
         public class Stater : TrojanPlusApp.App.IStart
         {
+            public int GetAppBuild()
+            {
+                return int.Parse(NSBundle.MainBundle.ObjectForInfoDictionary("CFBundleVersion").ToString());
+            }
+
+            public string GetAppVersion()
+            {
+                return NSBundle.MainBundle.ObjectForInfoDictionary("CFBundleShortVersionString").ToString();
+            }
+
             public void Start()
             {
                 throw new NotImplementedException();

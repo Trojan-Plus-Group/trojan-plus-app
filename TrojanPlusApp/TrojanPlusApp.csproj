@@ -21,9 +21,9 @@
 
 	<ItemGroup>
 		<Compile Update="Resx\TextResource.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>TextResource.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>TextResource.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Views\HostsPage.xaml.cs">
 		  <DependentUpon>HostsPage.xaml</DependentUpon>

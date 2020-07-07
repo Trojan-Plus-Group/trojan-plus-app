@@ -27,9 +27,9 @@ namespace TrojanPlusApp.Droid
     {
         private static readonly string TAG = typeof(TrojanPlusVPNService).Name;
 
-        private const string VPN_ADDRESS = "10.0.0.1";
+        private const string VPN_ADDRESS = "10.233.233.1";
         private const string VPN_ROUTE = "0.0.0.0";
-        private const string VPN_DNS_SERVER = "10.254.240.1";
+        private const string VPN_DNS_SERVER = "127.0.0.1";
         private const int VPN_MTU = 1500;
 
         [DllImport("trojan.so", EntryPoint = "Java_com_trojan_1plus_android_TrojanPlusVPNService_runMain")]
@@ -109,7 +109,6 @@ namespace TrojanPlusApp.Droid
         {
             if (m_vpnFD == null)
             {
-
                 PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0,
                     new Intent(Application.Context, typeof(MainActivity)).SetFlags(ActivityFlags.ReorderToFront), 0);
 
@@ -125,7 +124,7 @@ namespace TrojanPlusApp.Droid
                 try
                 {
                     var configFile = System.IO.File.ReadAllText(m_configPath)
-                                        .Replace("${fd}", m_vpnFD.Fd.ToString());
+                                        .Replace("${tun.tun_fd}", m_vpnFD.Fd.ToString());
 
                     System.IO.File.WriteAllText(m_configPath, configFile);
                 }

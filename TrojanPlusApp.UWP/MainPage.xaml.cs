@@ -19,6 +19,16 @@ namespace TrojanPlusApp.UWP
     {
         public class Stater : TrojanPlusApp.App.IStart
         {
+            public int GetAppBuild()
+            {
+                throw new NotImplementedException();
+            }
+
+            public string GetAppVersion()
+            {
+                throw new NotImplementedException();
+            }
+
             public void Start()
             {
                 throw new NotImplementedException();

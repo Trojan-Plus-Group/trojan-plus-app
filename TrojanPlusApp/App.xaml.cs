@@ -1,4 +1,5 @@
-﻿using TrojanPlusApp.Services;
+﻿using System.IO;
+using TrojanPlusApp.Services;
 using TrojanPlusApp.Views;
 using Xamarin.Forms;
 
@@ -8,7 +9,11 @@ namespace TrojanPlusApp
     {
         public interface IStart
         {
+            // start libtrojan.so
             void Start();
+
+            string GetAppVersion();
+            int GetAppBuild();
         }
 
         public static App Instance
@@ -16,15 +21,18 @@ namespace TrojanPlusApp
             get { return (App)Current; }
         }
 
-        private readonly IStart starter;
+        public IStart Starter { get; private set; }
 
-        public string ConfigPath { get; }
+        public string ConfigPath { get; private set; }
+        public string DataPathParent { get; private set; }
+
         public bool IsStartBtnEnabled { get; private set; }
         public bool GetStartBtnStatus { get; private set; }
 
         public App(string configPath, IStart starter)
         {
-            this.starter = starter;
+            Starter = starter;
+            DataPathParent = configPath.Substring(0, configPath.LastIndexOf(Path.DirectorySeparatorChar));
             ConfigPath = configPath;
 
             InitializeComponent();
