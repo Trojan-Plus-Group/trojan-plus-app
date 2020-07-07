@@ -191,3 +191,4 @@ FakesAssemblies/
 # visual studio auto
 .vs/
 Resource.designer.cs
+TextResource.Designer.cs
