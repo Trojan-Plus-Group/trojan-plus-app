@@ -17,11 +17,19 @@ namespace TrojanPlusApp.UWP
 {
     public sealed partial class MainPage
     {
+        public class Stater : TrojanPlusApp.App.IStart
+        {
+            public void Start()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            LoadApplication(new TrojanPlusApp.App());
+            LoadApplication(new TrojanPlusApp.App("", new Stater()));
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using TrojanPlusApp.Models;
 using TrojanPlusApp.Views;
 using Xamarin.Forms;
@@ -14,12 +10,25 @@ namespace TrojanPlusApp.ViewModels
         public ObservableCollection<HostModel> Items { get; set; }
         public int CurrSelectHostIdx { get; set; }
 
+        public HostModel CurretSelectHost
+        {
+            get
+            {
+                return CurrSelectHostIdx < Items.Count ? Items[CurrSelectHostIdx] : null;
+            }
+        }
+
         public string ConnectBtnText
         {
             get
             {
-                return "Connect";
+                return App.Instance.GetStartBtnStatus ? "Disconnect" : "Connect";
             }
+        }
+
+        public bool IsConnectBtnEnabled
+        {
+            get { return App.Instance.IsStartBtnEnabled; }
         }
 
         public HostsViewModel()
@@ -27,7 +36,7 @@ namespace TrojanPlusApp.ViewModels
             Title = Resx.TextResource.Menu_HostsViewTitle;
             Items = new ObservableCollection<HostModel>();
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (obj, item) =>
+            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (sender, item) =>
             {
                 var newItem = item as HostModel;
                 if (newItem != null)
@@ -48,7 +57,7 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.AddItemAsync(newItem);
             });
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "DeleteItem", async (obj, item) =>
+            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "DeleteItem", async (sender, item) =>
             {
                 var deleteItem = item as HostModel;
                 if (deleteItem != null)
@@ -72,7 +81,7 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.DeleteItemAsync(deleteItem.HostName);
             });
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "UpdateItem", async (obj, item) =>
+            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "UpdateItem", async (sender, item) =>
             {
                 var updatedItem = item as HostModel;
                 if (updatedItem != null)
@@ -93,6 +102,16 @@ namespace TrojanPlusApp.ViewModels
                 }
 
                 await DataStore.UpdateItemAsync(updatedItem);
+            });
+
+            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnEnabled", (sender, enable) =>
+            {
+                OnPropertyChanged("IsConnectBtnEnabled");
+            });
+
+            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnStatus", (sender, runing) =>
+            {
+                OnPropertyChanged("ConnectBtnText");
             });
         }
 
