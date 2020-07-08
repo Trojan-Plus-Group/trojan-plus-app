@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using TrojanPlusApp.Models;
 using TrojanPlusApp.Views;
 using Xamarin.Forms;
@@ -129,6 +130,12 @@ namespace TrojanPlusApp.ViewModels
                     Items[i].UI_Selected = false;
                 }
             }
+        }
+
+
+        public HostModel FindHostByName(string hostName)
+        {
+            return Items.FindOrNull(i => i.HostName.Equals(hostName));
         }
     }
 }

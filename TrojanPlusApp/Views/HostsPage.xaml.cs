@@ -39,15 +39,18 @@ namespace TrojanPlusApp.Views
             await Navigation.PushModalAsync(new NavigationPage(new HostEditPage(viewModel, null)));
         }
 
-
-
-        public void OnConnectBtnClicked(object sender, EventArgs e)
+        public async void OnConnectBtnClicked(object sender, EventArgs e)
         {
             // TODO generate config file
             if (viewModel.CurretSelectHost == null)
             {
                 // TODO popup a dialog to warning
-                // return;
+                await DisplayAlert(
+                    Resx.TextResource.Common_AlertTitle,
+                    Resx.TextResource.Hosts_PleaseAddHost,
+                    Resx.TextResource.Common_OK);
+
+                return;
             }
 
             try
@@ -55,7 +58,7 @@ namespace TrojanPlusApp.Views
                 var layout = (BindableObject)sender;
                 var item = layout.BindingContext as HostModel;
 
-                File.WriteAllText(App.Instance.ConfigPath, Utils.PrepareConfig(item, viewModel));
+                File.WriteAllText(App.Instance.ConfigPath, item.PrepareConfig(viewModel));
                 App.Instance.Start();
             }
             catch (Exception ex)

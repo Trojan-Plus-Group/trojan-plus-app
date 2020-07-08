@@ -1,4 +1,9 @@
-﻿using Xamarin.Forms;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using TrojanPlusApp.ViewModels;
+using Xamarin.Forms;
 
 namespace TrojanPlusApp.Models
 {
@@ -20,6 +25,11 @@ namespace TrojanPlusApp.Models
         public string Password { get; set; }
         public bool SSLVerify { get; set; }
         public RouteType Route { get; set; }
+
+        private List<string> loadBalance = new List<string>();
+        public IList<string> LoadBalance { get { return loadBalance; } }
+
+        public bool EnableDebugLog { get; set; }
 
         // Experimental Options
         public bool EnablePipeline { get; set; }
@@ -59,6 +69,161 @@ namespace TrojanPlusApp.Models
             newOne.HostName = newHostName;
             newOne.uiSelected = false;
             return newOne;
+        }
+
+        private static readonly string ConfigTemplate = "{\n" +
+        "    \"run_type\": \"${run_type}\",\n" +
+        "    \"local_addr\": \"0.0.0.0\",\n" +
+        "    \"local_port\": 2062,\n" +
+        "    \"remote_addr\": \"${remote_addr}\",\n" +
+        "    \"remote_port\": ${remote_port},\n" +
+        "    \"udp_timeout\" : ${udp_timeout}, \n" +
+        "    \"udp_socket_buf\": ${udp_socket_buf},\n" +
+        "    \"udp_recv_buf\": ${udp_recv_buf},\n" +
+        "    \"password\": [\n" +
+        "        \"${password}\"\n" +
+        "    ],\n" +
+        "    \"log_level\": ${log_level},\n" +
+        "    \"ssl\": {\n" +
+        "        \"verify\": ${ssl.verify},\n" +
+        "        \"verify_hostname\": ${ssl.verify_hostname},\n" +
+        "        \"cert\": \"\",\n" +
+        "        \"cipher\": \"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA\",\n" +
+        "        \"cipher_tls13\": \"TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384\",\n" +
+        "        \"sni\": \"\",\n" +
+        "        \"alpn\": [\n" +
+        "            \"h2\",\n" +
+        "            \"http/1.1\"\n" +
+        "        ],\n" +
+        "        \"reuse_session\": true,\n" +
+        "        \"session_ticket\": false,\n" +
+        "        \"curves\": \"\"\n" +
+        "    },\n" +
+        "    \"tcp\": {\n" +
+        "        \"no_delay\": true,\n" +
+        "        \"keep_alive\": true,\n" +
+        "        \"reuse_port\": true,\n" +
+        "        \"fast_open\": ${tcp.fast_open},\n" +
+        "        \"fast_open_qlen\": 20,\n" +
+        "        \"connect_time_out\": ${tcp.connect_time_out}\n" +
+        "    },\n" +
+        "    \"experimental\": {\n" +
+        "        \"pipeline_num\": ${experimental.pipeline_num},\n" +
+        "        \"pipeline_ack_window\":  ${experimental.pipeline_ack_window},\n" +
+        "        \"pipeline_loadbalance_configs\": [\n" +
+        "            ${experimental.pipeline_loadbalance_configs}\n" +
+        "        ]" +
+        "    },\n" +
+        "    \"tun\" : {\n" +
+        "        \"tun_name\" : \"tun0\",\n" +
+        "        \"net_ip\" : \"10.233.233.2\",\n" +
+        "        \"net_mask\" : \"255.255.255.0\",\n" +
+        "        \"mtu\" : 1500,\n" +
+        "        \"tun_fd\" : ${tun.tun_fd}\n" +
+        "    },\n" +
+        "    \"dns\": {\n" +
+        "        \"enabled\": true,\n" +
+        "        \"enable_cached\": true,\n" +
+        "        \"port\": 53,\n" +
+        "        \"udp_timeout\": 5,\n" +
+        "        \"udp_socket_buf\": ${dns.udp_socket_buf},\n" +
+        "        \"udp_recv_buf\": ${dns.udp_recv_buf},\n" +
+        "        \"up_dns_server\": [\n" +
+        "            \"${dns.up_dns_server}\"\n" +
+        "        ],\n" +
+        "        \"up_gfw_dns_server\": [\n" +
+        "            \"${dns.up_gfw_dns_server}\"\n" +
+        "        ],\n" +
+        "        \"gfwlist\": \"${dns.gfwlist}\"\n" +
+        "    },\n" +
+        "    \"route\": {\n" +
+        "        \"enabled\": true,\n" +
+        "        \"proxy_type\": ${route.proxy_type},\n" +
+        "        \"cn_mainland_ips_file\": \"${route.cn_mainland_ips_file}\",\n" +
+        "        \"proxy_ips\": \"${route.proxy_ips}\",\n" +
+        "        \"white_ips\": \"${route.white_ips}\"\n" +
+        "    }\n" +
+        "}\n";
+
+        private static bool hasWritenTextFile = false;
+        public string PrepareConfig(HostsViewModel hosts)
+        {
+            string config = ConfigTemplate;
+
+            config = config.Replace("${run_type}", "client_tun");
+            config = config.Replace("${remote_addr}", HostAddress);
+            config = config.Replace("${remote_port}", HostPort.ToString());
+            config = config.Replace("${password}", Password);
+
+            config = config.Replace("${udp_timeout}", "10");
+            config = config.Replace("${udp_socket_buf}", "16384");
+            config = config.Replace("${udp_recv_buf}", "4096");
+
+            config = config.Replace("${log_level}", EnableDebugLog ? "0" : "5");
+
+            config = config.Replace("${ssl.verify}", SSLVerify.ToLowerString());
+            config = config.Replace("${ssl.verify_hostname}", SSLVerify.ToLowerString());
+
+            config = config.Replace("${tcp.fast_open}", "true");
+            config = config.Replace("${tcp.connect_time_out}", "5");
+
+            config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");
+            config = config.Replace("${experimental.pipeline_ack_window}", "100");
+
+            StringBuilder sb = new StringBuilder();
+            if (LoadBalance.Count > 0)
+            {
+                for (int i = 0; i < LoadBalance.Count; i++)
+                {
+                    var h = hosts.FindHostByName(LoadBalance[i]);
+                    if (h != null)
+                    {
+                        string loadConfig = h.PrepareConfig(hosts);
+                        string path = Path.Combine(App.Instance.DataPathParent, "balance_config" + i);
+                        File.WriteAllText(path, loadConfig);
+
+                        if (sb.Length == 0)
+                        {
+                            sb.Append(",");
+                        }
+
+                        sb.Append($"\"{path}\"");
+                    }
+                }
+            }
+
+            config = config.Replace("${experimental.pipeline_loadbalance_configs}", sb.ToString());
+
+            config = config.Replace("${dns.udp_socket_buf}", "8192");
+            config = config.Replace("${dns.udp_recv_buf}", "1024");
+
+            config = config.Replace("${dns.up_dns_server}", "114.114.114.114");
+            config = config.Replace("${dns.up_gfw_dns_server}", "8.8.8.8");
+
+            string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
+            string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
+            if (!hasWritenTextFile)
+            {
+                File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
+                File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
+            }
+
+            config = config.Replace("${dns.gfwlist}", gfwlist_path);
+            config = config.Replace("${route.cn_mainland_ips_file}", cn_ips_path);
+
+            config = config.Replace("${route.proxy_type}", ((int)Route).ToString());
+
+            string proxy_ips_path = Path.Combine(App.Instance.DataPathParent, "proxy_ips");
+            string white_ips_path = Path.Combine(App.Instance.DataPathParent, "white_ips");
+            File.WriteAllText(proxy_ips_path, string.Empty);
+            File.WriteAllText(white_ips_path, string.Empty);
+
+            config = config.Replace("${route.proxy_ips}", proxy_ips_path);
+            config = config.Replace("${route.white_ips}", white_ips_path);
+
+            hasWritenTextFile = true;
+
+            return config;
         }
     }
 }

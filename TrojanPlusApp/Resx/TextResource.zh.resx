@@ -138,6 +138,9 @@
   <data name="Common_Yes" xml:space="preserve">
     <value>好的</value>
   </data>
+  <data name="Hosts_PleaseAddHost" xml:space="preserve">
+    <value>请先添加一台主机。</value>
+  </data>
   <data name="Menu_AboutTitle" xml:space="preserve">
     <value>关于</value>
   </data>
