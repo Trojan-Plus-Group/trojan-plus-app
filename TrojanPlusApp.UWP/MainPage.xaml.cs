@@ -29,6 +29,11 @@ namespace TrojanPlusApp.UWP
                 throw new NotImplementedException();
             }
 
+            public string GetTrojanPlusLibVersion()
+            {
+                throw new NotImplementedException();
+            }
+
             public void Start()
             {
                 throw new NotImplementedException();

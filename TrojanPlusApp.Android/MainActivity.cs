@@ -59,6 +59,11 @@ namespace TrojanPlusApp.Droid
 
                 return info.VersionCode;
             }
+
+            public string GetTrojanPlusLibVersion()
+            {
+                return TrojanPlusVPNService.GetTrojanPlusLibVersion();
+            }
         }
 
         App app;

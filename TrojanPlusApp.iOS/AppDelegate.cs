@@ -25,6 +25,11 @@ namespace TrojanPlusApp.iOS
                 return NSBundle.MainBundle.ObjectForInfoDictionary("CFBundleShortVersionString").ToString();
             }
 
+            public string GetTrojanPlusLibVersion()
+            {
+                throw new NotImplementedException();
+            }
+
             public void Start()
             {
                 throw new NotImplementedException();

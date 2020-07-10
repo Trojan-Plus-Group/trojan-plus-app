@@ -14,6 +14,8 @@ namespace TrojanPlusApp
 
             string GetAppVersion();
             int GetAppBuild();
+
+            string GetTrojanPlusLibVersion();
         }
 
         public static App Instance

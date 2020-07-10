@@ -32,6 +32,14 @@ namespace TrojanPlusApp.Droid
         [DllImport("trojan.so", EntryPoint = "Java_com_trojan_1plus_android_TrojanPlusVPNService_stopMain")]
         public static extern void StopMain(IntPtr jnienv, IntPtr jclass);
 
+        [DllImport("trojan.so", EntryPoint = "Java_com_trojan_1plus_android_TrojanPlusVPNService_getVersion")]
+        public static extern IntPtr GetVersion(IntPtr jnienv, IntPtr jclass);
+
+        public static string GetTrojanPlusLibVersion()
+        {
+            return JNIEnv.GetString(GetVersion(JNIEnv.Handle, IntPtr.Zero), JniHandleOwnership.TransferLocalRef);
+        }
+
         [Export("protectSocket")]
         public static void ProtectSocket(int socket)
         {
