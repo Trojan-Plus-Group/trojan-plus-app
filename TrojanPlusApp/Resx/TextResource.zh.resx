@@ -156,8 +156,17 @@
   <data name="New_AskDuplicatePrompt" xml:space="preserve">
     <value>请给这个主机输入一个新的名字:</value>
   </data>
+  <data name="New_DNS_GFW_UpStreamNS" xml:space="preserve">
+    <value>GFW上游DNS服务器</value>
+  </data>
+  <data name="New_DNS_UpStreamNS" xml:space="preserve">
+    <value>中国大陆上游DNS服务器</value>
+  </data>
   <data name="New_EditHostTitle" xml:space="preserve">
     <value>编辑主机</value>
+  </data>
+  <data name="New_ErrorAttributes" xml:space="preserve">
+    <value>输入信息有不合规则的地方，请检查为空的字段，或标记为红色的地方</value>
   </data>
   <data name="New_HostAddressHolder" xml:space="preserve">
     <value>vpn.example.com</value>
@@ -212,6 +221,39 @@
   </data>
   <data name="New_HostSSLVerifyDetail" xml:space="preserve">
     <value>注意：是否验证主机域名的证书。如果你想穿越真正的GFW，请确保勾选上这个选项，并且使用域名而不是IP地址填写主机地址。</value>
+  </data>
+  <data name="New_LoadBalanceHost" xml:space="preserve">
+    <value>其他均衡负载主机</value>
+  </data>
+  <data name="New_LoadBalanceHost_Detail" xml:space="preserve">
+    <value>选择以后，可以使用其他的主机同时进行代理，以增加带宽。但是注意的是，各个均衡负载主机之间的Ping值需要小于10ms才能正常使用，否则会极大降低代理性能。</value>
+  </data>
+  <data name="New_Output_Debug_Log" xml:space="preserve">
+    <value>输出详细的日志</value>
+  </data>
+  <data name="New_Output_Debug_Log_Detail" xml:space="preserve">
+    <value>注意：仅作开发者调试作用，如果打开，会严重影响性能</value>
+  </data>
+  <data name="New_RouteType" xml:space="preserve">
+    <value>路由选择：</value>
+  </data>
+  <data name="New_RouteType_All" xml:space="preserve">
+    <value>全局代理</value>
+  </data>
+  <data name="New_RouteType_Bypass_CN" xml:space="preserve">
+    <value>绕过中国大陆</value>
+  </data>
+  <data name="New_RouteType_Bypass_CN_Local" xml:space="preserve">
+    <value>绕过中国大陆以及局域网</value>
+  </data>
+  <data name="New_RouteType_Bypass_Local" xml:space="preserve">
+    <value>绕过局域网</value>
+  </data>
+  <data name="New_RouteType_CN" xml:space="preserve">
+    <value>代理中国大陆</value>
+  </data>
+  <data name="New_RouteType_GFWList" xml:space="preserve">
+    <value>代理GFWList</value>
   </data>
   <data name="New_ToolbarCancel" xml:space="preserve">
     <value>取消</value>

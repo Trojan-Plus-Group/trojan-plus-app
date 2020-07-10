@@ -55,15 +55,14 @@ namespace TrojanPlusApp.Views
 
             try
             {
-                var layout = (BindableObject)sender;
-                var item = layout.BindingContext as HostModel;
-
-                File.WriteAllText(App.Instance.ConfigPath, item.PrepareConfig(viewModel));
+                File.WriteAllText(App.Instance.ConfigPath, viewModel.CurretSelectHost.PrepareConfig(viewModel));
                 App.Instance.Start();
+
+                viewModel.IsConnectBtnEnabled = false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
             }
         }
     }

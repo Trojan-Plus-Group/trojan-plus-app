@@ -5,9 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="TrojanPlusApp.Views.HostEditPage"
-             Title="{Binding PageTitle}}"
+             Title="{Binding PageTitle}"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
-			 xmlns:local="clr-namespace:TrojanPlusApp.Models">
+			 xmlns:local="clr-namespace:TrojanPlusApp.Models"
+			 xmlns:behaviors="clr-namespace:TrojanPlusApp.Behaviors">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="{x:Static resources:TextResource.New_ToolbarCancel}" Clicked="Cancel_Clicked" />
@@ -28,17 +29,53 @@
 				<Entry Text="{Binding Item.HostName}" Placeholder="{x:Static resources:TextResource.New_HostNameHolder}" FontSize="Small" IsEnabled="{Binding EnableEditHostName}"/>
 
 				<Label Text="{x:Static resources:TextResource.New_HostAddressTitle}" FontSize="Medium" />
-				<Entry Text="{Binding Item.HostAddress}" Placeholder="{x:Static resources:TextResource.New_HostAddressHolder}" FontSize="Small" />
+				<Entry Text="{Binding Item.HostAddress}" Placeholder="{x:Static resources:TextResource.New_HostAddressHolder}" FontSize="Small" >
+					<Entry.Behaviors>
+						<behaviors:HostAddressValidation/>
+					</Entry.Behaviors>
+				</Entry>
 
 				<Label Text="{x:Static resources:TextResource.New_HostPortTitle}" FontSize="Medium" />
 				<Entry Text="{Binding Item.HostPort}" Placeholder="{x:Static resources:TextResource.New_HostPortHolder}" FontSize="Small">
 					<Entry.Behaviors>
-						<local:PortNumValidation/>
+						<behaviors:PortNumValidation/>
 					</Entry.Behaviors>
 				</Entry>
 
 				<Label Text="{x:Static resources:TextResource.New_HostPasswordTitle}" FontSize="Medium" />
-				<Entry IsPassword="True" Text="{Binding Item.Password}" Placeholder="{x:Static resources:TextResource.New_HostPasswordHolder}" FontSize="Small" />
+				<Entry IsPassword="True" Text="{Binding Item.Password}" Placeholder="{x:Static resources:TextResource.New_HostPasswordHolder}" FontSize="Small" >
+					<Entry.Behaviors>
+						<behaviors:EntryLengthValidatorBehavior MaxLength="64"/>
+					</Entry.Behaviors>
+				</Entry>
+
+				<Label Text="{x:Static resources:TextResource.New_RouteType}" FontSize="Medium" />
+				<Picker HorizontalOptions="FillAndExpand" SelectedIndex="{Binding Item.UI_Route}">
+					<Picker.ItemsSource>
+						<x:Array Type="{x:Type x:String}">
+							<x:Static Member="resources:TextResource.New_RouteType_All"/>
+							<x:Static Member="resources:TextResource.New_RouteType_Bypass_Local"/>
+							<x:Static Member="resources:TextResource.New_RouteType_Bypass_CN"/>
+							<x:Static Member="resources:TextResource.New_RouteType_Bypass_CN_Local"/>
+							<x:Static Member="resources:TextResource.New_RouteType_GFWList"/>
+							<x:Static Member="resources:TextResource.New_RouteType_CN"/>
+						</x:Array>
+					</Picker.ItemsSource>
+				</Picker>
+
+				<Label Text="{x:Static resources:TextResource.New_DNS_UpStreamNS}" FontSize="Medium" />
+				<Entry Text="{Binding Item.UpStreamNS}" FontSize="Small" >
+					<Entry.Behaviors>
+						<behaviors:IPAddressValidation/>
+					</Entry.Behaviors>
+				</Entry>
+
+				<Label Text="{x:Static resources:TextResource.New_DNS_GFW_UpStreamNS}" FontSize="Medium" />
+				<Entry Text="{Binding Item.GFWUpStreamNS}" FontSize="Small" >
+					<Entry.Behaviors>
+						<behaviors:IPAddressValidation/>
+					</Entry.Behaviors>
+				</Entry>
 
 				<Label Text="{x:Static resources:TextResource.New_HostExperimentalTitle}" FontSize="Large" />
 
@@ -71,6 +108,22 @@
 					<Switch IsToggled="{Binding Item.EnablePipeline}" Grid.Column="1" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_HostEnablePipelineDetail}" FontSize="Small" />
+
+				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
+
+				<Grid Margin="0,10,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="0.5*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log}" VerticalOptions="Center"  FontSize="Medium" />
+					<Switch IsToggled="{Binding Item.EnableDebugLog}" Grid.Column="1" VerticalOptions="Center" />
+				</Grid>
+				<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log_Detail}" FontSize="Small" />
 
 				<Button Margin="0,20,0,0" Text="{x:Static resources:TextResource.New_HostDuplicateText}" Clicked="OnDuplicateBtnClicked" IsVisible="{Binding ShowDeleteBtn}" 
 					BackgroundColor="{StaticResource Primary}" TextColor="White" FontSize="Large"/>

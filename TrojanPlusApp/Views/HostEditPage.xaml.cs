@@ -69,6 +69,15 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
+            if (!Item.IsValid())
+            {
+                await DisplayAlert(
+                        Resx.TextResource.Common_ErrorTitle,
+                        string.Format(Resx.TextResource.New_ErrorAttributes, Item.HostName),
+                        Resx.TextResource.Common_OK);
+                return;
+            }
+
             MessagingCenter.Send(this, "AddItem", Item);
             await Navigation.PopModalAsync();
         }

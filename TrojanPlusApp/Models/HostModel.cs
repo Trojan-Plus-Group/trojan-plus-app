@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
+using TrojanPlusApp.Behaviors;
 using TrojanPlusApp.ViewModels;
 using Xamarin.Forms;
 
@@ -21,19 +22,21 @@ namespace TrojanPlusApp.Models
 
         public string HostName { get; set; }
         public string HostAddress { get; set; }
-        public int HostPort { get; set; }
+        public ushort HostPort { get; set; } = 443;
         public string Password { get; set; }
-        public bool SSLVerify { get; set; }
-        public RouteType Route { get; set; }
-
-        private List<string> loadBalance = new List<string>();
-        public IList<string> LoadBalance { get { return loadBalance; } }
-
-        public bool EnableDebugLog { get; set; }
+        public bool SSLVerify { get; set; } = true;
+        public RouteType Route { get; set; } = RouteType.Route_all;
+        public string UpStreamNS { get; set; } = "114.114.114.114";
+        public string GFWUpStreamNS { get; set; } = "8.8.8.8";
 
         // Experimental Options
         public bool EnablePipeline { get; set; }
         public string PipelineLoadbalance { get; set; }
+        private List<string> loadBalance = new List<string>();
+        public IList<string> LoadBalance { get { return loadBalance; } }
+
+        // Debug Options
+        public bool EnableDebugLog { get; set; } = false;
 
         // For UI display
         public string UI_Description
@@ -51,6 +54,8 @@ namespace TrojanPlusApp.Models
         }
 
         private bool uiSelected = false;
+
+        [JsonIgnore]
         public bool UI_Selected
         {
             get { return uiSelected; }
@@ -60,7 +65,22 @@ namespace TrojanPlusApp.Models
             }
         }
 
+        [JsonIgnore]
         public Color UI_SelectedColor => UI_Selected ? Color.Green : Color.LightGray;
+
+        [JsonIgnore]
+        public int UI_Route
+        {
+            get
+            {
+                return (int)Route;
+            }
+
+            set
+            {
+                Route = (RouteType)value;
+            }
+        }
 
         // Utils 
         public HostModel Duplicate(string newHostName)
@@ -69,6 +89,15 @@ namespace TrojanPlusApp.Models
             newOne.HostName = newHostName;
             newOne.uiSelected = false;
             return newOne;
+        }
+
+        public bool IsValid()
+        {
+            return HostAddressValidation.IsValid(HostAddress)
+                && HostPort > 0
+                && !string.IsNullOrEmpty(Password)
+                && IPAddressValidation.IsValid(UpStreamNS)
+                && IPAddressValidation.IsValid(GFWUpStreamNS);
         }
 
         private static readonly string ConfigTemplate = "{\n" +
@@ -197,15 +226,18 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${dns.udp_socket_buf}", "8192");
             config = config.Replace("${dns.udp_recv_buf}", "1024");
 
-            config = config.Replace("${dns.up_dns_server}", "114.114.114.114");
-            config = config.Replace("${dns.up_gfw_dns_server}", "8.8.8.8");
+            config = config.Replace("${dns.up_dns_server}", UpStreamNS);
+            config = config.Replace("${dns.up_gfw_dns_server}", GFWUpStreamNS);
 
             string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
             string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
             if (!hasWritenTextFile)
             {
+                // DO NOT use !File.Exists(gfwlist_path) || !File.Exists(cn_ips_path)
+                // becuase version updating might update this resource file
                 File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
                 File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
+                hasWritenTextFile = true;
             }
 
             config = config.Replace("${dns.gfwlist}", gfwlist_path);
@@ -220,8 +252,6 @@ namespace TrojanPlusApp.Models
 
             config = config.Replace("${route.proxy_ips}", proxy_ips_path);
             config = config.Replace("${route.white_ips}", white_ips_path);
-
-            hasWritenTextFile = true;
 
             return config;
         }

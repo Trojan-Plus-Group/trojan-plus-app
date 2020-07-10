@@ -163,8 +163,17 @@
   <data name="New_AskDuplicatePrompt" xml:space="preserve">
     <value>Please input a name for new host:</value>
   </data>
+  <data name="New_DNS_GFW_UpStreamNS" xml:space="preserve">
+    <value>GFWList Up Stream DNS Server</value>
+  </data>
+  <data name="New_DNS_UpStreamNS" xml:space="preserve">
+    <value>China Mainland Up Stream DNS Server</value>
+  </data>
   <data name="New_EditHostTitle" xml:space="preserve">
     <value>Edit Host</value>
+  </data>
+  <data name="New_ErrorAttributes" xml:space="preserve">
+    <value>Input Some information are wrong, please check those elements empty or marked as red.</value>
   </data>
   <data name="New_HostAddressHolder" xml:space="preserve">
     <value>vpn.example.com</value>
@@ -219,6 +228,39 @@
   </data>
   <data name="New_HostSSLVerifyDetail" xml:space="preserve">
     <value>CAUTION: Whether verify certification of host domain, please DO check this option if you want to go through the real GFW and fill host address as a domain instead of IP. </value>
+  </data>
+  <data name="New_LoadBalanceHost" xml:space="preserve">
+    <value>Load Balance Hosts</value>
+  </data>
+  <data name="New_LoadBalanceHost_Detail" xml:space="preserve">
+    <value>After selecting, you can use others host to proxy together to increase bandwith. Caution: please make sure the ping among all server host is low than 10ms, otherwise you will get terriable proxy experience.</value>
+  </data>
+  <data name="New_Output_Debug_Log" xml:space="preserve">
+    <value>Output Debug Log</value>
+  </data>
+  <data name="New_Output_Debug_Log_Detail" xml:space="preserve">
+    <value>CAUTION: only for developer, if you enable, proxy performance will be reduced a lot.</value>
+  </data>
+  <data name="New_RouteType" xml:space="preserve">
+    <value>Route Type:</value>
+  </data>
+  <data name="New_RouteType_All" xml:space="preserve">
+    <value>Proxy All</value>
+  </data>
+  <data name="New_RouteType_Bypass_CN" xml:space="preserve">
+    <value>Bypass China Mainland</value>
+  </data>
+  <data name="New_RouteType_Bypass_CN_Local" xml:space="preserve">
+    <value>Bypass China Mainland and Local</value>
+  </data>
+  <data name="New_RouteType_Bypass_Local" xml:space="preserve">
+    <value>Bypass Local</value>
+  </data>
+  <data name="New_RouteType_CN" xml:space="preserve">
+    <value>Proxy China Mainland</value>
+  </data>
+  <data name="New_RouteType_GFWList" xml:space="preserve">
+    <value>Proxy GFWList</value>
   </data>
   <data name="New_ToolbarCancel" xml:space="preserve">
     <value>Cancel</value>

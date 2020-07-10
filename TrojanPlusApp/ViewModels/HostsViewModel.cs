@@ -9,7 +9,11 @@ namespace TrojanPlusApp.ViewModels
     public class HostsViewModel : BaseViewModel
     {
         public ObservableCollection<HostModel> Items { get; set; }
-        public int CurrSelectHostIdx { get; set; }
+        public int CurrSelectHostIdx
+        {
+            get { return DataStore.GetCurrSelectHostIdx(); }
+            set { DataStore.SetCurrSelectHostIdx(value); }
+        }
 
         public HostModel CurretSelectHost
         {
@@ -30,12 +34,19 @@ namespace TrojanPlusApp.ViewModels
         public bool IsConnectBtnEnabled
         {
             get { return App.Instance.IsStartBtnEnabled; }
+            set { OnPropertyChanged(); }
         }
 
         public HostsViewModel()
         {
             Title = Resx.TextResource.Menu_HostsViewTitle;
             Items = new ObservableCollection<HostModel>();
+            DataStore.FillHosts(Items);
+
+            if (CurrSelectHostIdx < Items.Count)
+            {
+                Items[CurrSelectHostIdx].UI_Selected = true;
+            }
 
             MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (sender, item) =>
             {

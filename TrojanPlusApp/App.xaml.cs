@@ -43,7 +43,7 @@ namespace TrojanPlusApp
 
         public void Start()
         {
-            starter.Start();
+            Starter.Start();
         }
 
         public void OnSetStartBtnEnabled(bool enable)

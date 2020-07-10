@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Java.Interop;
-using Java.IO;
+using TrojanPlusApp.Models;
 
 namespace TrojanPlusApp.Droid
 {
@@ -28,8 +23,7 @@ namespace TrojanPlusApp.Droid
         private static readonly string TAG = typeof(TrojanPlusVPNService).Name;
 
         private const string VPN_ADDRESS = "10.233.233.1";
-        private const string VPN_ROUTE = "0.0.0.0";
-        private const string VPN_DNS_SERVER = "127.0.0.1";
+        private const string VPN_DNS_SERVER = "10.233.233.2";
         private const int VPN_MTU = 1500;
 
         [DllImport("trojan.so", EntryPoint = "Java_com_trojan_1plus_android_TrojanPlusVPNService_runMain")]
@@ -59,7 +53,7 @@ namespace TrojanPlusApp.Droid
         {
             base.OnCreate();
             messenger = new Messenger(new VpnServiceHandler(this));
-
+            sm_currentService = this;
         }
 
         public override IBinder OnBind(Intent intent)
@@ -105,26 +99,73 @@ namespace TrojanPlusApp.Droid
             }
         }
 
+        private HostModel.RouteType ParseType(string configFile)
+        {
+            var begin = configFile.IndexOf("\"proxy_type\"");
+            if (begin == -1)
+            {
+                return HostModel.RouteType.Route_all;
+            }
+            begin = configFile.IndexOf(":", begin) + 1;
+            var end = configFile.IndexOf(",", begin);
+
+            if (end <= begin)
+            {
+                return HostModel.RouteType.Route_all;
+            }
+
+            var typeStr = configFile.Substring(begin, end - begin).Trim();
+            int type;
+            if (int.TryParse(typeStr, out type))
+            {
+                return (HostModel.RouteType)type;
+            }
+            else
+            {
+                return HostModel.RouteType.Route_all;
+            }
+        }
+
         private void OpenFD()
         {
             if (m_vpnFD == null)
             {
-                PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0,
-                    new Intent(Application.Context, typeof(MainActivity)).SetFlags(ActivityFlags.ReorderToFront), 0);
-
-                Builder builder = new Builder(this);
-                builder.AddAddress(VPN_ADDRESS, 32)
-                            .AddRoute(VPN_ROUTE, 0)
-                            .SetMtu(VPN_MTU)
-                            .SetConfigureIntent(pintent)
-                            .AddDnsServer(VPN_DNS_SERVER)
-                            .SetSession(GetString(Resource.String.app_name));
-
-                m_vpnFD = builder.Establish();
                 try
                 {
-                    var configFile = System.IO.File.ReadAllText(m_configPath)
-                                        .Replace("${tun.tun_fd}", m_vpnFD.Fd.ToString());
+                    var configFile = System.IO.File.ReadAllText(m_configPath);
+                    var route = ParseType(configFile);
+
+                    Log.Debug(TAG, "VPN Route Type: " + route);
+
+                    PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0,
+                        new Intent(Application.Context, typeof(MainActivity)).SetFlags(ActivityFlags.ReorderToFront), 0);
+
+                    Builder builder = new Builder(this);
+                    builder.AddAddress(VPN_ADDRESS, 32)
+                                .SetMtu(VPN_MTU)
+                                .SetConfigureIntent(pintent)
+                                .AddDnsServer(VPN_DNS_SERVER)
+                                .SetSession(GetString(Resource.String.app_name));
+
+                    if (route == HostModel.RouteType.Route_all
+                        || route == HostModel.RouteType.Route_bypass_cn_mainland)
+                    {
+                        builder.AddRoute("0.0.0.0", 0);
+                    }
+                    else
+                    {
+                        var ips = Resources.GetTextArray(Resource.Array.bypass_private_route);
+                        foreach (var ip in ips)
+                        {
+                            string[] addr = ip.Split('/');
+                            builder.AddRoute(addr[0], int.Parse(addr[1]));
+                        }
+                        builder.AddRoute(VPN_DNS_SERVER, 0);
+                    }
+
+                    m_vpnFD = builder.Establish();
+
+                    configFile = configFile.Replace("${tun.tun_fd}", m_vpnFD.Fd.ToString());
 
                     System.IO.File.WriteAllText(m_configPath, configFile);
                 }
