@@ -165,6 +165,12 @@
   <data name="New_EditHostTitle" xml:space="preserve">
     <value>编辑主机</value>
   </data>
+  <data name="New_EnableFastOpen" xml:space="preserve">
+    <value>开启TCP Fast Open</value>
+  </data>
+  <data name="New_EnableFastOpenDetail" xml:space="preserve">
+    <value>注意：在有些机型上面有可能需要Root才能生效。生效之后，虽然会减少延迟，但是可能会严重影响网速，请在开启之后记得测试一下速度。</value>
+  </data>
   <data name="New_ErrorAttributes" xml:space="preserve">
     <value>输入信息有不合规则的地方，请检查为空的字段，或标记为红色的地方</value>
   </data>
@@ -226,7 +232,7 @@
     <value>其他均衡负载主机</value>
   </data>
   <data name="New_LoadBalanceHost_Detail" xml:space="preserve">
-    <value>选择以后，可以使用其他的主机同时进行代理，以增加带宽。但是注意的是，各个均衡负载主机之间的Ping值需要小于10ms才能正常使用，否则会极大降低代理性能。</value>
+    <value>可以添加其他的主机同时进行代理，以增加带宽。但是注意的是，各个均衡负载主机之间的Ping值需要小于10ms才能正常使用，否则会极大降低代理性能。</value>
   </data>
   <data name="New_Output_Debug_Log" xml:space="preserve">
     <value>输出详细的日志</value>

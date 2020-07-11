@@ -172,6 +172,12 @@
   <data name="New_EditHostTitle" xml:space="preserve">
     <value>Edit Host</value>
   </data>
+  <data name="New_EnableFastOpen" xml:space="preserve">
+    <value>Enable TCP Fast Open</value>
+  </data>
+  <data name="New_EnableFastOpenDetail" xml:space="preserve">
+    <value>CAUTION: Might need Root to enable. After enabling, it can reduce some delay, but might decrease bandwidth seriously, please test bandwith after enabling.</value>
+  </data>
   <data name="New_ErrorAttributes" xml:space="preserve">
     <value>Input Some information are wrong, please check those elements empty or marked as red.</value>
   </data>
@@ -233,7 +239,7 @@
     <value>Load Balance Hosts</value>
   </data>
   <data name="New_LoadBalanceHost_Detail" xml:space="preserve">
-    <value>After selecting, you can use others host to proxy together to increase bandwith. Caution: please make sure the ping among all server host is low than 10ms, otherwise you will get terriable proxy experience.</value>
+    <value>You can add others host as a loadbalance node to proxy together to increase bandwith. Caution: please make sure the ping among all server hosts is low than 10ms, otherwise you will get terriable proxy experience.</value>
   </data>
   <data name="New_Output_Debug_Log" xml:space="preserve">
     <value>Output Debug Log</value>

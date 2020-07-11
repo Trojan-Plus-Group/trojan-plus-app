@@ -31,14 +31,15 @@ namespace TrojanPlusApp.Models
 
         // Experimental Options
         public bool EnablePipeline { get; set; }
-        public string PipelineLoadbalance { get; set; }
-        private List<string> loadBalance = new List<string>();
-        public IList<string> LoadBalance { get { return loadBalance; } }
+        public List<string> LoadBalance { get; } = new List<string>();
+
+        public bool EnableTCPFastOpen { get; set; }
 
         // Debug Options
         public bool EnableDebugLog { get; set; } = false;
 
         // For UI display
+        [JsonIgnore]
         public string UI_Description
         {
             get
@@ -193,7 +194,7 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${ssl.verify}", SSLVerify.ToLowerString());
             config = config.Replace("${ssl.verify_hostname}", SSLVerify.ToLowerString());
 
-            config = config.Replace("${tcp.fast_open}", "true");
+            config = config.Replace("${tcp.fast_open}", EnableTCPFastOpen ? "true" : "false");
             config = config.Replace("${tcp.connect_time_out}", "5");
 
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");

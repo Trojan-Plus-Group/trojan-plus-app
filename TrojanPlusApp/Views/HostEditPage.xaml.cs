@@ -129,5 +129,15 @@ namespace TrojanPlusApp.Views
             MessagingCenter.Send(this, "AddItem", Item.Duplicate(name));
             await Navigation.PopModalAsync();
         }
+
+        public async void OnAddLoadbalanceClicked(object sender, EventArgs e)
+        {
+
+        }
+
+        public async void OnDeleteLoadbalanceClicked(object sender, EventArgs e)
+        {
+
+        }
     }
 }
