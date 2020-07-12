@@ -117,10 +117,10 @@ namespace TrojanPlusApp.Models
         "    \"ssl\": {\n" +
         "        \"verify\": ${ssl.verify},\n" +
         "        \"verify_hostname\": ${ssl.verify_hostname},\n" +
-        "        \"cert\": \"\",\n" +
+        "        \"cert\": \"${ssl.cert}\",\n" +
         "        \"cipher\": \"ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA\",\n" +
         "        \"cipher_tls13\": \"TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384\",\n" +
-        "        \"sni\": \"\",\n" +
+        "        \"sni\": \"${ssl.sni}\",\n" +
         "        \"alpn\": [\n" +
         "            \"h2\",\n" +
         "            \"http/1.1\"\n" +
@@ -180,6 +180,23 @@ namespace TrojanPlusApp.Models
         {
             string config = ConfigTemplate;
 
+            string version_path = Path.Combine(
+                App.Instance.DataPathParent,
+                "version_" + App.Instance.Starter.GetAppVersion());
+
+            string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
+            string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
+            string cert_path = Path.Combine(App.Instance.DataPathParent, "cacert");
+
+            if (!File.Exists(version_path))
+            {
+                File.WriteAllText(version_path, "TrojanPlus App Version: " + App.Instance.Starter.GetAppVersion());
+
+                File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
+                File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
+                File.WriteAllText(cert_path, Resx.TextResource.cacert);
+            }
+
             config = config.Replace("${run_type}", "client_tun");
             config = config.Replace("${remote_addr}", HostAddress);
             config = config.Replace("${remote_port}", HostPort.ToString());
@@ -193,6 +210,8 @@ namespace TrojanPlusApp.Models
 
             config = config.Replace("${ssl.verify}", SSLVerify.ToLowerString());
             config = config.Replace("${ssl.verify_hostname}", SSLVerify.ToLowerString());
+            config = config.Replace("${ssl.sni}", HostAddress);
+            config = config.Replace("${ssl.cert}", cert_path);
 
             config = config.Replace("${tcp.fast_open}", EnableTCPFastOpen ? "true" : "false");
             config = config.Replace("${tcp.connect_time_out}", "5");
@@ -230,20 +249,8 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${dns.up_dns_server}", UpStreamNS);
             config = config.Replace("${dns.up_gfw_dns_server}", GFWUpStreamNS);
 
-            string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
-            string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
-            if (!hasWritenTextFile)
-            {
-                // DO NOT use !File.Exists(gfwlist_path) || !File.Exists(cn_ips_path)
-                // becuase version updating might update this resource file
-                File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
-                File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
-                hasWritenTextFile = true;
-            }
-
             config = config.Replace("${dns.gfwlist}", gfwlist_path);
             config = config.Replace("${route.cn_mainland_ips_file}", cn_ips_path);
-
             config = config.Replace("${route.proxy_type}", ((int)Route).ToString());
 
             string proxy_ips_path = Path.Combine(App.Instance.DataPathParent, "proxy_ips");

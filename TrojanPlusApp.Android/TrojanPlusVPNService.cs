@@ -168,7 +168,7 @@ namespace TrojanPlusApp.Droid
                             string[] addr = ip.Split('/');
                             builder.AddRoute(addr[0], int.Parse(addr[1]));
                         }
-                        builder.AddRoute(VPN_DNS_SERVER, 0);
+                        builder.AddRoute(VPN_DNS_SERVER, 32);
                     }
 
                     m_vpnFD = builder.Establish();
