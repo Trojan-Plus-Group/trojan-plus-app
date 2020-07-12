@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using TrojanPlusApp.Models;
 using TrojanPlusApp.Services;
 using TrojanPlusApp.Views;
 using Xamarin.Forms;
@@ -38,8 +40,6 @@ namespace TrojanPlusApp
             ConfigPath = configPath;
 
             InitializeComponent();
-
-            DependencyService.Register<DataStore>();
             MainPage = new MainPage();
         }
 
