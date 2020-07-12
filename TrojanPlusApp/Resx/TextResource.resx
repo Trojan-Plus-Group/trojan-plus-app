@@ -235,11 +235,23 @@
   <data name="New_HostSSLVerifyDetail" xml:space="preserve">
     <value>CAUTION: Whether verify certification of host domain, please DO check this option if you want to go through the real GFW and fill host address as a domain instead of IP. </value>
   </data>
+  <data name="New_LoadBalanceDelHostAsk" xml:space="preserve">
+    <value>Do you want to delete '{0}' loadbalance node?</value>
+  </data>
   <data name="New_LoadBalanceHost" xml:space="preserve">
     <value>Load Balance Hosts</value>
   </data>
   <data name="New_LoadBalanceHost_Detail" xml:space="preserve">
-    <value>You can add others host as a loadbalance node to proxy together to increase bandwith. Caution: please make sure the ping among all server hosts is low than 10ms, otherwise you will get terriable proxy experience.</value>
+    <value>You can add others host with pipeline mode as a loadbalance node to proxy together to increase bandwith. Caution: please make sure the ping among all server hosts is low than 10ms, otherwise you will get terriable proxy experience.</value>
+  </data>
+  <data name="New_LoadBalanceHost_Error" xml:space="preserve">
+    <value>You need to add another host with pipeline mode firstly.</value>
+  </data>
+  <data name="New_LoadBalanceHost_NoHosts" xml:space="preserve">
+    <value>&lt;No any LoadBalance node&gt;</value>
+  </data>
+  <data name="New_LoadBalanceHost_Title" xml:space="preserve">
+    <value>Please select a host:</value>
   </data>
   <data name="New_Output_Debug_Log" xml:space="preserve">
     <value>Output Debug Log</value>

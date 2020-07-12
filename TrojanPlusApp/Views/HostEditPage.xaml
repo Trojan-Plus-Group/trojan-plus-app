@@ -7,7 +7,6 @@
              x:Class="TrojanPlusApp.Views.HostEditPage"
              Title="{Binding PageTitle}"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
-			 xmlns:local="clr-namespace:TrojanPlusApp.Models"
 			 xmlns:behaviors="clr-namespace:TrojanPlusApp.Behaviors">
 
 	<ContentPage.ToolbarItems>
@@ -25,9 +24,6 @@
 	<ContentPage.Content>
 		<ScrollView Grid.Row="1">
 			<StackLayout Spacing="10" Padding="10">
-
-
-
 				<Label Text="{x:Static resources:TextResource.New_HostNameTitle}" FontSize="Medium" />
 				<Entry Text="{Binding Item.HostName}" Placeholder="{x:Static resources:TextResource.New_HostNameHolder}" FontSize="Small" IsEnabled="{Binding EnableEditHostName}"/>
 
@@ -113,14 +109,15 @@
 				<Label Text="{x:Static resources:TextResource.New_HostEnablePipelineDetail}" FontSize="Small" />
 
 				<!-- LoadBalance Hosts -->
-				<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" IsVisible="{Binding Source={x:Reference Switch_EnablingPipeline}, Path=IsToggled, Mode=OneWay}" >
+				<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" 
+							 IsVisible="{Binding Source={x:Reference Switch_EnablingPipeline}, Path=IsToggled, Mode=OneWay}" >
 					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 					<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" HeightRequest="40">
 						<Label Text="{x:Static resources:TextResource.New_LoadBalanceHost}" HorizontalOptions="Start" VerticalOptions="Center"  FontSize="Medium" />
 						<ImageButton Source="icon_add.png" HeightRequest="30" BackgroundColor="Transparent"
 										 HorizontalOptions="EndAndExpand" WidthRequest="30" VerticalOptions="Center" Clicked="OnAddLoadbalanceClicked" />
 					</StackLayout>
-					<StackLayout Orientation="Vertical" BindableLayout.ItemsSource="{Binding Item.LoadBalance}" >
+					<StackLayout Orientation="Vertical" BindableLayout.ItemsSource="{Binding LoadBalance}">
 						<d:BindableLayout.ItemsSource>
 							<x:Array Type="{x:Type x:String}">
 								<x:String >LoadBalance Host 1</x:String>

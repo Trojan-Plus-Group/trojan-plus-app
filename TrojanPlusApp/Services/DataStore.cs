@@ -85,6 +85,12 @@ namespace TrojanPlusApp.Services
         {
             var oldItem = items.Where((HostModel arg) => arg.HostName == id).FirstOrDefault();
             items.Remove(oldItem);
+
+            foreach (var h in items)
+            {
+                h.LoadBalance.Remove(oldItem.HostName);
+            }
+
             await Store();
 
             return await Task.FromResult(true);

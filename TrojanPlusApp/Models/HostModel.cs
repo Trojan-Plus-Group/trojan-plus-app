@@ -31,7 +31,7 @@ namespace TrojanPlusApp.Models
 
         // Experimental Options
         public bool EnablePipeline { get; set; }
-        public List<string> LoadBalance { get; } = new List<string>();
+        public List<string> LoadBalance { get; set; } = new List<string>();
 
         public bool EnableTCPFastOpen { get; set; }
 

@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.ComponentModel;
 using Xamarin.Forms;
 
 using TrojanPlusApp.Models;
 using TrojanPlusApp.ViewModels;
+using System.Runtime.InteropServices.ComTypes;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace TrojanPlusApp.Views
 {
@@ -14,6 +18,7 @@ namespace TrojanPlusApp.Views
     {
         private readonly HostsViewModel hostsModel;
         private readonly bool addedOrEdit;
+        public ObservableCollection<string> LoadBalance { get; set; } = new ObservableCollection<string>();
 
         public HostModel Item { get; set; }
         public bool ShowDeleteBtn { get; set; }
@@ -35,6 +40,11 @@ namespace TrojanPlusApp.Views
             Item = editHost ?? new HostModel() { SSLVerify = true };
             ShowDeleteBtn = !addedOrEdit;
             EnableEditHostName = addedOrEdit;
+
+            foreach (var h in Item.LoadBalance)
+            {
+                LoadBalance.Add(h);
+            }
 
             BindingContext = this;
         }
@@ -64,6 +74,8 @@ namespace TrojanPlusApp.Views
             }
             else
             {
+                Item.LoadBalance.Clear();
+                Item.LoadBalance.AddRange(LoadBalance);
                 MessagingCenter.Send(this, "UpdateItem", Item);
                 await Navigation.PopModalAsync();
                 return;
@@ -78,6 +90,8 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
+            Item.LoadBalance.Clear();
+            Item.LoadBalance.AddRange(LoadBalance);
             MessagingCenter.Send(this, "AddItem", Item);
             await Navigation.PopModalAsync();
         }
@@ -126,18 +140,68 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
-            MessagingCenter.Send(this, "AddItem", Item.Duplicate(name));
+            var newItem = Item.Duplicate(name);
+            newItem.LoadBalance.Clear();
+            newItem.LoadBalance.AddRange(LoadBalance);
+            MessagingCenter.Send(this, "AddItem", newItem);
             await Navigation.PopModalAsync();
         }
 
         public async void OnAddLoadbalanceClicked(object sender, EventArgs e)
         {
+            List<string> hosts = null;
+            if (addedOrEdit)
+            {
+                hosts = hostsModel.Items
+                    .Where(h => h.EnablePipeline)
+                    .Select(h => h.HostName)
+                    .ToList();
+            }
+            else
+            {
+                hosts = hostsModel.Items
+                    .Where(h => !h.HostName.Equals(Item.HostName) && h.EnablePipeline)
+                    .Select(h => h.HostName)
+                    .ToList();
+            }
 
+            if (hosts.Count == 0)
+            {
+                await DisplayAlert(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_LoadBalanceHost_Error,
+                    Resx.TextResource.Common_Yes);
+
+                return;
+            }
+
+            string action = await DisplayActionSheet(
+                Resx.TextResource.New_LoadBalanceHost_Title,
+                Resx.TextResource.Common_Cancel,
+                null,
+                hosts.ToArray());
+
+            if (hosts.Contains(action))
+            {
+                LoadBalance.Add(action);
+            }
         }
 
         public async void OnDeleteLoadbalanceClicked(object sender, EventArgs e)
         {
+            var layout = (BindableObject)sender;
+            var hostName = layout.BindingContext as string;
 
+            bool response = await DisplayAlert(
+                Resx.TextResource.Common_AskTitle,
+                string.Format(Resx.TextResource.New_LoadBalanceDelHostAsk, hostName),
+                Resx.TextResource.Common_Yes,
+                Resx.TextResource.Common_No);
+
+            if (response)
+            {
+                LoadBalance.Remove(hostName);
+            }
         }
     }
 }

@@ -9,6 +9,11 @@ namespace TrojanPlusApp.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         protected bool SetProperty<T>(
            ref T backingStore,
            T value,
@@ -26,9 +31,5 @@ namespace TrojanPlusApp.Models
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
