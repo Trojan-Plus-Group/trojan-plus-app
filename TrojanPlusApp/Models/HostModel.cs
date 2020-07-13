@@ -68,7 +68,7 @@ namespace TrojanPlusApp.Models
         }
 
         [JsonIgnore]
-        public Color UI_SelectedColor => UI_Selected ? Color.Green : Color.LightGray;
+        public Color UI_SelectedColor => UI_Selected ? Color.Black : Color.LightGray;
 
         [JsonIgnore]
         public int UI_Route
@@ -194,7 +194,7 @@ namespace TrojanPlusApp.Models
         "}\n";
 
         private static bool hasWritenTextFile = false;
-        public string PrepareConfig(HostsViewModel hosts, bool withLoadBalance = true)
+        public string PrepareConfig(HostsViewModel hosts, bool isLoadBalancePrepare = false)
         {
             string config = ConfigTemplate;
 
@@ -237,7 +237,7 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");
             config = config.Replace("${experimental.pipeline_ack_window}", "100");
 
-            if (withLoadBalance && LoadBalance.Count > 0)
+            if (!isLoadBalancePrepare && LoadBalance.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < LoadBalance.Count; i++)
@@ -245,7 +245,7 @@ namespace TrojanPlusApp.Models
                     var h = hosts.FindHostByName(LoadBalance[i]);
                     if (h != null && h.EnablePipeline)
                     {
-                        string loadConfig = h.PrepareConfig(hosts, false);
+                        string loadConfig = h.PrepareConfig(hosts, true);
                         string path = Path.Combine(App.Instance.DataPathParent, "balance_config" + i);
                         File.WriteAllText(path, loadConfig);
 
@@ -263,7 +263,10 @@ namespace TrojanPlusApp.Models
             else
             {
                 config = config.Replace("${experimental.pipeline_loadbalance_configs}", string.Empty);
-                config = config.Replace("${tun.tun_fd}", "-1");
+                if (isLoadBalancePrepare)
+                {
+                    config = config.Replace("${tun.tun_fd}", "-1");
+                }
             }
 
             config = config.Replace("${dns.udp_socket_buf}", "8192");

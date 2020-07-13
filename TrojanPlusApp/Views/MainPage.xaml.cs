@@ -11,32 +11,38 @@ namespace TrojanPlusApp.Views
     [DesignTimeVisible(false)]
     public partial class MainPage : MasterDetailPage
     {
-        Dictionary<int, NavigationPage> MenuPages = new Dictionary<int, NavigationPage>();
+        private Dictionary<int, NavigationPage> menuPages = new Dictionary<int, NavigationPage>();
         public MainPage()
         {
             InitializeComponent();
 
             MasterBehavior = MasterBehavior.Popover;
 
-            MenuPages.Add((int)MenuItemType.AllHost, (NavigationPage)Detail);
+            menuPages.Add((int)MenuItemType.AllHost, (NavigationPage)Detail);
         }
 
         public async Task NavigateFromMenu(int id)
         {
-            if (!MenuPages.ContainsKey(id))
+            if (!menuPages.ContainsKey(id))
             {
                 switch (id)
                 {
                     case (int)MenuItemType.AllHost:
-                        MenuPages.Add(id, new NavigationPage(new HostsPage()));
+                        menuPages.Add(id, new NavigationPage(new HostsPage())
+                        {
+                            BarBackgroundColor = Color.Black
+                        });
                         break;
                     case (int)MenuItemType.About:
-                        MenuPages.Add(id, new NavigationPage(new AboutPage()));
+                        menuPages.Add(id, new NavigationPage(new AboutPage())
+                        {
+                            BarBackgroundColor = Color.Black
+                        });
                         break;
                 }
             }
 
-            var newPage = MenuPages[id];
+            var newPage = menuPages[id];
 
             if (newPage != null && Detail != newPage)
             {

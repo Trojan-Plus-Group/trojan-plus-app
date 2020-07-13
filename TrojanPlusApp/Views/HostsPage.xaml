@@ -23,9 +23,9 @@
 			</d:CollectionView.ItemsSource>
 			<CollectionView.ItemTemplate>
 				<DataTemplate>
-					<StackLayout Padding="5" Orientation="Horizontal">
+					<StackLayout Padding="5" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
 						<BoxView WidthRequest="5" Color="{Binding UI_SelectedColor}"/>
-						<Grid HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand">
+						<Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="Auto"/>
@@ -78,8 +78,8 @@
 				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<BoxView VerticalOptions="Fill" BackgroundColor="LightGray"/>
-			<Button BackgroundColor="Gray" Text="{Binding ConnectBtnText}" Clicked="OnConnectBtnClicked" IsEnabled="{Binding IsConnectBtnEnabled}"
-					WidthRequest="120" VerticalOptions="Center" HorizontalOptions="Center"/>
+			<Button Text="{Binding ConnectBtnText}" Clicked="OnConnectBtnClicked" IsEnabled="{Binding IsConnectBtnEnabled}"
+					WidthRequest="120" Style="{StaticResource buttonStyle}"/>
 		</Grid>
 
 	</StackLayout>

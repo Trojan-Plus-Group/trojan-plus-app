@@ -14,7 +14,7 @@ namespace TrojanPlusApp.Views
     {
         public MainPage RootPage { get => Application.Current.MainPage as MainPage; }
 
-        public List<HomeMenuItem> menuItems;
+        private List<HomeMenuItem> menuItems;
 
         public MenuPage()
         {
@@ -27,7 +27,6 @@ namespace TrojanPlusApp.Views
             };
 
             ListViewMenu.ItemsSource = menuItems;
-
             ListViewMenu.SelectedItem = menuItems[0];
             ListViewMenu.ItemSelected += async (sender, e) =>
             {

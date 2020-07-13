@@ -6,15 +6,33 @@
              mc:Ignorable="d"
              x:Class="TrojanPlusApp.App">
 
-    <Application.Resources>
-        <ResourceDictionary>
-            <!--Global Styles-->
-            <Color x:Key="NavigationPrimary">#2196F3</Color>
-            <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="BarTextColor" Value="White" />
-            </Style>
-        </ResourceDictionary>
-    </Application.Resources>
-    
+	<Application.Resources>
+		<ResourceDictionary>
+			<!--Global Styles-->
+			<Color x:Key="NavigationPrimary">#000000</Color>
+			<Color x:Key="NavigationSecond">#404040</Color>
+			<Style TargetType="NavigationPage">
+				<Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
+				<Setter Property="BarTextColor" Value="White" />
+			</Style>
+
+			<Style x:Key="buttonStyle" TargetType="Button">
+				<Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+				<Setter Property="VerticalOptions" Value="CenterAndExpand" />
+				<Setter Property="BorderRadius" Value="5" />
+				<Setter Property="BorderWidth" Value="5" />
+				<Setter Property="TextColor" Value="White" />
+				<Setter Property="BackgroundColor" Value="{StaticResource NavigationPrimary}"/>
+				<Style.Triggers>
+					<Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="False">
+						<Setter Property="TextColor" Value="Gray" />
+						<Setter Property="BackgroundColor" Value="{StaticResource NavigationSecond}"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
+	</Application.Resources>
+
 </Application>
