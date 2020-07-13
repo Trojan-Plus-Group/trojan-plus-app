@@ -89,6 +89,8 @@ namespace TrojanPlusApp.Models
             var newOne = (HostModel)MemberwiseClone();
             newOne.HostName = newHostName;
             newOne.uiSelected = false;
+            newOne.LoadBalance = new List<string>();
+            newOne.LoadBalance.AddRange(LoadBalance);
             return newOne;
         }
 
@@ -176,7 +178,7 @@ namespace TrojanPlusApp.Models
         "}\n";
 
         private static bool hasWritenTextFile = false;
-        public string PrepareConfig(HostsViewModel hosts)
+        public string PrepareConfig(HostsViewModel hosts, bool withLoadBalance = true)
         {
             string config = ConfigTemplate;
 
@@ -219,19 +221,19 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");
             config = config.Replace("${experimental.pipeline_ack_window}", "100");
 
-            StringBuilder sb = new StringBuilder();
-            if (LoadBalance.Count > 0)
+            if (withLoadBalance && LoadBalance.Count > 0)
             {
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < LoadBalance.Count; i++)
                 {
                     var h = hosts.FindHostByName(LoadBalance[i]);
-                    if (h != null)
+                    if (h != null && h.EnablePipeline)
                     {
-                        string loadConfig = h.PrepareConfig(hosts);
+                        string loadConfig = h.PrepareConfig(hosts, false);
                         string path = Path.Combine(App.Instance.DataPathParent, "balance_config" + i);
                         File.WriteAllText(path, loadConfig);
 
-                        if (sb.Length == 0)
+                        if (sb.Length > 0)
                         {
                             sb.Append(",");
                         }
@@ -239,9 +241,14 @@ namespace TrojanPlusApp.Models
                         sb.Append($"\"{path}\"");
                     }
                 }
-            }
 
-            config = config.Replace("${experimental.pipeline_loadbalance_configs}", sb.ToString());
+                config = config.Replace("${experimental.pipeline_loadbalance_configs}", sb.ToString());
+            }
+            else
+            {
+                config = config.Replace("${experimental.pipeline_loadbalance_configs}", string.Empty);
+                config = config.Replace("${tun.tun_fd}", "-1");
+            }
 
             config = config.Replace("${dns.udp_socket_buf}", "8192");
             config = config.Replace("${dns.udp_recv_buf}", "1024");

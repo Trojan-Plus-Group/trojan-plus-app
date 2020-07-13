@@ -92,6 +92,7 @@ namespace TrojanPlusApp.Views
 
             Item.LoadBalance.Clear();
             Item.LoadBalance.AddRange(LoadBalance);
+            LoadBalance.Clear();
             MessagingCenter.Send(this, "AddItem", Item);
             await Navigation.PopModalAsync();
         }
@@ -143,6 +144,7 @@ namespace TrojanPlusApp.Views
             var newItem = Item.Duplicate(name);
             newItem.LoadBalance.Clear();
             newItem.LoadBalance.AddRange(LoadBalance);
+            LoadBalance.Clear();
             MessagingCenter.Send(this, "AddItem", newItem);
             await Navigation.PopModalAsync();
         }
