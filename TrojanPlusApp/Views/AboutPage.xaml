@@ -26,7 +26,7 @@
 		<StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
 			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
 				<ContentView Padding="0,20,0,20" VerticalOptions="FillAndExpand">
-					<Image Source="trojan_plus_logo.png" VerticalOptions="Center" HeightRequest="64" />
+					<Image Source="trojan_plus_logo.png" VerticalOptions="Center" HeightRequest="64" BackgroundColor="Transparent"/>
 				</ContentView>
 			</StackLayout>
 		</StackLayout>
