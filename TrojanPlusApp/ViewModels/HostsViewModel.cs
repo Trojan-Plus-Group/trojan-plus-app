@@ -8,27 +8,22 @@ namespace TrojanPlusApp.ViewModels
 {
     public class HostsViewModel : BaseViewModel
     {
+        private string goingToRuningHostName;
         public ObservableCollection<HostModel> Items { get; set; }
         public int CurrSelectHostIdx
         {
-            get { return DataStore.GetCurrSelectHostIdx(); }
+            get { return DataStore.Settings.HostSelectedIdx; }
             set { DataStore.SetCurrSelectHostIdx(value); }
         }
 
         public HostModel CurretSelectHost
         {
-            get
-            {
-                return CurrSelectHostIdx < Items.Count ? Items[CurrSelectHostIdx] : null;
-            }
+            get { return CurrSelectHostIdx < Items.Count ? Items[CurrSelectHostIdx] : null; }
         }
 
         public string ConnectBtnText
         {
-            get
-            {
-                return App.Instance.GetStartBtnStatus ? "Disconnect" : "Connect";
-            }
+            get { return App.Instance.GetStartBtnStatus ? "Disconnect" : "Connect"; }
         }
 
         public bool IsConnectBtnEnabled
@@ -47,6 +42,8 @@ namespace TrojanPlusApp.ViewModels
             {
                 Items[CurrSelectHostIdx].UI_Selected = true;
             }
+
+            goingToRuningHostName = DataStore.Settings.HostRunningName;
 
             MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (sender, item) =>
             {
@@ -121,9 +118,24 @@ namespace TrojanPlusApp.ViewModels
                 OnPropertyChanged("IsConnectBtnEnabled");
             });
 
-            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnStatus", (sender, runing) =>
+            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnStatus", (sender, running) =>
             {
                 OnPropertyChanged("ConnectBtnText");
+
+                var host = FindHostByName(goingToRuningHostName);
+                if (host != null)
+                {
+                    DataStore.SetHostRunningName(running ? host.HostName : string.Empty);
+                    host.UI_NotRunning = !running;
+                    foreach (var load in host.LoadBalance)
+                    {
+                        var h = FindHostByName(load);
+                        if (h != null)
+                        {
+                            h.UI_NotRunning = !running;
+                        }
+                    }
+                }
             });
         }
 
@@ -143,10 +155,16 @@ namespace TrojanPlusApp.ViewModels
             }
         }
 
-
         public HostModel FindHostByName(string hostName)
         {
             return Items.FindOrNull(i => i.HostName.Equals(hostName));
         }
+
+        public void SetHostGoingToRun(string hostName)
+        {
+            goingToRuningHostName = hostName;
+        }
+
+
     }
 }

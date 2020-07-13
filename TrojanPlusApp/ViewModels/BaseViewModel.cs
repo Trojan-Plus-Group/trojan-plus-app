@@ -7,7 +7,7 @@ namespace TrojanPlusApp.ViewModels
     public class BaseViewModel : NotificationModel
     {
         private static readonly DataStore DataStoreValue = new DataStore();
-        public IDataStore<HostModel> DataStore
+        public DataStore DataStore
         {
             get { return DataStoreValue; }
         }

@@ -54,6 +54,7 @@ namespace TrojanPlusApp.Models
             }
         }
 
+        [JsonIgnore]
         private bool uiSelected = false;
 
         [JsonIgnore]
@@ -72,15 +73,29 @@ namespace TrojanPlusApp.Models
         [JsonIgnore]
         public int UI_Route
         {
-            get
-            {
-                return (int)Route;
-            }
+            get { return (int)Route; }
+            set { Route = (RouteType)value; }
+        }
 
+        [JsonIgnore]
+        private bool uiNotRunning = true;
+
+        [JsonIgnore]
+        public bool UI_NotRunning
+        {
+            get { return uiNotRunning; }
             set
             {
-                Route = (RouteType)value;
+                if (SetProperty(ref uiNotRunning, value))
+                {
+                    OnPropertyChanged("UI_NotRunningOpacity");
+                }
             }
+        }
+
+        public double UI_NotRunningOpacity
+        {
+            get { return UI_NotRunning ? 1 : 0.3; }
         }
 
         // Utils 
@@ -89,6 +104,7 @@ namespace TrojanPlusApp.Models
             var newOne = (HostModel)MemberwiseClone();
             newOne.HostName = newHostName;
             newOne.uiSelected = false;
+            newOne.uiNotRunning = true;
             newOne.LoadBalance = new List<string>();
             newOne.LoadBalance.AddRange(LoadBalance);
             return newOne;

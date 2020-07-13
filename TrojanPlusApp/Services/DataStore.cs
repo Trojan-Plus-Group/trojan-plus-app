@@ -7,13 +7,13 @@ using TrojanPlusApp.Models;
 
 namespace TrojanPlusApp.Services
 {
-    public class DataStore : IDataStore<HostModel>
+    public class DataStore
     {
         private const string HostsKey = "HostsKey";
-        private const string HostSelectedIdxKey = "HostSelectedIdxKey";
+        private const string SettingsKey = "SettingsKey";
 
         private readonly List<HostModel> items;
-        private int currSelectHostIdx;
+        public SettingsModel Settings { get; private set; }
 
         public DataStore()
         {
@@ -21,15 +21,18 @@ namespace TrojanPlusApp.Services
             {
                 items = JsonConvert.DeserializeObject<List<HostModel>>(App.Instance.Properties[HostsKey] as string);
             }
-
-            if (App.Instance.Properties.ContainsKey(HostSelectedIdxKey))
-            {
-                currSelectHostIdx = (int)App.Instance.Properties[HostSelectedIdxKey];
-            }
-
-            if (items == null)
+            else
             {
                 items = new List<HostModel>();
+            }
+
+            if (App.Instance.Properties.ContainsKey(SettingsKey))
+            {
+                Settings = JsonConvert.DeserializeObject<SettingsModel>(App.Instance.Properties[SettingsKey] as string);
+            }
+            else
+            {
+                Settings = new SettingsModel();
             }
         }
 
@@ -41,14 +44,15 @@ namespace TrojanPlusApp.Services
             }
         }
 
-        public int GetCurrSelectHostIdx()
-        {
-            return currSelectHostIdx;
-        }
-
         public async void SetCurrSelectHostIdx(int idx)
         {
-            currSelectHostIdx = idx;
+            Settings.HostSelectedIdx = idx;
+            await Store();
+        }
+
+        public async void SetHostRunningName(string hostName)
+        {
+            Settings.HostRunningName = hostName;
             await Store();
         }
 
@@ -99,7 +103,8 @@ namespace TrojanPlusApp.Services
         private Task Store()
         {
             App.Instance.Properties[HostsKey] = JsonConvert.SerializeObject(items);
-            App.Instance.Properties[HostSelectedIdxKey] = currSelectHostIdx;
+            App.Instance.Properties[SettingsKey] = JsonConvert.SerializeObject(Settings);
+
             return App.Instance.SavePropertiesAsync();
         }
     }

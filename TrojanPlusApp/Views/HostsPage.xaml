@@ -25,10 +25,11 @@
 				<DataTemplate>
 					<StackLayout Padding="5" Orientation="Horizontal">
 						<BoxView WidthRequest="5" Color="{Binding UI_SelectedColor}"/>
-						<Grid HorizontalOptions="FillAndExpand">
+						<Grid HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand">
 							<Grid.RowDefinitions>
-								<RowDefinition/>
-								<RowDefinition/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
 								<RowDefinition Height="1"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
@@ -36,17 +37,34 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<Label Text="{Binding HostName}" Grid.Row="0"
+							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center"
                                 LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="30" />
 
 							<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
-										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" />
+										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" 
+										 IsEnabled="{Binding UI_NotRunning}" Opacity="{Binding UI_NotRunningOpacity}"/>
 
 							<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
                                 LineBreakMode="NoWrap" HorizontalOptions="StartAndExpand" Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="20" VerticalOptions="Center" />
-							<BoxView Grid.Row="2" Color="Gray" Grid.ColumnSpan="2" HeightRequest="1"/>
+							<StackLayout Grid.Row="2" Orientation="Vertical" BindableLayout.ItemsSource="{Binding LoadBalance}">
+								<d:BindableLayout.ItemsSource>
+									<x:Array Type="{x:Type x:String}">
+										<x:String >LoadBalance Host 1</x:String>
+										<x:String >LoadBalance Host 2</x:String>
+									</x:Array>
+								</d:BindableLayout.ItemsSource>
+								<BindableLayout.ItemTemplate>
+									<DataTemplate>
+										<StackLayout Margin="10,0,0,0" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+											<Label Text=" + " VerticalOptions="Center"  FontSize="20" />
+											<Label Text="{Binding .}" VerticalOptions="Center"  FontSize="20" />
+										</StackLayout>
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</StackLayout>
+							<BoxView Grid.Row="3" Color="Gray" Grid.ColumnSpan="2" HeightRequest="1"/>
 						</Grid>
 						<StackLayout.GestureRecognizers>
 							<TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnItemSelected"></TapGestureRecognizer>
@@ -61,7 +79,7 @@
 			</Grid.RowDefinitions>
 			<BoxView VerticalOptions="Fill" BackgroundColor="LightGray"/>
 			<Button BackgroundColor="Gray" Text="{Binding ConnectBtnText}" Clicked="OnConnectBtnClicked" IsEnabled="{Binding IsConnectBtnEnabled}"
-					WidthRequest="100" VerticalOptions="Center" HorizontalOptions="Center"/>
+					WidthRequest="120" VerticalOptions="Center" HorizontalOptions="Center"/>
 		</Grid>
 
 	</StackLayout>

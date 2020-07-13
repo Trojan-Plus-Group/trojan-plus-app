@@ -155,14 +155,17 @@ namespace TrojanPlusApp.Views
             if (addedOrEdit)
             {
                 hosts = hostsModel.Items
-                    .Where(h => h.EnablePipeline)
+                    .Where(h => h.EnablePipeline
+                           && !LoadBalance.Contains(h.HostName))
                     .Select(h => h.HostName)
                     .ToList();
             }
             else
             {
                 hosts = hostsModel.Items
-                    .Where(h => !h.HostName.Equals(Item.HostName) && h.EnablePipeline)
+                    .Where(h => h.EnablePipeline
+                            && !LoadBalance.Contains(h.HostName)
+                            && !h.HostName.Equals(Item.HostName))
                     .Select(h => h.HostName)
                     .ToList();
             }

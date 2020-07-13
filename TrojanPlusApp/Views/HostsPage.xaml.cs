@@ -41,10 +41,9 @@ namespace TrojanPlusApp.Views
 
         public async void OnConnectBtnClicked(object sender, EventArgs e)
         {
-            // TODO generate config file
-            if (viewModel.CurretSelectHost == null)
+            var host = viewModel.CurretSelectHost;
+            if (host == null)
             {
-                // TODO popup a dialog to warning
                 await DisplayAlert(
                     Resx.TextResource.Common_AlertTitle,
                     Resx.TextResource.Hosts_PleaseAddHost,
@@ -59,6 +58,7 @@ namespace TrojanPlusApp.Views
                 App.Instance.Start();
 
                 viewModel.IsConnectBtnEnabled = false;
+                viewModel.SetHostGoingToRun(host.HostName);
             }
             catch (Exception ex)
             {
