@@ -122,19 +122,31 @@ namespace TrojanPlusApp.ViewModels
             {
                 OnPropertyChanged("ConnectBtnText");
 
-                var host = FindHostByName(goingToRuningHostName);
-                if (host != null)
+                if (running)
                 {
-                    DataStore.SetHostRunningName(running ? host.HostName : string.Empty);
-                    host.UI_NotRunning = !running;
-                    foreach (var load in host.LoadBalance)
+                    var host = FindHostByName(goingToRuningHostName);
+                    if (host != null)
                     {
-                        var h = FindHostByName(load);
-                        if (h != null)
+                        DataStore.SetHostRunningName(host.HostName);
+                        host.UI_NotRunning = false;
+                        foreach (var load in host.LoadBalance)
                         {
-                            h.UI_NotRunning = !running;
+                            var h = FindHostByName(load);
+                            if (h != null)
+                            {
+                                h.UI_NotRunning = false;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    foreach (var h in Items)
+                    {
+                        h.UI_NotRunning = true;
+                    }
+
+                    DataStore.SetHostRunningName(string.Empty);
                 }
             });
         }
