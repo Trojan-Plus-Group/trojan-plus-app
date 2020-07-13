@@ -118,7 +118,7 @@ You should have received a copy of the GNU General Public License along with thi
 							<FormattedString.Spans>
 								<Span Text="GFW Domain List " TextColor="Blue" TextDecorations="Underline">
 									<Span.GestureRecognizers>
-										<TapGestureRecognizer Command="{Binding OpenWebCommand}"
+										<TapGestureRecognizer Command="{Binding ClickCommand}"
                                           CommandParameter="https://github.com/cokebar/gfwlist2dnsmasq" />
 									</Span.GestureRecognizers>
 								</Span>
