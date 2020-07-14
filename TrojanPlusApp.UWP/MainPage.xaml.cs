@@ -38,6 +38,16 @@ namespace TrojanPlusApp.UWP
             {
                 throw new NotImplementedException();
             }
+
+            public bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void StopMonitorNetwork(bool wifi, bool cellur)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public MainPage()

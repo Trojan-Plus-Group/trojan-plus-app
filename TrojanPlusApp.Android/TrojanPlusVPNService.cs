@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Android.App;
@@ -12,7 +13,8 @@ using TrojanPlusApp.Models;
 namespace TrojanPlusApp.Droid
 {
     [Register("com.trojan_plus.android.TrojanPlusVPNService")]
-    [Service(Name = "com.trojan_plus.android.TrojanPlusVPNService",
+    [Service(
+            Name = "com.trojan_plus.android.TrojanPlusVPNService",
             Enabled = true,
             Permission = "android.permission.BIND_VPN_SERVICE",
             Process = ":vpn_remote",
@@ -43,25 +45,27 @@ namespace TrojanPlusApp.Droid
         [Export("protectSocket")]
         public static void ProtectSocket(int socket)
         {
-            if (sm_currentService != null)
+            if (currentService != null)
             {
-                sm_currentService.Protect(socket);
+                currentService.Protect(socket);
             }
         }
 
-        static TrojanPlusVPNService sm_currentService = null;
-        Messenger messenger;
-        private ParcelFileDescriptor m_vpnFD = null;
+        private static TrojanPlusVPNService currentService = null;
 
-        private Thread m_worker = null;
-        private string m_configPath;
-        private Messenger m_replyMessenger = null;
+        private Messenger messenger = null;
+        private ParcelFileDescriptor vpnFD = null;
+
+        private Thread worker = null;
+        private string prepareConfigPath = null;
+        private string runConfigPath = null;
+        private Messenger replyMessenger = null;
 
         public override void OnCreate()
         {
             base.OnCreate();
             messenger = new Messenger(new VpnServiceHandler(this));
-            sm_currentService = this;
+            currentService = this;
         }
 
         public override IBinder OnBind(Intent intent)
@@ -74,7 +78,7 @@ namespace TrojanPlusApp.Droid
         {
             Log.Debug(TAG, "OnDestroy");
             messenger.Dispose();
-            sm_currentService = null;
+            currentService = null;
 
             base.OnDestroy();
 
@@ -97,13 +101,13 @@ namespace TrojanPlusApp.Droid
 
         private void BroadcastStatus(bool started)
         {
-            if (m_replyMessenger != null)
+            if (replyMessenger != null)
             {
                 var msg = Message.Obtain(null, TrojanPlusStarter.VPN_START);
                 msg.Data = new Bundle();
                 msg.Data.PutBoolean("start", started);
 
-                m_replyMessenger.Send(msg);
+                replyMessenger.Send(msg);
             }
         }
 
@@ -114,6 +118,7 @@ namespace TrojanPlusApp.Droid
             {
                 return HostModel.RouteType.Route_all;
             }
+
             begin = configFile.IndexOf(":", begin) + 1;
             var end = configFile.IndexOf(",", begin);
 
@@ -136,17 +141,19 @@ namespace TrojanPlusApp.Droid
 
         private void OpenFD()
         {
-            if (m_vpnFD == null)
+            if (vpnFD == null)
             {
                 try
                 {
-                    var configFile = System.IO.File.ReadAllText(m_configPath);
+                    var configFile = File.ReadAllText(prepareConfigPath);
                     var route = ParseType(configFile);
 
                     Log.Debug(TAG, "VPN Route Type: " + route);
 
-                    PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0,
-                        new Intent(Application.Context, typeof(MainActivity)).SetFlags(ActivityFlags.ReorderToFront), 0);
+                    var intent = new Intent(Application.Context, typeof(MainActivity));
+                    intent.SetFlags(ActivityFlags.ReorderToFront);
+
+                    PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0, intent, 0);
 
                     Builder builder = new Builder(this);
                     builder.AddAddress(VPN_ADDRESS, 32)
@@ -168,14 +175,16 @@ namespace TrojanPlusApp.Droid
                             string[] addr = ip.Split('/');
                             builder.AddRoute(addr[0], int.Parse(addr[1]));
                         }
+
                         builder.AddRoute(VPN_DNS_SERVER, 32);
                     }
 
-                    m_vpnFD = builder.Establish();
+                    vpnFD = builder.Establish();
 
-                    configFile = configFile.Replace("${tun.tun_fd}", m_vpnFD.Fd.ToString());
+                    configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
 
-                    System.IO.File.WriteAllText(m_configPath, configFile);
+                    runConfigPath = prepareConfigPath + "_running";
+                    File.WriteAllText(runConfigPath, configFile);
                 }
                 catch (Exception ex)
                 {
@@ -185,42 +194,43 @@ namespace TrojanPlusApp.Droid
                     return;
                 }
 
-                m_worker = new Thread(new WorkerThread(this).Run);
-                m_worker.Start();
+                worker = new Thread(new WorkerThread(this).Run);
+                worker.Start();
             }
         }
 
         private void CloseFD()
         {
-            if (m_vpnFD != null)
+            if (vpnFD != null)
             {
                 try
                 {
                     Log.Debug(TAG, "close fd");
-                    m_vpnFD.Close();
+                    vpnFD.Close();
                 }
                 catch (Exception ex)
                 {
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
-                m_vpnFD = null;
+
+                vpnFD = null;
             }
         }
 
         private class WorkerThread
         {
-            private readonly TrojanPlusVPNService m_service;
+            private readonly TrojanPlusVPNService service;
             public WorkerThread(TrojanPlusVPNService service)
             {
-                m_service = service;
+                this.service = service;
             }
 
             public void Run()
             {
-                IntPtr path = JNIEnv.NewString(m_service.m_configPath);
+                IntPtr path = JNIEnv.NewString(service.runConfigPath);
                 try
                 {
-                    m_service.BroadcastStatus(true);
+                    service.BroadcastStatus(true);
 
                     var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
                     RunMain(JNIEnv.Handle, jclass, path);
@@ -234,52 +244,58 @@ namespace TrojanPlusApp.Droid
                     JNIEnv.DeleteLocalRef(path);
                 }
 
-                m_service.CloseFD();
-                m_service.StopSelf();
-                m_service.m_worker = null;
-                m_service.BroadcastStatus(false);
+                service.CloseFD();
+                service.StopSelf();
+                service.worker = null;
+                service.BroadcastStatus(false);
             }
         }
 
         private class VpnServiceHandler : Handler
         {
-            private readonly TrojanPlusVPNService m_service;
+            private readonly TrojanPlusVPNService service;
             public VpnServiceHandler(TrojanPlusVPNService service)
             {
-                m_service = service;
+                this.service = service;
             }
 
             public override void HandleMessage(Message msg)
             {
-                m_service.m_replyMessenger = msg.ReplyTo;
+                service.replyMessenger = msg.ReplyTo;
                 switch (msg.What)
                 {
                     case TrojanPlusStarter.VPN_START:
-                        if (m_service.m_worker == null)
+                        if (service.worker == null)
                         {
                             Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_START");
-                            m_service.m_configPath = msg.Data.GetString("config");
-                            m_service.OpenFD();
+                            service.prepareConfigPath = msg.Data.GetString("config");
+                            service.OpenFD();
                         }
+
                         break;
                     case TrojanPlusStarter.VPN_STATUS_ASK:
                         {
                             var reply = Message.Obtain(null, TrojanPlusStarter.VPN_STATUS_ASK);
                             reply.Data = new Bundle();
-                            reply.Data.PutBoolean("start", m_service.m_worker != null);
+                            reply.Data.PutBoolean("start", service.worker != null);
 
                             msg.ReplyTo.Send(reply);
                         }
+
                         break;
                     case TrojanPlusStarter.VPN_STOP:
-                        if (m_service.m_worker != null)
+                        if (service.worker != null)
                         {
                             Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_STOP");
                             StopMain(IntPtr.Zero, IntPtr.Zero);
                         }
+                        else
+                        {
+                            service.StopSelf();
+                        }
                         break;
                     default:
-                        Log.Warn(TAG, $"Unknown msg.what value: {msg.What} . Ignoring this message.");
+                        Log.Error(TAG, $"Unknown msg.what value: {msg.What} . Ignoring this message.");
                         break;
                 }
             }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using TrojanPlusApp.Models;
-using TrojanPlusApp.Services;
+﻿using System.IO;
 using TrojanPlusApp.Views;
 using Xamarin.Forms;
 
@@ -18,6 +15,10 @@ namespace TrojanPlusApp
             int GetAppBuild();
 
             string GetTrojanPlusLibVersion();
+
+            // start job service to check network status changed
+            bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur);
+            void StopMonitorNetwork(bool wifi, bool cellur);
         }
 
         public static App Instance
@@ -31,7 +32,7 @@ namespace TrojanPlusApp
         public string DataPathParent { get; private set; }
 
         public bool IsStartBtnEnabled { get; private set; }
-        public bool GetStartBtnStatus { get; private set; }
+        public bool IsVpnServiceRunning { get; private set; }
 
         public App(string configPath, IStart starter)
         {
@@ -54,10 +55,10 @@ namespace TrojanPlusApp
             MessagingCenter.Send(this, "Starter_OnSetStartBtnEnabled", enable);
         }
 
-        public void OnSetStartBtnStatus(bool running)
+        public void OnVpnIsRunning(bool running)
         {
-            GetStartBtnStatus = running;
-            MessagingCenter.Send(this, "Starter_OnSetStartBtnStatus", running);
+            IsVpnServiceRunning = running;
+            MessagingCenter.Send(this, "Starter_OnVpnIsRunning", running);
         }
 
         /*

@@ -23,7 +23,7 @@ namespace TrojanPlusApp.ViewModels
 
         public string ConnectBtnText
         {
-            get { return App.Instance.GetStartBtnStatus ? "Disconnect" : "Connect"; }
+            get { return App.Instance.IsVpnServiceRunning ? "Disconnect" : "Connect"; }
         }
 
         public bool IsConnectBtnEnabled
@@ -118,7 +118,7 @@ namespace TrojanPlusApp.ViewModels
                 OnPropertyChanged("IsConnectBtnEnabled");
             });
 
-            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnStatus", (sender, running) =>
+            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnVpnIsRunning", (sender, running) =>
             {
                 OnPropertyChanged("ConnectBtnText");
 

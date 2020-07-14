@@ -1,15 +1,20 @@
-﻿using Android.App;
-using Android.Content.PM;
-using Android.Runtime;
-using Android.OS;
+﻿using System.IO;
+using Android.App;
+using Android.App.Job;
 using Android.Content;
-using System.IO;
+using Android.Content.PM;
+using Android.OS;
+using Android.Runtime;
 using Java.Lang;
-using Android.Util;
 
 namespace TrojanPlusApp.Droid
 {
-    [Activity(Name = "com.trojan_plus.android.MainActivity", Label = "@string/app_name", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true,
+    [Activity(
+        Name = "com.trojan_plus.android.MainActivity",
+        Label = "@string/app_name",
+        Icon = "@mipmap/icon",
+        Theme = "@style/MainTheme",
+        MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -26,14 +31,14 @@ namespace TrojanPlusApp.Droid
                 activity.app.OnSetStartBtnEnabled(enable);
             }
 
-            public void SetStartBtnStatus(bool running)
+            public void OnVpnIsRunning(bool running)
             {
-                activity.app.OnSetStartBtnStatus(running);
+                activity.app.OnVpnIsRunning(running);
             }
 
             public string GetConfigPath()
             {
-                return activity.configPath;
+                return PrepareConfigPath;
             }
 
             public void Start()
@@ -64,11 +69,79 @@ namespace TrojanPlusApp.Droid
             {
                 return TrojanPlusVPNService.GetTrojanPlusLibVersion();
             }
+
+            public bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur)
+            {
+                bool succ = true;
+                var jobServ = (JobScheduler)activity.GetSystemService(JobSchedulerService);
+
+                if (autoStartWifiSSID != null)
+                {
+                    jobServ.Cancel(TrojanPlusWifiJobService.JobId);
+
+                    JobInfo.Builder jobBuilder = new JobInfo.Builder(
+                        TrojanPlusWifiJobService.JobId,
+                        new ComponentName(activity, Class.FromType(typeof(TrojanPlusWifiJobService)).Name));
+
+                    jobBuilder.SetRequiredNetworkType(NetworkType.Unmetered);
+
+                    PersistableBundle bundle = new PersistableBundle();
+                    bundle.PutStringArray(TrojanPlusWifiJobService.AutoStartWifiSSIDKey, autoStartWifiSSID);
+                    jobBuilder.SetExtras(bundle);
+
+                    succ = jobServ.Schedule(jobBuilder.Build()) > 0;
+                }
+
+                if (autoStartCellur)
+                {
+                    jobServ.Cancel(TrojanPlusCellurJobService.JobId);
+
+                    var jobBuilder = new JobInfo.Builder(
+                        TrojanPlusCellurJobService.JobId,
+                        new ComponentName(activity, Class.FromType(typeof(TrojanPlusCellurJobService)).Name));
+
+                    jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
+
+                    succ = succ && jobServ.Schedule(jobBuilder.Build()) > 0;
+                }
+
+                return succ;
+            }
+
+            public void StopMonitorNetwork(bool wifi, bool cellur)
+            {
+                var jobServ = (JobScheduler)activity.GetSystemService(JobSchedulerService);
+                if (wifi)
+                {
+                    jobServ.Cancel(TrojanPlusWifiJobService.JobId);
+                }
+
+                if (cellur)
+                {
+                    jobServ.Cancel(TrojanPlusCellurJobService.JobId);
+                }
+            }
         }
 
-        App app;
-        string configPath;
+        public static readonly string PrepareConfigPath = Path.Combine(
+                System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
+                "config.json");
+
+        private App app;
         private TrojanPlusStarter starter;
+
+        private string autoStartWifiSSID;
+        private bool autoStartCellur;
+
+        public override void OnRequestPermissionsResult(
+            int requestCode,
+            string[] permissions,
+            [GeneratedEnum] Permission[] grantResults)
+        {
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -80,22 +153,13 @@ namespace TrojanPlusApp.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            configPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
-                "config.json");
-
             var com = new Communicator(this);
             starter = new TrojanPlusStarter(this, com);
-            app = new App(configPath, com);
+            app = new App(PrepareConfigPath, com);
 
             LoadApplication(app);
-        }
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
-            [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
-        {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            //com.StartMonitorNetwork(null, true);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -119,5 +183,6 @@ namespace TrojanPlusApp.Droid
             starter.OnDestroy();
             base.OnDestroy();
         }
+
     }
 }

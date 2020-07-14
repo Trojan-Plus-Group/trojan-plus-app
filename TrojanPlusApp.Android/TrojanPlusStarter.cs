@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Net;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Xamarin.Forms.Platform.Android;
 
 namespace TrojanPlusApp.Droid
 {
@@ -20,104 +11,38 @@ namespace TrojanPlusApp.Droid
         public interface IActivityCommunicator
         {
             void SetStartBtnEnabled(bool enable);
-            void SetStartBtnStatus(bool running);
+            void OnVpnIsRunning(bool running);
             string GetConfigPath();
         }
 
-        private static readonly string TAG = typeof(TrojanPlusStarter).Name;
         public const int VPN_START = 1000;
         public const int VPN_STOP = 1001;
         public const int VPN_STATUS_ASK = 1002;
 
-        private bool m_service_is_bound = false;
-        private bool m_service_is_running = false;
-        private bool m_need_send_start_msg = false;
+        private static readonly string TAG = typeof(TrojanPlusStarter).Name;
 
-        private readonly IActivityCommunicator m_communicator;
-        private readonly Activity m_activity;
+        private readonly IActivityCommunicator communicator;
+        private readonly Context context;
+        private readonly Activity activity;
+        private readonly VPNServiceConnection serviceConnection;
+        private readonly Messenger messengerHandler;
 
-        private Messenger MessengerHandler { get; set; }
+        private bool serviceIsBound = false;
+        private bool serviceIsRunning = false;
+        private bool needSendStartMsg = false;
 
-        VPNServiceConnection m_serviceConnection;
-        public TrojanPlusStarter(Activity activity, IActivityCommunicator communicator)
+        public TrojanPlusStarter(Context context, IActivityCommunicator communicator)
         {
-            m_communicator = communicator;
-            m_activity = activity;
-            m_serviceConnection = new VPNServiceConnection(this);
-            MessengerHandler = new Messenger(new VPNMessageHandler(this));
-        }
-
-        private void BindVpnService()
-        {
-            if (!m_service_is_bound)
-            {
-                m_service_is_bound = true;
-
-                Log.Debug(TAG, "BindVpnService");
-                Intent serviceToStart = new Intent(m_activity, typeof(TrojanPlusVPNService));
-                m_activity.BindService(serviceToStart, m_serviceConnection, Bind.AutoCreate);
-                m_activity.StartService(serviceToStart);
-            }
-        }
-
-        private void UnbindVpnService()
-        {
-            if (m_service_is_bound && m_serviceConnection.Messenger != null)
-            {
-                m_activity.UnbindService(m_serviceConnection);
-                m_service_is_bound = false;
-            }
-        }
-
-        private void RefreshBtnStatus()
-        {
-            m_communicator.SetStartBtnStatus(m_service_is_running);
-        }
-
-        private void SendStartMessage()
-        {
-            if (m_serviceConnection.Messenger != null)
-            {
-                try
-                {
-                    Bundle data = new Bundle();
-                    data.PutString("config", m_communicator.GetConfigPath());
-
-                    var msg = Message.Obtain(null, VPN_START);
-                    msg.Data = data;
-                    msg.ReplyTo = MessengerHandler;
-
-                    m_serviceConnection.Messenger.Send(msg);
-                    m_communicator.SetStartBtnEnabled(false);
-                }
-                catch (RemoteException ex)
-                {
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
-                }
-            }
-        }
-
-        private void SendAskStatusMessage()
-        {
-            if (m_serviceConnection.Messenger != null)
-            {
-                try
-                {
-                    var msg = Message.Obtain(null, VPN_STATUS_ASK);
-                    msg.ReplyTo = MessengerHandler;
-
-                    m_serviceConnection.Messenger.Send(msg);
-                }
-                catch (RemoteException ex)
-                {
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
-                }
-            }
+            this.communicator = communicator;
+            this.context = context;
+            activity = context as Activity;
+            serviceConnection = new VPNServiceConnection(this);
+            messengerHandler = new Messenger(new VPNMessageHandler(this));
         }
 
         public void Start()
         {
-            if (m_service_is_running)
+            if (serviceIsRunning)
             {
                 StopVPNService();
             }
@@ -127,42 +52,20 @@ namespace TrojanPlusApp.Droid
             }
         }
 
-        private void StopVPNService()
+        public void OnJobServiceStart()
         {
-            if (m_serviceConnection.Messenger != null)
-            {
-                try
-                {
-                    var msg = Message.Obtain(null, VPN_STOP);
-                    msg.ReplyTo = MessengerHandler;
-
-                    m_serviceConnection.Messenger.Send(msg);
-                    m_communicator.SetStartBtnEnabled(false);
-                }
-                catch (RemoteException ex)
-                {
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
-                }
-            }
+            BindVpnService();
         }
 
-        private void StartVPNService()
+        public void OnJobServiceStop()
         {
-            Intent intent = VpnService.Prepare(m_activity);
-            if (intent != null)
-            {
-                m_activity.StartActivityForResult(intent, VPN_START);
-            }
-            else
-            {
-                OnActivityResult(VPN_START, Result.Ok, null);
-            }
+            UnbindVpnService();
         }
 
         public void OnResume()
         {
             BindVpnService();
-            RefreshBtnStatus();
+            RefreshRunningStatus();
         }
 
         public void OnDestroy()
@@ -174,30 +77,135 @@ namespace TrojanPlusApp.Droid
         {
             if (requestCode == VPN_START && resultCode == Result.Ok)
             {
-                m_communicator.SetStartBtnEnabled(false);
-                if (m_service_is_bound)
+                communicator.SetStartBtnEnabled(false);
+                if (serviceIsBound)
                 {
                     SendStartMessage();
                 }
                 else
                 {
-                    m_need_send_start_msg = true;
+                    needSendStartMsg = true;
                     BindVpnService();
                 }
 
                 return true;
             }
+
             return false;
+        }
+
+        private void BindVpnService()
+        {
+            if (!serviceIsBound)
+            {
+                serviceIsBound = true;
+
+                Log.Debug(TAG, "BindVpnService");
+
+                Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
+                context.BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
+                context.StartService(serviceToStart);
+            }
+        }
+
+        private void UnbindVpnService()
+        {
+            if (serviceIsBound && serviceConnection.Messenger != null)
+            {
+                context.UnbindService(serviceConnection);
+                serviceIsBound = false;
+            }
+        }
+
+        private void RefreshRunningStatus()
+        {
+            communicator.OnVpnIsRunning(serviceIsRunning);
+        }
+
+        private void SendStartMessage()
+        {
+            if (serviceConnection.Messenger != null)
+            {
+                try
+                {
+                    Bundle data = new Bundle();
+                    data.PutString("config", communicator.GetConfigPath());
+
+                    var msg = Message.Obtain(null, VPN_START);
+                    msg.Data = data;
+                    msg.ReplyTo = messengerHandler;
+
+                    serviceConnection.Messenger.Send(msg);
+                    communicator.SetStartBtnEnabled(false);
+                }
+                catch (RemoteException ex)
+                {
+                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                }
+            }
+        }
+
+        private void SendAskStatusMessage()
+        {
+            if (serviceConnection.Messenger != null)
+            {
+                try
+                {
+                    var msg = Message.Obtain(null, VPN_STATUS_ASK);
+                    msg.ReplyTo = messengerHandler;
+
+                    serviceConnection.Messenger.Send(msg);
+                }
+                catch (RemoteException ex)
+                {
+                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                }
+            }
+        }
+
+        private void StopVPNService()
+        {
+            if (serviceConnection.Messenger != null)
+            {
+                try
+                {
+                    var msg = Message.Obtain(null, VPN_STOP);
+                    msg.ReplyTo = messengerHandler;
+
+                    serviceConnection.Messenger.Send(msg);
+                    communicator.SetStartBtnEnabled(false);
+                }
+                catch (RemoteException ex)
+                {
+                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                }
+            }
+        }
+
+        private void StartVPNService()
+        {
+            Intent intent = VpnService.Prepare(context);
+            if (intent != null)
+            {
+                if (activity != null)
+                {
+                    activity.StartActivityForResult(intent, VPN_START);
+                }
+            }
+            else
+            {
+                OnActivityResult(VPN_START, Result.Ok, null);
+            }
         }
 
         private class VPNServiceConnection : Java.Lang.Object, IServiceConnection
         {
-            TrojanPlusStarter m_starter;
+            private readonly TrojanPlusStarter starter;
             public Messenger Messenger { get; private set; }
 
-            public VPNServiceConnection(TrojanPlusStarter stater)
+            public VPNServiceConnection(TrojanPlusStarter starter)
             {
-                m_starter = stater;
+                this.starter = starter;
             }
 
             public void OnServiceConnected(ComponentName name, IBinder service)
@@ -208,14 +216,14 @@ namespace TrojanPlusApp.Droid
                 {
                     Messenger = new Messenger(service);
 
-                    if (m_starter.m_need_send_start_msg)
+                    if (starter.needSendStartMsg)
                     {
-                        m_starter.m_need_send_start_msg = false;
-                        m_starter.SendStartMessage();
+                        starter.needSendStartMsg = false;
+                        starter.SendStartMessage();
                     }
                     else
                     {
-                        m_starter.SendAskStatusMessage();
+                        starter.SendAskStatusMessage();
                     }
                 }
             }
@@ -224,20 +232,19 @@ namespace TrojanPlusApp.Droid
             {
                 Log.Debug(TAG, $"OnServiceDisconnected {name.ClassName}");
 
-                m_starter.m_service_is_running = false;
-                m_starter.m_service_is_bound = false;
-                m_starter.RefreshBtnStatus();
+                starter.serviceIsRunning = false;
+                starter.serviceIsBound = false;
+                starter.RefreshRunningStatus();
                 Messenger = null;
             }
         }
 
         private class VPNMessageHandler : Handler
         {
-            private readonly TrojanPlusStarter m_starter;
-
+            private readonly TrojanPlusStarter starter;
             public VPNMessageHandler(TrojanPlusStarter starter)
             {
-                m_starter = starter;
+                this.starter = starter;
             }
 
             public override void HandleMessage(Message msg)
@@ -248,26 +255,35 @@ namespace TrojanPlusApp.Droid
                     case VPN_START:
                     case VPN_STATUS_ASK:
                         {
-                            m_starter.m_service_is_running = msg.Data.GetBoolean("start");
+                            starter.serviceIsRunning = msg.Data.GetBoolean("start");
 
-                            m_starter.m_activity.RunOnUiThread(() =>
+                            if (starter.activity != null)
                             {
-                                m_starter.m_communicator.SetStartBtnEnabled(true);
-                                m_starter.RefreshBtnStatus();
-
-                                if (what != VPN_STATUS_ASK)
-                                {
-                                    if (!m_starter.m_service_is_running)
-                                    {
-                                        m_starter.UnbindVpnService();
-                                    }
-                                }
-                            });
+                                starter.activity.RunOnUiThread(() => ProcessMessage(what));
+                            }
+                            else
+                            {
+                                ProcessMessage(what);
+                            }
                         }
+
                         break;
                     default:
                         Log.Warn(TAG, $"Unknown msg.what value: {msg.What} . Ignoring this message.");
                         break;
+                }
+            }
+
+            private void ProcessMessage(int what)
+            {
+                starter.communicator.SetStartBtnEnabled(true);
+                starter.RefreshRunningStatus();
+                if (what != VPN_STATUS_ASK)
+                {
+                    if (!starter.serviceIsRunning)
+                    {
+                        starter.UnbindVpnService();
+                    }
                 }
             }
         }
