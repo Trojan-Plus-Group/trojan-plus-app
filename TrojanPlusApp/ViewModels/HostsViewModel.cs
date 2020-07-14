@@ -23,7 +23,12 @@ namespace TrojanPlusApp.ViewModels
 
         public string ConnectBtnText
         {
-            get { return App.Instance.IsVpnServiceRunning ? "Disconnect" : "Connect"; }
+            get
+            {
+                return App.Instance.IsVpnServiceRunning ?
+                  Resx.TextResource.Hosts_BtnDisconnect :
+                  Resx.TextResource.Hosts_BtnConnect;
+            }
         }
 
         public bool IsConnectBtnEnabled

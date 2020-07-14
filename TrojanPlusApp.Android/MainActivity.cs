@@ -6,6 +6,9 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Java.Lang;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace TrojanPlusApp.Droid
 {
@@ -145,6 +148,8 @@ namespace TrojanPlusApp.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AppCenter.Start("ac977bfd-2c63-4663-8fe1-4d3ea3f4750c", typeof(Analytics), typeof(Crashes));
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 

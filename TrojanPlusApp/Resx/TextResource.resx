@@ -148,6 +148,12 @@
   <data name="gfwlist" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gfwlist.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
+  <data name="Hosts_BtnConnect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Hosts_BtnDisconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
   <data name="Hosts_PleaseAddHost" xml:space="preserve">
     <value>Please add a host.</value>
   </data>

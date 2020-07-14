@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Net;
 using Android.OS;
 using Android.Util;
+using Microsoft.AppCenter.Crashes;
 
 namespace TrojanPlusApp.Droid
 {
@@ -140,6 +141,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (RemoteException ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
             }
@@ -158,6 +160,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (RemoteException ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
             }
@@ -177,6 +180,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (RemoteException ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
             }

@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Util;
 using Java.Interop;
+using Microsoft.AppCenter.Crashes;
 using TrojanPlusApp.Models;
 
 namespace TrojanPlusApp.Droid
@@ -188,6 +189,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (Exception ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.StackTrace);
                     CloseFD();
                     StopSelf();
@@ -210,6 +212,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (Exception ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
 
@@ -237,6 +240,7 @@ namespace TrojanPlusApp.Droid
                 }
                 catch (Exception ex)
                 {
+                    Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
                 }
                 finally
@@ -293,6 +297,7 @@ namespace TrojanPlusApp.Droid
                         {
                             service.StopSelf();
                         }
+
                         break;
                     default:
                         Log.Error(TAG, $"Unknown msg.what value: {msg.What} . Ignoring this message.");

@@ -138,6 +138,12 @@
   <data name="Common_Yes" xml:space="preserve">
     <value>好的</value>
   </data>
+  <data name="Hosts_BtnConnect" xml:space="preserve">
+    <value>连  接</value>
+  </data>
+  <data name="Hosts_BtnDisconnect" xml:space="preserve">
+    <value>断  开</value>
+  </data>
   <data name="Hosts_PleaseAddHost" xml:space="preserve">
     <value>请先添加一台主机。</value>
   </data>
