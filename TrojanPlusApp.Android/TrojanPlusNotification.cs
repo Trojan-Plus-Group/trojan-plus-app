@@ -39,7 +39,7 @@ namespace TrojanPlusApp.Droid
 
             builder = new NotificationCompat.Builder(service, ChannelID)
                 .SetWhen(0)
-                .SetContentTitle(Resx.TextResource.Common_AlertTitle)
+                .SetContentTitle(Resx.TextResource.Notification_Title)
                 .SetContentIntent(service.CreatePendingIntent())
                 .SetSmallIcon(Resource.Mipmap.notification_small_icon)
                 .SetCategory(NotificationCompat.CategoryService)

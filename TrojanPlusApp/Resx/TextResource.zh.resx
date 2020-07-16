@@ -294,7 +294,7 @@
   <data name="Notification_ChannelName" xml:space="preserve">
     <value>Trojan Plus 通知</value>
   </data>
-  <data name="Notification_Name" xml:space="preserve">
+  <data name="Notification_Title" xml:space="preserve">
     <value>Trojan Plus VPN 服务正在运行</value>
   </data>
   <data name="Settings_EnableAndroidNotification" xml:space="preserve">
