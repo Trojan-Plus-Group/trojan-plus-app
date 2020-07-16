@@ -108,7 +108,7 @@ namespace TrojanPlusApp.Services
 
         public async Task<bool> DeleteItemAsync(string id)
         {
-            var oldItem = items.Where((HostModel arg) => arg.HostName == id).FirstOrDefault();
+            var oldItem = items.Where(h => h.HostName == id).FirstOrDefault();
             items.Remove(oldItem);
 
             foreach (var h in items)

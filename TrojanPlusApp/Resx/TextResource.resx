@@ -154,6 +154,9 @@
   <data name="Hosts_BtnDisconnect" xml:space="preserve">
     <value>Disconnect</value>
   </data>
+  <data name="Hosts_LoadBalanceNodeError" xml:space="preserve">
+    <value>This Host has a load balance host without enabling pipeline mode. Please check.</value>
+  </data>
   <data name="Hosts_PleaseAddHost" xml:space="preserve">
     <value>Please add a host.</value>
   </data>

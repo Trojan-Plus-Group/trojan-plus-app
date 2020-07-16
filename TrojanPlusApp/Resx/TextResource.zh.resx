@@ -144,6 +144,9 @@
   <data name="Hosts_BtnDisconnect" xml:space="preserve">
     <value>断  开</value>
   </data>
+  <data name="Hosts_LoadBalanceNodeError" xml:space="preserve">
+    <value>这个主机的均衡负载节点中有至少一个主机没有开启Pipeline，请检查。</value>
+  </data>
   <data name="Hosts_PleaseAddHost" xml:space="preserve">
     <value>请先添加一台主机。</value>
   </data>

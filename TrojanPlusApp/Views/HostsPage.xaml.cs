@@ -22,6 +22,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using TrojanPlusApp.Models;
 using TrojanPlusApp.ViewModels;
 using Xamarin.Forms;
@@ -73,9 +74,28 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
+            if (host.EnablePipeline && host.LoadBalance.Count > 0)
+            {
+                var hasInvalid = host.LoadBalance.Any(h =>
+                {
+                    var n = viewModel.FindHostByName(h);
+                    return n == null || !n.EnablePipeline;
+                });
+
+                if (hasInvalid)
+                {
+                    await DisplayAlert(
+                       Resx.TextResource.Common_AlertTitle,
+                       Resx.TextResource.Hosts_LoadBalanceNodeError,
+                       Resx.TextResource.Common_OK);
+
+                    return;
+                }
+            }
+
             try
             {
-                File.WriteAllText(App.Instance.ConfigPath, viewModel.CurretSelectHost.PrepareConfig(viewModel));
+                File.WriteAllText(App.Instance.ConfigPath, host.PrepareConfig(viewModel));
                 App.Instance.Start();
 
                 viewModel.IsConnectBtnEnabled = false;
