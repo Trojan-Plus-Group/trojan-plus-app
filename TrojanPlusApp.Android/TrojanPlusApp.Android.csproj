@@ -100,6 +100,7 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrojanPlusCellurJobService.cs" />
+    <Compile Include="TrojanPlusNotification.cs" />
     <Compile Include="TrojanPlusWifiJobService.cs" />
     <Compile Include="TrojanPlusStarter.cs" />
     <Compile Include="TrojanPlusVPNService.cs" />
@@ -149,6 +150,31 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\trojan_plus_logo.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-hdpi\notification_small_icon.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-mdpi\notification_small_icon.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xhdpi\notification_small_icon.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxhdpi\notification_small_icon.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\notification_small_icon.png">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>

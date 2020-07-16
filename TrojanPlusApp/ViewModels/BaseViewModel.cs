@@ -19,12 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TrojanPlusApp.Models;
-using TrojanPlusApp.Services;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.ViewModels
 {
+    using TrojanPlusApp.Models;
+    using TrojanPlusApp.Services;
+
     public class BaseViewModel : NotificationModel
     {
         private static readonly DataStore DataStoreValue = new DataStore();

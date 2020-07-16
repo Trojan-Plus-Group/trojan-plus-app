@@ -159,6 +159,9 @@
   <data name="Menu_HostsViewTitle" xml:space="preserve">
     <value>所有主机</value>
   </data>
+  <data name="Menu_SettingsTitle" xml:space="preserve">
+    <value>设置</value>
+  </data>
   <data name="New_AddHostTitle" xml:space="preserve">
     <value>新增主机</value>
   </data>
@@ -284,5 +287,20 @@
   </data>
   <data name="New_ToolbarSave" xml:space="preserve">
     <value>保存</value>
+  </data>
+  <data name="Notification_ChannelDescription" xml:space="preserve">
+    <value>Trojan Plus 能帮助你绕过GFW</value>
+  </data>
+  <data name="Notification_ChannelName" xml:space="preserve">
+    <value>Trojan Plus 通知</value>
+  </data>
+  <data name="Notification_Name" xml:space="preserve">
+    <value>Trojan Plus VPN 服务正在运行</value>
+  </data>
+  <data name="Settings_EnableAndroidNotification" xml:space="preserve">
+    <value>显示通知</value>
+  </data>
+  <data name="Settings_EnableAndroidNotificationDetail" xml:space="preserve">
+    <value>在状态栏上面显示一个通知用于标识VPN服务正在运行中</value>
   </data>
 </root>

@@ -19,35 +19,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TrojanPlusApp.Behaviors
+namespace TrojanPlusApp.Views
 {
-    using System.Text.RegularExpressions;
+    using System.ComponentModel;
+    using TrojanPlusApp.ViewModels;
     using Xamarin.Forms;
 
-    public class IPAddressValidation : Behavior<Entry>
+    // Learn more about making custom code visible in the Xamarin.Forms previewer
+    // by visiting https://aka.ms/xamarinforms-previewer
+    [DesignTimeVisible(false)]
+    public partial class SettingsPage : ContentPage
     {
-        public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        private SettingsViewModel viewModel;
+        public SettingsPage()
         {
-            ((Entry)sender).TextColor = IsValid(args.NewTextValue) ? Color.Default : Color.Red;
+            InitializeComponent();
+
+            BindingContext = viewModel = new SettingsViewModel();
         }
 
-        protected override void OnAttachedTo(Entry entry)
+        protected override void OnDisappearing()
         {
-            entry.TextChanged += OnEntryTextChanged;
-            base.OnAttachedTo(entry);
-        }
-
-        protected override void OnDetachingFrom(Entry entry)
-        {
-            entry.TextChanged -= OnEntryTextChanged;
-            base.OnDetachingFrom(entry);
-        }
-
-        private static readonly string PatternString = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-
-        public static bool IsValid(string address)
-        {
-            return !string.IsNullOrEmpty(address) && Regex.IsMatch(address, PatternString);
+            base.OnDisappearing();
+            viewModel.DataStore.StoreToFile();
         }
     }
 }

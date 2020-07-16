@@ -19,15 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Foundation;
-using UIKit;
-
 namespace TrojanPlusApp.iOS
 {
+    using System;
+    using Foundation;
+    using TrojanPlusApp.Models;
+    using UIKit;
+
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
@@ -51,7 +49,7 @@ namespace TrojanPlusApp.iOS
                 throw new NotImplementedException();
             }
 
-            public void Start()
+            public void Start(SettingsModel settings)
             {
                 throw new NotImplementedException();
             }

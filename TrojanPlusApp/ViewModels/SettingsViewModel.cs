@@ -19,35 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TrojanPlusApp.Behaviors
+namespace TrojanPlusApp.ViewModels
 {
-    using System.Text.RegularExpressions;
-    using Xamarin.Forms;
+    using TrojanPlusApp.Models;
 
-    public class IPAddressValidation : Behavior<Entry>
+    public class SettingsViewModel : BaseViewModel
     {
-        public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        public SettingsModel Settings
         {
-            ((Entry)sender).TextColor = IsValid(args.NewTextValue) ? Color.Default : Color.Red;
+            get { return DataStore.Settings; }
         }
 
-        protected override void OnAttachedTo(Entry entry)
+        public SettingsViewModel()
         {
-            entry.TextChanged += OnEntryTextChanged;
-            base.OnAttachedTo(entry);
-        }
-
-        protected override void OnDetachingFrom(Entry entry)
-        {
-            entry.TextChanged -= OnEntryTextChanged;
-            base.OnDetachingFrom(entry);
-        }
-
-        private static readonly string PatternString = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
-
-        public static bool IsValid(string address)
-        {
-            return !string.IsNullOrEmpty(address) && Regex.IsMatch(address, PatternString);
+            Title = Resx.TextResource.Menu_SettingsTitle;
         }
     }
 }

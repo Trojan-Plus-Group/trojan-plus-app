@@ -19,14 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Android.App;
-using Android.App.Job;
-using Android.Content;
-using Android.Runtime;
-using Android.Util;
-
 namespace TrojanPlusApp.Droid
 {
+    using Android.App;
+    using Android.App.Job;
+    using Android.Runtime;
+    using Android.Util;
+    using Newtonsoft.Json;
+    using TrojanPlusApp.Models;
+
     [Register("com.trojan_plus.android.TrojanPlusCellurJobService")]
     [Service(Permission = "android.permission.BIND_JOB_SERVICE")]
     public class TrojanPlusCellurJobService : JobService, TrojanPlusStarter.IActivityCommunicator
@@ -36,12 +37,14 @@ namespace TrojanPlusApp.Droid
         private static readonly string TAG = typeof(TrojanPlusCellurJobService).Name;
         private TrojanPlusStarter starter = null;
         private JobParameters jobParam;
+        private SettingsModel settings;
 
         public override bool OnStartJob(JobParameters parm)
         {
             Log.Debug(TAG, "OnStartJob");
 
             jobParam = parm;
+            settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
 
             if (starter == null)
             {
@@ -78,7 +81,7 @@ namespace TrojanPlusApp.Droid
 
             if (!running)
             {
-                starter.Start(); // start the service
+                starter.Start(settings); // start the service
             }
             else
             {

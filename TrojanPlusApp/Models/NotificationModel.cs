@@ -19,13 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 namespace TrojanPlusApp.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+
     public class NotificationModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

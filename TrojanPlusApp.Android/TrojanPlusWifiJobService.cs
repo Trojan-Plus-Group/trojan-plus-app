@@ -19,24 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.App.Job;
-using Android.Content;
-using Android.Net;
-using Android.Net.Wifi;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Xamarin.Forms.Internals;
-
 namespace TrojanPlusApp.Droid
 {
+    using System;
+    using Android.App;
+    using Android.App.Job;
+    using Android.Content;
+    using Android.Net;
+    using Android.Net.Wifi;
+    using Android.OS;
+    using Android.Runtime;
+    using Newtonsoft.Json;
+    using TrojanPlusApp.Models;
+    using Xamarin.Forms.Internals;
+
     [Register("com.trojan_plus.android.TrojanPlusWifiJobService")]
     [Service(Permission = "android.permission.BIND_JOB_SERVICE")]
     public class TrojanPlusWifiJobService : JobService, TrojanPlusStarter.IActivityCommunicator
@@ -47,6 +43,7 @@ namespace TrojanPlusApp.Droid
         private TrojanPlusStarter starter = null;
         private string[] ssids = null;
         private JobParameters jobParam;
+        private SettingsModel settings;
 
         public static string GetWIFISSID(Context context)
         {
@@ -89,6 +86,7 @@ namespace TrojanPlusApp.Droid
         public override bool OnStartJob(JobParameters parm)
         {
             jobParam = parm;
+            settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
             if (starter == null)
             {
                 starter = new TrojanPlusStarter(this, this);
@@ -117,7 +115,7 @@ namespace TrojanPlusApp.Droid
                 var currSSID = GetWIFISSID(this);
                 if (ssids.IndexOf(currSSID) != -1)
                 {
-                    starter.Start(); // start again to stop the service
+                    starter.Start(settings); // start again to stop the service
                 }
             }
 

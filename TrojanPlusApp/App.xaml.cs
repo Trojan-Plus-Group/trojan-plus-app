@@ -19,18 +19,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.IO;
-using TrojanPlusApp.Views;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp
 {
+    using System.IO;
+    using TrojanPlusApp.Models;
+    using TrojanPlusApp.Views;
+    using Xamarin.Forms;
+
     public partial class App : Application
     {
         public interface IStart
         {
             // start libtrojan.so
-            void Start();
+            void Start(SettingsModel settings);
 
             string GetAppVersion();
             int GetAppBuild();
@@ -65,9 +66,9 @@ namespace TrojanPlusApp
             MainPage = new MainPage();
         }
 
-        public void Start()
+        public void Start(SettingsModel settings)
         {
-            Starter.Start();
+            Starter.Start(settings);
         }
 
         public void OnSetStartBtnEnabled(bool enable)
@@ -96,5 +97,4 @@ namespace TrojanPlusApp
         }
         */
     }
-
 }

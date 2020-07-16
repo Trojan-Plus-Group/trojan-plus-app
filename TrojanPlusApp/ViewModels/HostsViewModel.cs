@@ -19,14 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Collections.ObjectModel;
-using System.Linq;
-using TrojanPlusApp.Models;
-using TrojanPlusApp.Views;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.ViewModels
 {
+    using System.Collections.ObjectModel;
+    using TrojanPlusApp.Models;
+    using TrojanPlusApp.Views;
+    using Xamarin.Forms;
+
     public class HostsViewModel : BaseViewModel
     {
         private string goingToRuningHostName;
@@ -202,7 +201,5 @@ namespace TrojanPlusApp.ViewModels
         {
             goingToRuningHostName = hostName;
         }
-
-
     }
 }

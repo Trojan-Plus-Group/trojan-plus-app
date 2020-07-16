@@ -19,18 +19,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Newtonsoft.Json;
-using TrojanPlusApp.Behaviors;
-using TrojanPlusApp.ViewModels;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Models
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+    using Newtonsoft.Json;
+    using TrojanPlusApp.Behaviors;
+    using TrojanPlusApp.ViewModels;
+    using Xamarin.Forms;
+
     public class HostModel : NotificationModel
     {
+        public const string TunGateWayIP = "10.233.233.1";
+        public const string TunNetIP = "10.233.233.2";
+        public const int TunMtu = 1500;
+
         public enum RouteType
         {
             Route_all = 0, // controlled by route table
@@ -82,10 +86,7 @@ namespace TrojanPlusApp.Models
         public bool UI_Selected
         {
             get { return uiSelected; }
-            set
-            {
-                SetProperty(ref uiSelected, value, "UI_SelectedColor");
-            }
+            set { SetProperty(ref uiSelected, value, "UI_SelectedColor"); }
         }
 
         [JsonIgnore]
@@ -104,7 +105,10 @@ namespace TrojanPlusApp.Models
         [JsonIgnore]
         public bool UI_NotRunning
         {
-            get { return uiNotRunning; }
+            get
+            {
+                return uiNotRunning;
+            }
             set
             {
                 if (SetProperty(ref uiNotRunning, value))
@@ -119,7 +123,7 @@ namespace TrojanPlusApp.Models
             get { return UI_NotRunning ? 1 : 0.3; }
         }
 
-        // Utils 
+        // Utils
         public HostModel Duplicate(string newHostName)
         {
             var newOne = (HostModel)MemberwiseClone();
@@ -185,9 +189,9 @@ namespace TrojanPlusApp.Models
         "    },\n" +
         "    \"tun\" : {\n" +
         "        \"tun_name\" : \"tun0\",\n" +
-        "        \"net_ip\" : \"10.233.233.2\",\n" +
+        "        \"net_ip\" : \"${tun.net_ip}\",\n" +
         "        \"net_mask\" : \"255.255.255.0\",\n" +
-        "        \"mtu\" : 1500,\n" +
+        "        \"mtu\" : ${tun.mtu},\n" +
         "        \"tun_fd\" : ${tun.tun_fd}\n" +
         "    },\n" +
         "    \"dns\": {\n" +
@@ -289,6 +293,9 @@ namespace TrojanPlusApp.Models
                     config = config.Replace("${tun.tun_fd}", "-1");
                 }
             }
+
+            config = config.Replace("${tun.net_ip}", TunNetIP);
+            config = config.Replace("${tun.mtu}", TunMtu.ToString());
 
             config = config.Replace("${dns.udp_socket_buf}", "8192");
             config = config.Replace("${dns.udp_recv_buf}", "1024");

@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Behaviors
 {
+    using Xamarin.Forms;
+
     public class EntryLengthValidatorBehavior : Behavior<Entry>
     {
         public int MaxLength { get; set; }

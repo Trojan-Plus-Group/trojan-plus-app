@@ -19,15 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TrojanPlusApp.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-
 namespace TrojanPlusApp.Views
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using TrojanPlusApp.Models;
+    using Xamarin.Forms;
+
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
@@ -43,8 +41,9 @@ namespace TrojanPlusApp.Views
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.AllHost, Title = Resx.TextResource.Menu_HostsViewTitle },
-                new HomeMenuItem {Id = MenuItemType.About, Title = Resx.TextResource.Menu_AboutTitle }
+                new HomeMenuItem { Id = MenuItemType.AllHost, Title = Resx.TextResource.Menu_HostsViewTitle },
+                new HomeMenuItem { Id = MenuItemType.Settings, Title = Resx.TextResource.Menu_SettingsTitle },
+                new HomeMenuItem { Id = MenuItemType.About, Title = Resx.TextResource.Menu_AboutTitle }
             };
 
             ListViewMenu.ItemsSource = menuItems;

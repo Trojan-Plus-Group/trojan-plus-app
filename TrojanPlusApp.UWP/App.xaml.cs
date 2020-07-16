@@ -19,15 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-
 namespace TrojanPlusApp.UWP
 {
+    using System;
+    using Windows.ApplicationModel;
+    using Windows.ApplicationModel.Activation;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Navigation;
+
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>

@@ -19,13 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Windows.Input;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.ViewModels
 {
+    using System.Windows.Input;
+    using Xamarin.Essentials;
+    using Xamarin.Forms;
+
     public class AboutViewModel : BaseViewModel
     {
         public string AppVersion

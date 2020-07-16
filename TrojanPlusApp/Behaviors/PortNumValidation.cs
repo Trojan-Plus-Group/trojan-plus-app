@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Behaviors
 {
+    using Xamarin.Forms;
+
     public class PortNumValidation : Behavior<Entry>
     {
         public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
@@ -43,6 +43,5 @@ namespace TrojanPlusApp.Behaviors
             entry.TextChanged -= OnEntryTextChanged;
             base.OnDetachingFrom(entry);
         }
-
     }
 }

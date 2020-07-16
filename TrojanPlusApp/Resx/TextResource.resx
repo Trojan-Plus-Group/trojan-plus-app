@@ -169,6 +169,9 @@
   <data name="Menu_HostsViewTitle" xml:space="preserve">
     <value>All Hosts</value>
   </data>
+  <data name="Menu_SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="New_AddHostTitle" xml:space="preserve">
     <value>Add Host</value>
   </data>
@@ -297,5 +300,20 @@
   </data>
   <data name="New_ToolbarSave" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="Notification_ChannelDescription" xml:space="preserve">
+    <value>Trojan Plus can help you bypass GFW.</value>
+  </data>
+  <data name="Notification_ChannelName" xml:space="preserve">
+    <value>Trojan Plus Notification</value>
+  </data>
+  <data name="Notification_Name" xml:space="preserve">
+    <value>Trojan Plus Service is runing as VPN</value>
+  </data>
+  <data name="Settings_EnableAndroidNotification" xml:space="preserve">
+    <value>Show Notification</value>
+  </data>
+  <data name="Settings_EnableAndroidNotificationDetail" xml:space="preserve">
+    <value>Display a notification in status bar to indicate VPN service is running.</value>
   </data>
 </root>

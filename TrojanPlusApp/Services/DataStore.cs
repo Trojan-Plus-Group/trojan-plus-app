@@ -19,19 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using TrojanPlusApp.Models;
-
 namespace TrojanPlusApp.Services
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using TrojanPlusApp.Models;
+
     public class DataStore
     {
-        private const string HostsKey = "HostsKey";
-        private const string SettingsKey = "SettingsKey";
+        public const string HostsKey = "HostsKey";
+        public const string SettingsKey = "SettingsKey";
 
         private readonly List<HostModel> items;
         public SettingsModel Settings { get; private set; }
@@ -68,13 +67,13 @@ namespace TrojanPlusApp.Services
         public async void SetCurrSelectHostIdx(int idx)
         {
             Settings.HostSelectedIdx = idx;
-            await Store();
+            await StoreToFile();
         }
 
         public async void SetHostRunningName(string hostName)
         {
             Settings.HostRunningName = hostName;
-            await Store();
+            await StoreToFile();
         }
 
         public bool HasHost(string hostName)
@@ -85,7 +84,7 @@ namespace TrojanPlusApp.Services
         public async Task<bool> AddItemAsync(HostModel item)
         {
             items.Add(item);
-            await Store();
+            await StoreToFile();
 
             return await Task.FromResult(true);
         }
@@ -101,7 +100,7 @@ namespace TrojanPlusApp.Services
                 }
             }
 
-            await Store();
+            await StoreToFile();
 
             return await Task.FromResult(true);
         }
@@ -116,12 +115,12 @@ namespace TrojanPlusApp.Services
                 h.LoadBalance.Remove(oldItem.HostName);
             }
 
-            await Store();
+            await StoreToFile();
 
             return await Task.FromResult(true);
         }
 
-        private Task Store()
+        public Task StoreToFile()
         {
             App.Instance.Properties[HostsKey] = JsonConvert.SerializeObject(items);
             App.Instance.Properties[SettingsKey] = JsonConvert.SerializeObject(Settings);

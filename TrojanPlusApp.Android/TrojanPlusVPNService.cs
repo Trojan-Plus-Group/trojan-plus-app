@@ -19,21 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Util;
-using Java.Interop;
-using Microsoft.AppCenter.Crashes;
-using TrojanPlusApp.Models;
-
 namespace TrojanPlusApp.Droid
 {
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using Android.App;
+    using Android.Content;
+    using Android.OS;
+    using Android.Runtime;
+    using Android.Util;
+    using Java.Interop;
+    using Microsoft.AppCenter.Crashes;
+    using TrojanPlusApp.Models;
+
     [Register("com.trojan_plus.android.TrojanPlusVPNService")]
     [Service(
             Name = "com.trojan_plus.android.TrojanPlusVPNService",
@@ -44,11 +44,11 @@ namespace TrojanPlusApp.Droid
     [IntentFilter(new string[] { "android.net.VpnService" })]
     public class TrojanPlusVPNService : Android.Net.VpnService
     {
-        private static readonly string TAG = typeof(TrojanPlusVPNService).Name;
+        private const string VpnAddress = HostModel.TunGateWayIP;
+        private const string VpnDnsServer = HostModel.TunNetIP;
+        private const int VpnMtu = HostModel.TunMtu;
 
-        private const string VPN_ADDRESS = "10.233.233.1";
-        private const string VPN_DNS_SERVER = "10.233.233.2";
-        private const int VPN_MTU = 1500;
+        private static readonly string TAG = typeof(TrojanPlusVPNService).Name;
 
         [DllImport("trojan.so", EntryPoint = "Java_com_trojan_1plus_android_TrojanPlusVPNService_runMain")]
         public static extern void RunMain(IntPtr jnienv, IntPtr jclass, IntPtr configPath);
@@ -82,10 +82,14 @@ namespace TrojanPlusApp.Droid
         private string prepareConfigPath = null;
         private string runConfigPath = null;
         private Messenger replyMessenger = null;
+        private bool showNotification = true;
+
+        private TrojanPlusNotification notification = null;
 
         public override void OnCreate()
         {
             base.OnCreate();
+
             messenger = new Messenger(new VpnServiceHandler(this));
             currentService = this;
         }
@@ -112,6 +116,14 @@ namespace TrojanPlusApp.Droid
         {
             OnStartCommand(intent, 0, 0);
             return false;
+        }
+
+        public PendingIntent CreatePendingIntent()
+        {
+            var intent = new Intent(Application.Context, typeof(MainActivity));
+            intent.SetFlags(ActivityFlags.ReorderToFront);
+
+            return PendingIntent.GetActivity(Application.Context, 0, intent, 0);
         }
 
         [return: GeneratedEnum]
@@ -172,16 +184,11 @@ namespace TrojanPlusApp.Droid
 
                     Log.Debug(TAG, "VPN Route Type: " + route);
 
-                    var intent = new Intent(Application.Context, typeof(MainActivity));
-                    intent.SetFlags(ActivityFlags.ReorderToFront);
-
-                    PendingIntent pintent = PendingIntent.GetActivity(Application.Context, 0, intent, 0);
-
                     Builder builder = new Builder(this);
-                    builder.AddAddress(VPN_ADDRESS, 32)
-                                .SetMtu(VPN_MTU)
-                                .SetConfigureIntent(pintent)
-                                .AddDnsServer(VPN_DNS_SERVER)
+                    builder.AddAddress(VpnAddress, 32)
+                                .SetMtu(VpnMtu)
+                                .SetConfigureIntent(CreatePendingIntent())
+                                .AddDnsServer(VpnDnsServer)
                                 .SetSession(GetString(Resource.String.app_name));
 
                     if (route == HostModel.RouteType.Route_all
@@ -198,7 +205,7 @@ namespace TrojanPlusApp.Droid
                             builder.AddRoute(addr[0], int.Parse(addr[1]));
                         }
 
-                        builder.AddRoute(VPN_DNS_SERVER, 32);
+                        builder.AddRoute(VpnDnsServer, 32);
                     }
 
                     vpnFD = builder.Establish();
@@ -207,6 +214,11 @@ namespace TrojanPlusApp.Droid
 
                     runConfigPath = prepareConfigPath + "_running";
                     File.WriteAllText(runConfigPath, configFile);
+
+                    if (showNotification)
+                    {
+                        notification = new TrojanPlusNotification(this);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -254,6 +266,11 @@ namespace TrojanPlusApp.Droid
                 IntPtr path = JNIEnv.NewString(service.runConfigPath);
                 try
                 {
+                    if (service.notification != null)
+                    {
+                        service.notification.Show();
+                    }
+
                     service.BroadcastStatus(true);
 
                     var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
@@ -267,6 +284,11 @@ namespace TrojanPlusApp.Droid
                 finally
                 {
                     JNIEnv.DeleteLocalRef(path);
+                }
+
+                if (service.notification != null)
+                {
+                    service.notification.Destroy();
                 }
 
                 service.CloseFD();
@@ -294,6 +316,7 @@ namespace TrojanPlusApp.Droid
                         {
                             Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_START");
                             service.prepareConfigPath = msg.Data.GetString("config");
+                            service.showNotification = msg.Data.GetBoolean("showNotification");
                             service.OpenFD();
                         }
 

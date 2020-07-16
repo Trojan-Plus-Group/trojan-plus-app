@@ -15,7 +15,7 @@
 	</ContentPage.ToolbarItems>
 
 	<ContentPage.Content>
-		<ScrollView Grid.Row="1">
+		<ScrollView>
 			<StackLayout Spacing="10" Padding="10">
 				<Label Text="{x:Static resources:TextResource.New_HostNameTitle}" FontSize="Medium" />
 				<Entry Text="{Binding Item.HostName}" Placeholder="{x:Static resources:TextResource.New_HostNameHolder}" FontSize="Small" IsEnabled="{Binding EnableEditHostName}"/>

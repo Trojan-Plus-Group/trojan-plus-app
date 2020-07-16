@@ -19,18 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System;
-using System.Linq;
-using TrojanPlusApp.ViewModels;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+
     public static class Utils
     {
         public static int RemoveAll<T>(this ObservableCollection<T> coll, Func<T, bool> condition)

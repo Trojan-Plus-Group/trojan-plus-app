@@ -19,14 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using TrojanPlusApp.Models;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Views
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Threading.Tasks;
+    using TrojanPlusApp.Models;
+    using Xamarin.Forms;
+
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
@@ -50,6 +50,12 @@ namespace TrojanPlusApp.Views
                 {
                     case (int)MenuItemType.AllHost:
                         menuPages.Add(id, new NavigationPage(new HostsPage())
+                        {
+                            BarBackgroundColor = Color.Black
+                        });
+                        break;
+                    case (int)MenuItemType.Settings:
+                        menuPages.Add(id, new NavigationPage(new SettingsPage())
                         {
                             BarBackgroundColor = Color.Black
                         });

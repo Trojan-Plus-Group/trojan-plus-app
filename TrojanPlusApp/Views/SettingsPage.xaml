@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TrojanPlusApp.Views.SettingsPage"
+             xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
+			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+             Title="{Binding Title}">
+
+	<ContentPage.Content>
+		<ScrollView>
+			<StackLayout Spacing="10" Padding="10">
+				<!-- Enabling Android Notification  -->
+				<Grid Margin="0,10,0,0" IsVisible="{OnPlatform Android=True, Default=False}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="0.5*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Label Text="{x:Static resources:TextResource.Settings_EnableAndroidNotification}" VerticalOptions="Center"  FontSize="Medium" />
+					<Switch IsToggled="{Binding Settings.EnableAndroidNotification}" Grid.Column="1" VerticalOptions="Center" />
+				</Grid>
+				<Label IsVisible="{OnPlatform Android=True, Default=False}" 
+					   Text="{x:Static resources:TextResource.Settings_EnableAndroidNotificationDetail}" FontSize="Small" />
+			</StackLayout>
+		</ScrollView>
+	</ContentPage.Content>
+
+</ContentPage>
+
+	

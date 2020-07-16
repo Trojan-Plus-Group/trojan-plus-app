@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Text.RegularExpressions;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Behaviors
 {
+    using System.Text.RegularExpressions;
+    using Xamarin.Forms;
+
     public class HostAddressValidation : Behavior<Entry>
     {
         public void OnEntryTextChanged(object sender, TextChangedEventArgs args)

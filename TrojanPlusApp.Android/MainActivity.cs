@@ -19,20 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.IO;
-using Android.App;
-using Android.App.Job;
-using Android.Content;
-using Android.Content.PM;
-using Android.OS;
-using Android.Runtime;
-using Java.Lang;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
 namespace TrojanPlusApp.Droid
 {
+    using System.IO;
+    using Android.App;
+    using Android.App.Job;
+    using Android.Content;
+    using Android.Content.PM;
+    using Android.OS;
+    using Android.Runtime;
+    using Java.Lang;
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using TrojanPlusApp.Models;
+
     [Activity(
         Name = "com.trojan_plus.android.MainActivity",
         Label = "@string/app_name",
@@ -65,9 +66,9 @@ namespace TrojanPlusApp.Droid
                 return PrepareConfigPath;
             }
 
-            public void Start()
+            public void Start(SettingsModel settings)
             {
-                activity.starter.Start();
+                activity.starter.Start(settings);
             }
 
             public string GetAppVersion()
@@ -111,8 +112,11 @@ namespace TrojanPlusApp.Droid
 
                     PersistableBundle bundle = new PersistableBundle();
                     bundle.PutStringArray(TrojanPlusWifiJobService.AutoStartWifiSSIDKey, autoStartWifiSSID);
-                    jobBuilder.SetExtras(bundle);
 
+                    // TODO add settings
+                    // bundle.PutString("settings",....)
+
+                    jobBuilder.SetExtras(bundle);
                     succ = jobServ.Schedule(jobBuilder.Build()) > 0;
                 }
 
@@ -123,6 +127,8 @@ namespace TrojanPlusApp.Droid
                     var jobBuilder = new JobInfo.Builder(
                         TrojanPlusCellurJobService.JobId,
                         new ComponentName(activity, Class.FromType(typeof(TrojanPlusCellurJobService)).Name));
+
+                    // TODO add settings
 
                     jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
 
@@ -209,6 +215,5 @@ namespace TrojanPlusApp.Droid
             starter.OnDestroy();
             base.OnDestroy();
         }
-
     }
 }

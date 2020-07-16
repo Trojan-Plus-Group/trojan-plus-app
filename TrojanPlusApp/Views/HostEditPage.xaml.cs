@@ -19,19 +19,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Linq;
-using System.ComponentModel;
-using Xamarin.Forms;
-
-using TrojanPlusApp.Models;
-using TrojanPlusApp.ViewModels;
-using System.Runtime.InteropServices.ComTypes;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
 namespace TrojanPlusApp.Views
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
+    using TrojanPlusApp.Models;
+    using TrojanPlusApp.ViewModels;
+    using Xamarin.Forms;
+
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]

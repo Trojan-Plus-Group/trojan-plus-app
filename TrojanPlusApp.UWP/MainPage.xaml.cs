@@ -19,10 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-
 namespace TrojanPlusApp.UWP
 {
+    using System;
+    using TrojanPlusApp.Models;
+
     public sealed partial class MainPage
     {
         public class Stater : TrojanPlusApp.App.IStart
@@ -42,7 +43,7 @@ namespace TrojanPlusApp.UWP
                 throw new NotImplementedException();
             }
 
-            public void Start()
+            public void Start(SettingsModel settings)
             {
                 throw new NotImplementedException();
             }

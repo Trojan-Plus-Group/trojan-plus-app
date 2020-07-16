@@ -19,16 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using TrojanPlusApp.Models;
-using TrojanPlusApp.ViewModels;
-using Xamarin.Forms;
-
 namespace TrojanPlusApp.Views
 {
+    using System;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using TrojanPlusApp.Models;
+    using TrojanPlusApp.ViewModels;
+    using Xamarin.Forms;
+
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
@@ -96,7 +96,7 @@ namespace TrojanPlusApp.Views
             try
             {
                 File.WriteAllText(App.Instance.ConfigPath, host.PrepareConfig(viewModel));
-                App.Instance.Start();
+                App.Instance.Start(viewModel.DataStore.Settings);
 
                 viewModel.IsConnectBtnEnabled = false;
                 viewModel.SetHostGoingToRun(host.HostName);

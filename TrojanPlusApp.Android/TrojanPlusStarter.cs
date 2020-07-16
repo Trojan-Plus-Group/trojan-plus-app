@@ -19,15 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Android.App;
-using Android.Content;
-using Android.Net;
-using Android.OS;
-using Android.Util;
-using Microsoft.AppCenter.Crashes;
-
 namespace TrojanPlusApp.Droid
 {
+    using Android.App;
+    using Android.Content;
+    using Android.Net;
+    using Android.OS;
+    using Android.Util;
+    using Microsoft.AppCenter.Crashes;
+    using TrojanPlusApp.Models;
+
     public class TrojanPlusStarter
     {
         public interface IActivityCommunicator
@@ -49,6 +50,7 @@ namespace TrojanPlusApp.Droid
         private readonly VPNServiceConnection serviceConnection;
         private readonly Messenger messengerHandler;
 
+        private SettingsModel settings;
         private bool serviceIsBound = false;
         private bool serviceIsRunning = false;
         private bool needSendStartMsg = false;
@@ -62,8 +64,10 @@ namespace TrojanPlusApp.Droid
             messengerHandler = new Messenger(new VPNMessageHandler(this));
         }
 
-        public void Start()
+        public void Start(SettingsModel settings)
         {
+            this.settings = settings;
+
             if (serviceIsRunning)
             {
                 StopVPNService();
@@ -152,6 +156,7 @@ namespace TrojanPlusApp.Droid
                 {
                     Bundle data = new Bundle();
                     data.PutString("config", communicator.GetConfigPath());
+                    data.PutBoolean("showNotification", settings == null ? true : settings.EnableAndroidNotification);
 
                     var msg = Message.Obtain(null, VPN_START);
                     msg.Data = data;

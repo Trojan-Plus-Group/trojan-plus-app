@@ -26,6 +26,9 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>TextResource.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Views\SettingsPage.xaml.cs">
+		  <DependentUpon>SettingsPage.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\HostsPage.xaml.cs">
 			<DependentUpon>HostsPage.xaml</DependentUpon>
 		</Compile>
