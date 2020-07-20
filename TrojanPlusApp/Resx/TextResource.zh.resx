@@ -297,6 +297,25 @@
   <data name="Notification_Title" xml:space="preserve">
     <value>Trojan Plus VPN 服务正在运行</value>
   </data>
+  <data name="Settings_AutoStartCellur" xml:space="preserve">
+    <value>移动网络自动开启</value>
+  </data>
+  <data name="Settings_AutoStartCellurDetail" xml:space="preserve">
+    <value>在移动网络的时候自动开启VPN。自动开启使用的配置是上一次手动开启的配置。</value>
+  </data>
+  <data name="Settings_AutoStopWifi" xml:space="preserve">
+    <value>Wifi下自动关闭</value>
+  </data>
+  <data name="Settings_AutoStopWifiAdd" xml:space="preserve">
+    <value>请添加一个Wifi</value>
+  </data>
+  <data name="Settings_AutoStopWifiDelete" xml:space="preserve">
+    <value>你想要删除这个自动停止VPN的Wifi么？</value>
+  </data>
+  <data name="Settings_AutoStopWifiDetail" xml:space="preserve">
+    <value>当添加的Wifi SSID 被连接的时候，会自动地关闭VPN。这个选项用于那些已经在Wifi环境中，可以不用代理的情况，比如透明代理。Trojan Plus App 在后台时才会工作。
+Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所以只有添加一个任意的SSID，Wifi环境中就会自动关闭VPN。</value>
+  </data>
   <data name="Settings_EnableAndroidNotification" xml:space="preserve">
     <value>显示通知</value>
   </data>

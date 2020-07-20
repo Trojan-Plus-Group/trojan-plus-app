@@ -22,6 +22,7 @@
 namespace TrojanPlusApp.iOS
 {
     using System;
+    using System.Collections.Generic;
     using Foundation;
     using TrojanPlusApp.Models;
     using UIKit;
@@ -34,17 +35,17 @@ namespace TrojanPlusApp.iOS
     {
         public class Stater : TrojanPlusApp.App.IStart
         {
-            public int GetAppBuild()
-            {
-                return int.Parse(NSBundle.MainBundle.ObjectForInfoDictionary("CFBundleVersion").ToString());
-            }
-
-            public string GetAppVersion()
-            {
-                return NSBundle.MainBundle.ObjectForInfoDictionary("CFBundleShortVersionString").ToString();
-            }
-
             public string GetTrojanPlusLibVersion()
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<string> GetWifiSSIDs()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SettingsChanged(SettingsModel settings)
             {
                 throw new NotImplementedException();
             }
@@ -54,15 +55,6 @@ namespace TrojanPlusApp.iOS
                 throw new NotImplementedException();
             }
 
-            public bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void StopMonitorNetwork(bool wifi, bool cellur)
-            {
-                throw new NotImplementedException();
-            }
         }
 
         //

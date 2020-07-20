@@ -21,10 +21,16 @@
 
 namespace TrojanPlusApp.Models
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
     public class SettingsModel : NotificationModel
     {
         public int HostSelectedIdx { get; set; }
         public string HostRunningName { get; set; }
+
         public bool EnableAndroidNotification { get; set; } = true;
+        public bool AutoStartCellur { get; set; }
+        public ObservableCollection<string> AutoStopWifi { get; set; } = new ObservableCollection<string>();
     }
 }

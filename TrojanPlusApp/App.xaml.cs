@@ -21,6 +21,7 @@
 
 namespace TrojanPlusApp
 {
+    using System.Collections.Generic;
     using System.IO;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.Views;
@@ -32,15 +33,10 @@ namespace TrojanPlusApp
         {
             // start libtrojan.so
             void Start(SettingsModel settings);
-
-            string GetAppVersion();
-            int GetAppBuild();
-
             string GetTrojanPlusLibVersion();
 
-            // start job service to check network status changed
-            bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur);
-            void StopMonitorNetwork(bool wifi, bool cellur);
+            List<string> GetWifiSSIDs();
+            void SettingsChanged(SettingsModel settings);
         }
 
         public static App Instance

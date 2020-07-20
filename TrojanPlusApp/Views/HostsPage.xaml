@@ -48,7 +48,9 @@
 							<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
                                 LineBreakMode="NoWrap" HorizontalOptions="StartAndExpand" Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="20" VerticalOptions="Center" />
-							<StackLayout Grid.Row="2" Orientation="Vertical" BindableLayout.ItemsSource="{Binding LoadBalance}">
+
+							<StackLayout Grid.Row="2" IsVisible="{Binding EnablePipeline}" Orientation="Vertical" 
+										 BindableLayout.ItemsSource="{Binding LoadBalance}">
 								<d:BindableLayout.ItemsSource>
 									<x:Array Type="{x:Type x:String}">
 										<x:String >LoadBalance Host 1</x:String>

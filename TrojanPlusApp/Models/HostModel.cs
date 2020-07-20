@@ -27,6 +27,7 @@ namespace TrojanPlusApp.Models
     using Newtonsoft.Json;
     using TrojanPlusApp.Behaviors;
     using TrojanPlusApp.ViewModels;
+    using Xamarin.Essentials;
     using Xamarin.Forms;
 
     public class HostModel : NotificationModel
@@ -169,6 +170,7 @@ namespace TrojanPlusApp.Models
         "            \"http/1.1\"\n" +
         "        ],\n" +
         "        \"reuse_session\": true,\n" +
+        "        \"ssl_shutdown_wait_time\": ${ssl.ssl_shutdown_wait_time},\n" +
         "        \"session_ticket\": false,\n" +
         "        \"curves\": \"\"\n" +
         "    },\n" +
@@ -218,14 +220,14 @@ namespace TrojanPlusApp.Models
         "    }\n" +
         "}\n";
 
-        private static bool hasWritenTextFile = false;
         public string PrepareConfig(HostsViewModel hosts, bool isLoadBalancePrepare = false)
         {
             string config = ConfigTemplate;
+            string appVersion = VersionTracking.CurrentVersion;
 
             string version_path = Path.Combine(
                 App.Instance.DataPathParent,
-                "version_" + App.Instance.Starter.GetAppVersion());
+                "version_" + appVersion);
 
             string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
             string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
@@ -233,7 +235,7 @@ namespace TrojanPlusApp.Models
 
             if (!File.Exists(version_path))
             {
-                File.WriteAllText(version_path, "TrojanPlus App Version: " + App.Instance.Starter.GetAppVersion());
+                File.WriteAllText(version_path, "TrojanPlus App Version: " + appVersion);
 
                 File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
                 File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
@@ -253,6 +255,7 @@ namespace TrojanPlusApp.Models
 
             config = config.Replace("${ssl.verify}", SSLVerify.ToLowerString());
             config = config.Replace("${ssl.verify_hostname}", SSLVerify.ToLowerString());
+            config = config.Replace("${ssl.ssl_shutdown_wait_time}", "3");
             config = config.Replace("${ssl.sni}", HostAddress);
             config = config.Replace("${ssl.cert}", cert_path);
 

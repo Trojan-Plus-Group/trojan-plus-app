@@ -166,7 +166,7 @@
 					Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />
 
 				<Button Margin="0,10,0,0" Text="{x:Static resources:TextResource.New_HostDeleteText}" Clicked="OnDeleteBtnClicked" IsVisible="{Binding ShowDeleteBtn}"
-					Style="{StaticResource buttonStyle}" FontSize="Large" BackgroundColor="Red" HorizontalOptions="FillAndExpand"/>
+					Style="{StaticResource buttonStyle}" FontSize="Large" BackgroundColor="DarkRed" HorizontalOptions="FillAndExpand"/>
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>

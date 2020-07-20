@@ -59,7 +59,7 @@ namespace TrojanPlusApp.Droid
 
         public override bool OnStopJob(JobParameters parm)
         {
-            Log.Debug(TAG, "OnStopJob");
+            Log.Debug(TAG, "OnStopJob it should never be called");
 
             if (starter != null)
             {
@@ -73,6 +73,7 @@ namespace TrojanPlusApp.Droid
 
         public void SetStartBtnEnabled(bool enable)
         {
+            // to do nothing
         }
 
         public void OnVpnIsRunning(bool running)
@@ -83,11 +84,9 @@ namespace TrojanPlusApp.Droid
             {
                 starter.Start(settings); // start the service
             }
-            else
-            {
-                starter.OnJobServiceStop();
-                JobFinished(jobParam, true);
-            }
+
+            starter.OnJobServiceStop();
+            JobFinished(jobParam, true);
         }
 
         public string GetConfigPath()

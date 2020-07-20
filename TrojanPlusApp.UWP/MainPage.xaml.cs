@@ -22,38 +22,30 @@
 namespace TrojanPlusApp.UWP
 {
     using System;
+    using System.Collections.Generic;
     using TrojanPlusApp.Models;
 
     public sealed partial class MainPage
     {
         public class Stater : TrojanPlusApp.App.IStart
         {
-            public int GetAppBuild()
-            {
-                throw new NotImplementedException();
-            }
-
-            public string GetAppVersion()
-            {
-                throw new NotImplementedException();
-            }
 
             public string GetTrojanPlusLibVersion()
             {
                 throw new NotImplementedException();
             }
 
+            public List<string> GetWifiSSIDs()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SettingsChanged(SettingsModel settings)
+            {
+                throw new NotImplementedException();
+            }
+
             public void Start(SettingsModel settings)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool StartMonitorNetwork(string[] autoStartWifiSSID, bool autoStartCellur)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void StopMonitorNetwork(bool wifi, bool cellur)
             {
                 throw new NotImplementedException();
             }

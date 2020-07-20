@@ -29,7 +29,7 @@ namespace TrojanPlusApp.Droid
     public class TrojanPlusNotification
     {
         private static readonly string ChannelID = "TrojanPlusNotificationChannel";
-        private NotificationCompat.Builder builder;
+        private readonly NotificationCompat.Builder builder;
         private TrojanPlusVPNService service;
         public TrojanPlusNotification(TrojanPlusVPNService service)
         {

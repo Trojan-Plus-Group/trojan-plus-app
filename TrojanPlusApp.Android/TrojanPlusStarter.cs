@@ -28,6 +28,7 @@ namespace TrojanPlusApp.Droid
     using Android.Util;
     using Microsoft.AppCenter.Crashes;
     using TrojanPlusApp.Models;
+    using Xamarin.Forms;
 
     public class TrojanPlusStarter
     {
@@ -94,7 +95,7 @@ namespace TrojanPlusApp.Droid
             RefreshRunningStatus();
         }
 
-        public void OnDestroy()
+        public void OnStop()
         {
             UnbindVpnService();
         }
@@ -126,11 +127,19 @@ namespace TrojanPlusApp.Droid
             {
                 serviceIsBound = true;
 
-                Log.Debug(TAG, "BindVpnService");
+                Log.Debug(TAG, "BindVpnService " + context.GetType().Name);
 
                 Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
                 context.BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
-                context.StartService(serviceToStart);
+
+                if (settings == null || settings.EnableAndroidNotification)
+                {
+                    context.StartForegroundService(serviceToStart);
+                }
+                else
+                {
+                    context.StartService(serviceToStart);
+                }
             }
         }
 
@@ -138,6 +147,8 @@ namespace TrojanPlusApp.Droid
         {
             if (serviceIsBound && serviceConnection.Messenger != null)
             {
+                Log.Debug(TAG, "UnbindVpnService " + context.GetType().Name);
+
                 context.UnbindService(serviceConnection);
                 serviceIsBound = false;
             }
@@ -152,6 +163,8 @@ namespace TrojanPlusApp.Droid
         {
             if (serviceConnection.Messenger != null)
             {
+                Log.Debug(TAG, "SendStartMessage " + context.GetType().Name);
+
                 try
                 {
                     Bundle data = new Bundle();
@@ -177,6 +190,8 @@ namespace TrojanPlusApp.Droid
         {
             if (serviceConnection.Messenger != null)
             {
+                Log.Debug(TAG, "SendAskStatusMessage " + context.GetType().Name);
+
                 try
                 {
                     var msg = Message.Obtain(null, VPN_STATUS_ASK);
@@ -196,6 +211,8 @@ namespace TrojanPlusApp.Droid
         {
             if (serviceConnection.Messenger != null)
             {
+                Log.Debug(TAG, "StopVPNService " + context.GetType().Name);
+
                 try
                 {
                     var msg = Message.Obtain(null, VPN_STOP);
@@ -214,6 +231,8 @@ namespace TrojanPlusApp.Droid
 
         private void StartVPNService()
         {
+            Log.Debug(TAG, "StartVPNService");
+
             Intent intent = VpnService.Prepare(context);
             if (intent != null)
             {
@@ -240,7 +259,7 @@ namespace TrojanPlusApp.Droid
 
             public void OnServiceConnected(ComponentName name, IBinder service)
             {
-                Log.Debug(TAG, $"OnServiceConnected {name.ClassName}");
+                Log.Debug(TAG, "OnServiceConnected " + starter.context.GetType().Name);
 
                 if (service != null)
                 {
@@ -260,7 +279,7 @@ namespace TrojanPlusApp.Droid
 
             public void OnServiceDisconnected(ComponentName name)
             {
-                Log.Debug(TAG, $"OnServiceDisconnected {name.ClassName}");
+                Log.Debug(TAG, "OnServiceDisconnected " + starter.context.GetType().Name);
 
                 starter.serviceIsRunning = false;
                 starter.serviceIsBound = false;
@@ -285,6 +304,8 @@ namespace TrojanPlusApp.Droid
                     case VPN_START:
                     case VPN_STATUS_ASK:
                         {
+                            Log.Debug(TAG, $"HandleMessage {what} " + starter.context.GetType().Name);
+
                             starter.serviceIsRunning = msg.Data.GetBoolean("start");
 
                             if (starter.activity != null)

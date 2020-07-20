@@ -29,7 +29,7 @@ namespace TrojanPlusApp.ViewModels
     {
         public string AppVersion
         {
-            get { return App.Instance.Starter.GetAppVersion(); }
+            get { return VersionTracking.CurrentVersion; }
         }
 
         public string TrojanPlusVersion

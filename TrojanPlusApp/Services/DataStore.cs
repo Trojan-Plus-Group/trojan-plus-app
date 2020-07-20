@@ -54,6 +54,8 @@ namespace TrojanPlusApp.Services
             {
                 Settings = new SettingsModel();
             }
+
+            App.Instance.Starter.SettingsChanged(Settings);
         }
 
         public void FillHosts(IList<HostModel> list)
@@ -124,6 +126,8 @@ namespace TrojanPlusApp.Services
         {
             App.Instance.Properties[HostsKey] = JsonConvert.SerializeObject(items);
             App.Instance.Properties[SettingsKey] = JsonConvert.SerializeObject(Settings);
+
+            App.Instance.Starter.SettingsChanged(Settings);
 
             return App.Instance.SavePropertiesAsync();
         }

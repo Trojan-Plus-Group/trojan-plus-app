@@ -21,8 +21,11 @@
 
 namespace TrojanPlusApp.Views
 {
+    using System;
     using System.ComponentModel;
+    using System.Linq;
     using TrojanPlusApp.ViewModels;
+    using Xamarin.Essentials;
     using Xamarin.Forms;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
@@ -36,6 +39,57 @@ namespace TrojanPlusApp.Views
             InitializeComponent();
 
             BindingContext = viewModel = new SettingsViewModel();
+        }
+
+        public async void OnAddWifiClicked(object sender, EventArgs e)
+        {
+            string ssid;
+            var wifiSSIDs = App.Instance.Starter.GetWifiSSIDs();
+            if (wifiSSIDs != null && wifiSSIDs.Count > 0)
+            {
+                wifiSSIDs = wifiSSIDs.Where(ss => !viewModel.Settings.AutoStopWifi.Contains(ss)).ToList();
+
+                if (wifiSSIDs.Count == 0)
+                {
+                    return;
+                }
+
+                ssid = await DisplayActionSheet(
+                    Resx.TextResource.Settings_AutoStopWifiAdd,
+                    Resx.TextResource.Common_Cancel,
+                    null,
+                    wifiSSIDs.ToArray());
+
+                viewModel.Settings.AutoStopWifi.Add(ssid);
+                return;
+            }
+
+            ssid = await DisplayPromptAsync(
+                Resx.TextResource.Common_AskTitle,
+                Resx.TextResource.Settings_AutoStopWifiAdd,
+                Resx.TextResource.Common_OK,
+                Resx.TextResource.Common_Cancel);
+
+            if (!string.IsNullOrEmpty(ssid) && !viewModel.Settings.AutoStopWifi.Contains(ssid))
+            {
+                viewModel.Settings.AutoStopWifi.Add(ssid);
+            }
+        }
+
+        public async void OnDeleteWifiClicked(object sender, EventArgs e)
+        {
+            bool response = await DisplayAlert(
+               Resx.TextResource.Common_AskTitle,
+               Resx.TextResource.Settings_AutoStopWifiDelete,
+               Resx.TextResource.Common_Yes,
+               Resx.TextResource.Common_No);
+
+            if (response)
+            {
+                var layout = (BindableObject)sender;
+                var ssid = layout.BindingContext as string;
+                viewModel.Settings.AutoStopWifi.Remove(ssid);
+            }
         }
 
         protected override void OnDisappearing()

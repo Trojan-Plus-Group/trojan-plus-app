@@ -22,6 +22,8 @@
 namespace TrojanPlusApp.Droid
 {
     using System;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
     using Android.App;
     using Android.App.Job;
     using Android.Content;
@@ -29,19 +31,18 @@ namespace TrojanPlusApp.Droid
     using Android.Net.Wifi;
     using Android.OS;
     using Android.Runtime;
+    using Android.Util;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
-    using Xamarin.Forms.Internals;
 
     [Register("com.trojan_plus.android.TrojanPlusWifiJobService")]
     [Service(Permission = "android.permission.BIND_JOB_SERVICE")]
     public class TrojanPlusWifiJobService : JobService, TrojanPlusStarter.IActivityCommunicator
     {
         public static readonly int JobId = 1001;
-        public static readonly string AutoStartWifiSSIDKey = "ssid";
+        private static readonly string TAG = typeof(TrojanPlusWifiJobService).Name;
 
         private TrojanPlusStarter starter = null;
-        private string[] ssids = null;
         private JobParameters jobParam;
         private SettingsModel settings;
 
@@ -49,7 +50,9 @@ namespace TrojanPlusApp.Droid
         {
             string ssid = null;
 
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.O || Build.VERSION.SdkInt >= BuildVersionCodes.P)
+            // this function will failed in Android Q(10) API 29
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.O
+                || Build.VERSION.SdkInt == BuildVersionCodes.P)
             {
                 WifiManager mWifiManager = (WifiManager)context.GetSystemService(Context.WifiService);
                 if (mWifiManager != null)
@@ -85,6 +88,8 @@ namespace TrojanPlusApp.Droid
 
         public override bool OnStartJob(JobParameters parm)
         {
+            Log.Debug(TAG, "OnStartJob");
+
             jobParam = parm;
             settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
             if (starter == null)
@@ -92,33 +97,47 @@ namespace TrojanPlusApp.Droid
                 starter = new TrojanPlusStarter(this, this);
             }
 
-            ssids = parm.Extras.GetStringArray(AutoStartWifiSSIDKey);
             starter.OnJobServiceStart();
             return true;
         }
 
         public override bool OnStopJob(JobParameters parm)
         {
-            // return true to indicate to the JobManager whether you'd like to reschedule 
-            // this job based on the retry criteria provided at job creation-time; 
+            Log.Debug(TAG, "OnStopJob it should never be called");
+
+            if (starter != null)
+            {
+                starter.OnJobServiceStop();
+            }
+
+            // return true to indicate to the JobManager whether you'd like to reschedule
+            // this job based on the retry criteria provided at job creation-time;
             return true;
         }
 
         public void SetStartBtnEnabled(bool enable)
         {
+            // to do nothing
         }
 
         public void OnVpnIsRunning(bool running)
         {
-            if (running && ssids != null)
+            Log.Debug(TAG, "OnVpnIsRunning " + running);
+
+            if (running)
             {
                 var currSSID = GetWIFISSID(this);
-                if (ssids.IndexOf(currSSID) != -1)
+
+                Log.Debug(TAG, "GetWIFISSID " + currSSID);
+
+                if ((currSSID == null && settings.AutoStopWifi.Count > 0) // ssid will be null in Android 10+ (API 29+) 
+                    || settings.AutoStopWifi.Contains(currSSID))
                 {
                     starter.Start(settings); // start again to stop the service
                 }
             }
 
+            starter.OnJobServiceStop();
             JobFinished(jobParam, true);
         }
 

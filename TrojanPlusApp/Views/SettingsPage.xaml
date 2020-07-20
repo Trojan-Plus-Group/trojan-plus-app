@@ -12,6 +12,7 @@
 	<ContentPage.Content>
 		<ScrollView>
 			<StackLayout Spacing="10" Padding="10">
+
 				<!-- Enabling Android Notification  -->
 				<Grid Margin="0,10,0,0" IsVisible="{OnPlatform Android=True, Default=False}">
 					<Grid.ColumnDefinitions>
@@ -23,10 +24,61 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.Settings_EnableAndroidNotification}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Settings.EnableAndroidNotification}" Grid.Column="1" VerticalOptions="Center" />
+					<Switch x:Name="EnableNotification" IsToggled="{Binding Settings.EnableAndroidNotification}" Grid.Column="1" VerticalOptions="Center" />
 				</Grid>
 				<Label IsVisible="{OnPlatform Android=True, Default=False}" 
 					   Text="{x:Static resources:TextResource.Settings_EnableAndroidNotificationDetail}" FontSize="Small" />
+
+				<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" 
+							 IsVisible="{Binding Source={x:Reference EnableNotification}, Path=IsToggled, Mode=OneWay}" >
+
+					<!-- Enabling Auto Start Cellur -->
+					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
+					<Grid Margin="0,10,0,0" IsVisible="{OnPlatform Android=True, Default=False}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*" />
+							<ColumnDefinition Width="0.5*" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Label Text="{x:Static resources:TextResource.Settings_AutoStartCellur}" VerticalOptions="Center"  FontSize="Medium" />
+						<Switch IsToggled="{Binding Settings.AutoStartCellur}" Grid.Column="1" VerticalOptions="Center" />
+					</Grid>
+					<Label IsVisible="{OnPlatform Android=True, Default=False}" 
+					   Text="{x:Static resources:TextResource.Settings_AutoStartCellurDetail}" FontSize="Small" />
+
+					<!-- Enabling Auto Stop Wifi-->
+					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
+					<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" IsVisible="{OnPlatform Android=True, Default=False}" >
+						<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" HeightRequest="40">
+							<Label Text="{x:Static resources:TextResource.Settings_AutoStopWifi}" HorizontalOptions="Start" VerticalOptions="Center"  FontSize="Medium" />
+							<ImageButton Source="icon_add.png" HeightRequest="30" BackgroundColor="Transparent"
+										 HorizontalOptions="EndAndExpand" WidthRequest="30" VerticalOptions="Center" Clicked="OnAddWifiClicked" />
+						</StackLayout>
+						<StackLayout Orientation="Vertical" BindableLayout.ItemsSource="{Binding Settings.AutoStopWifi}">
+							<d:BindableLayout.ItemsSource>
+								<x:Array Type="{x:Type x:String}">
+									<x:String >Wifi SSID 1</x:String>
+									<x:String >Wifi SSID 2</x:String>
+								</x:Array>
+							</d:BindableLayout.ItemsSource>
+							<BindableLayout.ItemTemplate>
+								<DataTemplate>
+									<StackLayout Margin="10,0,0,0" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+										<ImageButton Margin="0,0,10,0" Source="icon_delete.png" HeightRequest="30" BackgroundColor="Transparent"
+										 HorizontalOptions="Start" WidthRequest="30" VerticalOptions="Center" Clicked="OnDeleteWifiClicked" />
+										<Label Text="{Binding .}" VerticalOptions="Center"  FontSize="Small" />
+									</StackLayout>
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</StackLayout>
+						<Label Text="{x:Static resources:TextResource.Settings_AutoStopWifiDetail}" FontSize="Small" />
+					</StackLayout>
+
+				</StackLayout>
+
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>
