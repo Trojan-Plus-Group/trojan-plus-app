@@ -42,18 +42,18 @@ namespace TrojanPlusApp.Droid
     using Xamarin.Essentials;
 
     [Activity(
-        Name = "com.trojan_plus.android.MainActivity",
+        Name = "com.trojan_plus.android.TrojanPlusMainActivity",
         Label = "@string/app_name",
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
         MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class TrojanPlusMainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public class Communicator : TrojanPlusStarter.IActivityCommunicator, App.IStart
         {
-            private MainActivity activity;
-            public Communicator(MainActivity act)
+            private TrojanPlusMainActivity activity;
+            public Communicator(TrojanPlusMainActivity act)
             {
                 activity = act;
             }
@@ -96,7 +96,7 @@ namespace TrojanPlusApp.Droid
         }
 
         // job service to check network and vpn status to restart it 
-        public const int AutoJobServiceBackoffCriteria = 10 * 1000;
+        public const int AutoJobServiceBackoffCriteria = 30 * 1000;
 
         public static readonly string PrepareConfigPath = Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
@@ -110,7 +110,7 @@ namespace TrojanPlusApp.Droid
 
         public static void ShowAutoNotification(Context context, string title)
         {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.AutoChannelID)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TrojanPlusMainActivity.AutoChannelID)
                 .SetContentTitle(title)
                 .SetContentIntent(TrojanPlusVPNService.CreatePendingIntent())
                 .SetSmallIcon(Resource.Mipmap.notification_small_icon)
@@ -118,10 +118,10 @@ namespace TrojanPlusApp.Droid
                 .SetAutoCancel(true);
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
-            notificationManager.Notify(MainActivity.AutoNotificationId, builder.Build());
+            notificationManager.Notify(TrojanPlusMainActivity.AutoNotificationId, builder.Build());
         }
 
-        private static readonly string TAG = typeof(MainActivity).Name;
+        private static readonly string TAG = typeof(TrojanPlusMainActivity).Name;
         private App app;
         private TrojanPlusStarter starter;
         private SettingsModel settings = null;
@@ -226,6 +226,8 @@ namespace TrojanPlusApp.Droid
 
                     jobBuilder.SetRequiredNetworkType(NetworkType.Unmetered);
                     jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
+                    jobBuilder.SetImportantWhileForeground(true);
+                    jobBuilder.SetPersisted(true);
 
                     PersistableBundle bundle = new PersistableBundle();
                     bundle.PutString("settings", JsonConvert.SerializeObject(settings));
@@ -244,6 +246,8 @@ namespace TrojanPlusApp.Droid
 
                     jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
                     jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
+                    jobBuilder.SetImportantWhileForeground(true);
+                    jobBuilder.SetPersisted(true);
 
                     PersistableBundle bundle = new PersistableBundle();
                     bundle.PutString("settings", JsonConvert.SerializeObject(settings));

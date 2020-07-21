@@ -88,7 +88,7 @@ namespace TrojanPlusApp.Droid
 
         public static PendingIntent CreatePendingIntent()
         {
-            var intent = new Intent(Application.Context, typeof(MainActivity));
+            var intent = new Intent(Application.Context, typeof(TrojanPlusMainActivity));
             intent.SetFlags(ActivityFlags.ReorderToFront);
 
             return PendingIntent.GetActivity(Application.Context, 0, intent, 0);
@@ -212,7 +212,7 @@ namespace TrojanPlusApp.Droid
 
                     configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
 
-                    runConfigPath = prepareConfigPath + MainActivity.RunningConfigSuffix;
+                    runConfigPath = prepareConfigPath + TrojanPlusMainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
 
                     if (showNotification)

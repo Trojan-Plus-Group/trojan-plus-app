@@ -44,13 +44,13 @@ namespace TrojanPlusApp.Droid
         {
             Log.Debug(TAG, "OnStartJob");
 
-            if (!File.Exists(MainActivity.PrepareConfigPath))
+            if (!File.Exists(TrojanPlusMainActivity.PrepareConfigPath))
             {
                 Log.Debug(TAG, "PrepareConfig file is not exist");
                 return true;
             }
 
-            if (File.Exists(MainActivity.RunningConfigPath))
+            if (File.Exists(TrojanPlusMainActivity.RunningConfigPath))
             {
                 Log.Debug(TAG, "RunningConfigPath file is exist, VPN is running");
                 return true;
@@ -74,11 +74,6 @@ namespace TrojanPlusApp.Droid
         {
             Log.Debug(TAG, "OnStopJob");
 
-            if (starter != null)
-            {
-                starter.OnJobServiceStop();
-            }
-
             // return true to indicate to the JobManager whether you'd like to reschedule
             // this job based on the retry criteria provided at job creation-time;
             return true;
@@ -88,6 +83,11 @@ namespace TrojanPlusApp.Droid
         {
             base.OnDestroy();
             Log.Debug(TAG, "OnDestroy");
+
+            if (starter != null)
+            {
+                starter.OnJobServiceStop();
+            }
         }
 
         public void SetStartBtnEnabled(bool enable)
@@ -102,7 +102,7 @@ namespace TrojanPlusApp.Droid
             if (!running)
             {
                 starter.Switch(settings); // start the service
-                MainActivity.ShowAutoNotification(this, Resx.TextResource.Notification_AutoStart);
+                TrojanPlusMainActivity.ShowAutoNotification(this, Resx.TextResource.Notification_AutoStart);
             }
 
             starter.OnJobServiceStop();
@@ -110,7 +110,7 @@ namespace TrojanPlusApp.Droid
 
         public string GetConfigPath()
         {
-            return MainActivity.PrepareConfigPath;
+            return TrojanPlusMainActivity.PrepareConfigPath;
         }
     }
 }

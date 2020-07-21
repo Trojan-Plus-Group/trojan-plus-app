@@ -43,7 +43,7 @@ namespace TrojanPlusApp.Droid
                 .SetContentIntent(TrojanPlusVPNService.CreatePendingIntent())
                 .SetSmallIcon(Resource.Mipmap.notification_small_icon)
                 .SetCategory(NotificationCompat.CategoryService)
-                .SetPriority((int)NotificationPriority.Low);
+                .SetPriority((int)NotificationPriority.High);
         }
 
         public void Show()
