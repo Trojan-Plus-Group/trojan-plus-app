@@ -72,9 +72,9 @@ namespace TrojanPlusApp.Droid
                 return PrepareConfigPath;
             }
 
-            public void Start(SettingsModel settings)
+            public void Switch(SettingsModel settings)
             {
-                activity.starter.Start(settings);
+                activity.starter.Switch(settings);
             }
 
             public string GetTrojanPlusLibVersion()

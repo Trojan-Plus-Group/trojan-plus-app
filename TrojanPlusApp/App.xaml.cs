@@ -32,7 +32,7 @@ namespace TrojanPlusApp
         public interface IStart
         {
             // start libtrojan.so
-            void Start(SettingsModel settings);
+            void Switch(SettingsModel settings);
             string GetTrojanPlusLibVersion();
 
             List<string> GetWifiSSIDs();
@@ -64,7 +64,7 @@ namespace TrojanPlusApp
 
         public void Start(SettingsModel settings)
         {
-            Starter.Start(settings);
+            Starter.Switch(settings);
         }
 
         public void OnSetStartBtnEnabled(bool enable)

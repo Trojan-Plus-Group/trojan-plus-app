@@ -24,6 +24,7 @@ namespace TrojanPlusApp.Droid
     using System;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading.Tasks;
     using Android.App;
     using Android.App.Job;
     using Android.Content;
@@ -92,18 +93,19 @@ namespace TrojanPlusApp.Droid
 
             jobParam = parm;
             settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
+
             if (starter == null)
             {
                 starter = new TrojanPlusStarter(this, this);
             }
 
-            starter.OnJobServiceStart();
+            starter.OnJobServiceStart(false);
             return true;
         }
 
         public override bool OnStopJob(JobParameters parm)
         {
-            Log.Debug(TAG, "OnStopJob it should never be called");
+            Log.Debug(TAG, "OnStopJob");
 
             if (starter != null)
             {
@@ -130,10 +132,10 @@ namespace TrojanPlusApp.Droid
 
                 Log.Debug(TAG, "GetWIFISSID " + currSSID);
 
-                if ((currSSID == null && settings.AutoStopWifi.Count > 0) // ssid will be null in Android 10+ (API 29+) 
+                if ((currSSID == null && settings.AutoStopWifi.Count > 0) // ssid will be null in Android 10+ (API 29+)
                     || settings.AutoStopWifi.Contains(currSSID))
                 {
-                    starter.Start(settings); // start again to stop the service
+                    starter.Switch(settings); // start again to stop the service
                 }
             }
 

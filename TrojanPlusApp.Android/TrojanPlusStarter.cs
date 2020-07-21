@@ -65,7 +65,7 @@ namespace TrojanPlusApp.Droid
             messengerHandler = new Messenger(new VPNMessageHandler(this));
         }
 
-        public void Start(SettingsModel settings)
+        public void Switch(SettingsModel settings)
         {
             this.settings = settings;
 
@@ -79,9 +79,31 @@ namespace TrojanPlusApp.Droid
             }
         }
 
-        public void OnJobServiceStart()
+        public void StopVPNService()
         {
-            BindVpnService();
+            if (serviceIsBound && serviceConnection.Messenger != null)
+            {
+                Log.Debug(TAG, "StopVPNService " + context.GetType().Name);
+
+                try
+                {
+                    var msg = Message.Obtain(null, VPN_STOP);
+                    msg.ReplyTo = messengerHandler;
+
+                    serviceConnection.Messenger.Send(msg);
+                    communicator.SetStartBtnEnabled(false);
+                }
+                catch (RemoteException ex)
+                {
+                    Crashes.TrackError(ex);
+                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                }
+            }
+        }
+
+        public void OnJobServiceStart(bool startService)
+        {
+            BindVpnService(startService);
         }
 
         public void OnJobServiceStop()
@@ -121,7 +143,7 @@ namespace TrojanPlusApp.Droid
             return false;
         }
 
-        private void BindVpnService()
+        private void BindVpnService(bool startService = true)
         {
             if (!serviceIsBound)
             {
@@ -132,13 +154,16 @@ namespace TrojanPlusApp.Droid
                 Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
                 context.BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
 
-                if (settings == null || settings.EnableAndroidNotification)
+                if (startService)
                 {
-                    context.StartForegroundService(serviceToStart);
-                }
-                else
-                {
-                    context.StartService(serviceToStart);
+                    if (settings == null || settings.EnableAndroidNotification)
+                    {
+                        context.StartForegroundService(serviceToStart);
+                    }
+                    else
+                    {
+                        context.StartService(serviceToStart);
+                    }
                 }
             }
         }
@@ -207,27 +232,7 @@ namespace TrojanPlusApp.Droid
             }
         }
 
-        private void StopVPNService()
-        {
-            if (serviceConnection.Messenger != null)
-            {
-                Log.Debug(TAG, "StopVPNService " + context.GetType().Name);
 
-                try
-                {
-                    var msg = Message.Obtain(null, VPN_STOP);
-                    msg.ReplyTo = messengerHandler;
-
-                    serviceConnection.Messenger.Send(msg);
-                    communicator.SetStartBtnEnabled(false);
-                }
-                catch (RemoteException ex)
-                {
-                    Crashes.TrackError(ex);
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
-                }
-            }
-        }
 
         private void StartVPNService()
         {

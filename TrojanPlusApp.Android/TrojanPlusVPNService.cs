@@ -317,6 +317,7 @@ namespace TrojanPlusApp.Droid
                             Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_START");
                             service.prepareConfigPath = msg.Data.GetString("config");
                             service.showNotification = msg.Data.GetBoolean("showNotification");
+
                             service.OpenFD();
                         }
 

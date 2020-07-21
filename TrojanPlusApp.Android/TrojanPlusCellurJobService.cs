@@ -51,7 +51,7 @@ namespace TrojanPlusApp.Droid
                 starter = new TrojanPlusStarter(this, this);
             }
 
-            starter.OnJobServiceStart();
+            starter.OnJobServiceStart(true);
 
             // Return true from this method if your job needs to continue running.
             return true;
@@ -82,7 +82,7 @@ namespace TrojanPlusApp.Droid
 
             if (!running)
             {
-                starter.Start(settings); // start the service
+                starter.Switch(settings); // start the service
             }
 
             starter.OnJobServiceStop();

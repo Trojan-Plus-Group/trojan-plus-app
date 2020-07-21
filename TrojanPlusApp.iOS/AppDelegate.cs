@@ -50,7 +50,7 @@ namespace TrojanPlusApp.iOS
                 throw new NotImplementedException();
             }
 
-            public void Start(SettingsModel settings)
+            public void Switch(SettingsModel settings)
             {
                 throw new NotImplementedException();
             }

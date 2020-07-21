@@ -45,7 +45,7 @@ namespace TrojanPlusApp.UWP
                 throw new NotImplementedException();
             }
 
-            public void Start(SettingsModel settings)
+            public void Switch(SettingsModel settings)
             {
                 throw new NotImplementedException();
             }
