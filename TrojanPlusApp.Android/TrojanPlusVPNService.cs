@@ -212,25 +212,25 @@ namespace TrojanPlusApp.Droid
 
                     configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
 
-                    runConfigPath = prepareConfigPath + "_running";
+                    runConfigPath = prepareConfigPath + MainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
 
                     if (showNotification)
                     {
                         notification = new TrojanPlusNotification(this);
                     }
+
+                    worker = new Thread(new WorkerThread(this).Run);
+                    worker.Start();
                 }
                 catch (Exception ex)
                 {
                     Crashes.TrackError(ex);
                     Log.Error(TAG, ex.StackTrace);
+
                     CloseFD();
                     StopSelf();
-                    return;
                 }
-
-                worker = new Thread(new WorkerThread(this).Run);
-                worker.Start();
             }
         }
 
@@ -247,6 +247,11 @@ namespace TrojanPlusApp.Droid
                 {
                     Crashes.TrackError(ex);
                     Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                }
+
+                if (File.Exists(runConfigPath))
+                {
+                    File.Delete(runConfigPath);
                 }
 
                 vpnFD = null;

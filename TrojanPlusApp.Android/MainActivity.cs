@@ -95,9 +95,15 @@ namespace TrojanPlusApp.Droid
             }
         }
 
+        // job service to check network and vpn status to restart it 
+        public const int AutoJobServiceBackoffCriteria = 10 * 1000;
+
         public static readonly string PrepareConfigPath = Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 "config.json");
+
+        public static readonly string RunningConfigSuffix = "_running";
+        public static readonly string RunningConfigPath = PrepareConfigPath + RunningConfigSuffix;
 
         public static readonly string AutoChannelID = "TrojanPlusAutoStartStopChannel";
         public static readonly int AutoNotificationId = 1001;
@@ -219,6 +225,7 @@ namespace TrojanPlusApp.Droid
                         new ComponentName(this, Class.FromType(typeof(TrojanPlusWifiJobService)).Name));
 
                     jobBuilder.SetRequiredNetworkType(NetworkType.Unmetered);
+                    jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
 
                     PersistableBundle bundle = new PersistableBundle();
                     bundle.PutString("settings", JsonConvert.SerializeObject(settings));
@@ -235,13 +242,15 @@ namespace TrojanPlusApp.Droid
                         TrojanPlusCellurJobService.JobId,
                         new ComponentName(this, Class.FromType(typeof(TrojanPlusCellurJobService)).Name));
 
+                    jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
+                    jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
+
                     PersistableBundle bundle = new PersistableBundle();
                     bundle.PutString("settings", JsonConvert.SerializeObject(settings));
                     jobBuilder.SetExtras(bundle);
 
-                    jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
-                    var succ = jobServ.Schedule(jobBuilder.Build());
 
+                    var succ = jobServ.Schedule(jobBuilder.Build());
                     Log.Debug(TAG, "RefreshJobs  TrojanPlusCellurJobService " + succ);
                 }
             }

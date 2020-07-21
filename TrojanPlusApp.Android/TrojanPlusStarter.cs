@@ -101,9 +101,9 @@ namespace TrojanPlusApp.Droid
             }
         }
 
-        public void OnJobServiceStart(bool startService)
+        public void OnJobServiceStart()
         {
-            BindVpnService(startService);
+            BindVpnService();
         }
 
         public void OnJobServiceStop()
@@ -143,7 +143,7 @@ namespace TrojanPlusApp.Droid
             return false;
         }
 
-        private void BindVpnService(bool startService = true)
+        private void BindVpnService()
         {
             if (!serviceIsBound)
             {
@@ -153,24 +153,12 @@ namespace TrojanPlusApp.Droid
 
                 Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
                 context.BindService(serviceToStart, serviceConnection, Bind.AutoCreate);
-
-                if (startService)
-                {
-                    if (settings == null || settings.EnableAndroidNotification)
-                    {
-                        context.StartForegroundService(serviceToStart);
-                    }
-                    else
-                    {
-                        context.StartService(serviceToStart);
-                    }
-                }
             }
         }
 
         private void UnbindVpnService()
         {
-            if (serviceIsBound && serviceConnection.Messenger != null)
+            if (serviceIsBound && serviceConnection != null)
             {
                 Log.Debug(TAG, "UnbindVpnService " + context.GetType().Name);
 
@@ -188,6 +176,16 @@ namespace TrojanPlusApp.Droid
         {
             if (serviceConnection.Messenger != null)
             {
+                Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
+                if (settings == null || settings.EnableAndroidNotification)
+                {
+                    context.StartForegroundService(serviceToStart);
+                }
+                else
+                {
+                    context.StartService(serviceToStart);
+                }
+
                 Log.Debug(TAG, "SendStartMessage " + context.GetType().Name);
 
                 try

@@ -25,7 +25,6 @@ namespace TrojanPlusApp.Droid
     using Android.App;
     using Android.App.Job;
     using Android.Runtime;
-    using Android.Support.V4.App;
     using Android.Util;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
@@ -48,18 +47,24 @@ namespace TrojanPlusApp.Droid
             if (!File.Exists(MainActivity.PrepareConfigPath))
             {
                 Log.Debug(TAG, "PrepareConfig file is not exist");
-                return false;
+                return true;
             }
 
-            jobParam = parm;
-            settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
+            if (File.Exists(MainActivity.RunningConfigPath))
+            {
+                Log.Debug(TAG, "RunningConfigPath file is exist, VPN is running");
+                return true;
+            }
 
             if (starter == null)
             {
+                jobParam = parm;
+                settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
+
                 starter = new TrojanPlusStarter(this, this);
             }
 
-            starter.OnJobServiceStart(true);
+            starter.OnJobServiceStart();
 
             // Return true from this method if your job needs to continue running.
             return true;
@@ -67,7 +72,7 @@ namespace TrojanPlusApp.Droid
 
         public override bool OnStopJob(JobParameters parm)
         {
-            Log.Debug(TAG, "OnStopJob it should never be called");
+            Log.Debug(TAG, "OnStopJob");
 
             if (starter != null)
             {
@@ -77,6 +82,12 @@ namespace TrojanPlusApp.Droid
             // return true to indicate to the JobManager whether you'd like to reschedule
             // this job based on the retry criteria provided at job creation-time;
             return true;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Log.Debug(TAG, "OnDestroy");
         }
 
         public void SetStartBtnEnabled(bool enable)
@@ -95,7 +106,6 @@ namespace TrojanPlusApp.Droid
             }
 
             starter.OnJobServiceStop();
-            JobFinished(jobParam, true);
         }
 
         public string GetConfigPath()

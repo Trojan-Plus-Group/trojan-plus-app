@@ -21,10 +21,7 @@
 
 namespace TrojanPlusApp.Droid
 {
-    using System;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
+    using System.IO;
     using Android.App;
     using Android.App.Job;
     using Android.Content;
@@ -32,7 +29,6 @@ namespace TrojanPlusApp.Droid
     using Android.Net.Wifi;
     using Android.OS;
     using Android.Runtime;
-    using Android.Support.V4.App;
     using Android.Util;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
@@ -92,15 +88,21 @@ namespace TrojanPlusApp.Droid
         {
             Log.Debug(TAG, "OnStartJob");
 
-            jobParam = parm;
-            settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
+            if (!File.Exists(MainActivity.RunningConfigPath))
+            {
+                Log.Debug(TAG, "RunningConfigPath file is not exist, VPN is not running");
+                return true;
+            }
 
             if (starter == null)
             {
+                jobParam = parm;
+                settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
+
                 starter = new TrojanPlusStarter(this, this);
             }
 
-            starter.OnJobServiceStart(false);
+            starter.OnJobServiceStart();
             return true;
         }
 
@@ -116,6 +118,12 @@ namespace TrojanPlusApp.Droid
             // return true to indicate to the JobManager whether you'd like to reschedule
             // this job based on the retry criteria provided at job creation-time;
             return true;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Log.Debug(TAG, "OnDestroy");
         }
 
         public void SetStartBtnEnabled(bool enable)
@@ -142,7 +150,6 @@ namespace TrojanPlusApp.Droid
             }
 
             starter.OnJobServiceStop();
-            JobFinished(jobParam, true);
         }
 
         public string GetConfigPath()
