@@ -288,6 +288,18 @@
   <data name="New_ToolbarSave" xml:space="preserve">
     <value>保存</value>
   </data>
+  <data name="Notification_AutoChannelDescription" xml:space="preserve">
+    <value>Trojan Plus 自动开启和关闭VPN的通知，你可以在Trojan Plus App的设置界面更改。</value>
+  </data>
+  <data name="Notification_AutoChannelName" xml:space="preserve">
+    <value>Trojan Plus 自动开启和关闭通知</value>
+  </data>
+  <data name="Notification_AutoStart" xml:space="preserve">
+    <value>Trojan Plus VPN 移动数据时自动开启</value>
+  </data>
+  <data name="Notification_AutoStop" xml:space="preserve">
+    <value>Trojan Plus VPN Wifi连接时自动关闭</value>
+  </data>
   <data name="Notification_ChannelDescription" xml:space="preserve">
     <value>Trojan Plus 能帮助你绕过GFW</value>
   </data>

@@ -31,6 +31,7 @@ namespace TrojanPlusApp.Droid
     using Android.Net.Wifi;
     using Android.OS;
     using Android.Runtime;
+    using Android.Support.V4.App;
     using Android.Util;
     using Java.Lang;
     using Microsoft.AppCenter;
@@ -98,11 +99,25 @@ namespace TrojanPlusApp.Droid
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 "config.json");
 
-        private static readonly string TAG = typeof(MainActivity).Name;
+        public static readonly string AutoChannelID = "TrojanPlusAutoStartStopChannel";
+        public static readonly int AutoNotificationId = 1001;
 
+        public static void ShowAutoNotification(Context context, string title)
+        {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MainActivity.AutoChannelID)
+                .SetContentTitle(title)
+                .SetContentIntent(TrojanPlusVPNService.CreatePendingIntent())
+                .SetSmallIcon(Resource.Mipmap.notification_small_icon)
+                .SetPriority((int)NotificationPriority.Low)
+                .SetAutoCancel(true);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+            notificationManager.Notify(MainActivity.AutoNotificationId, builder.Build());
+        }
+
+        private static readonly string TAG = typeof(MainActivity).Name;
         private App app;
         private TrojanPlusStarter starter;
-
         private SettingsModel settings = null;
 
         public override void OnRequestPermissionsResult(
@@ -167,12 +182,34 @@ namespace TrojanPlusApp.Droid
             Log.Debug(TAG, "StopJobs");
         }
 
+        private void CreateAutoJobNotificationChannel()
+        {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                var name = Resx.TextResource.Notification_AutoChannelName;
+                var desc = Resx.TextResource.Notification_AutoChannelDescription;
+
+                NotificationChannel channel = new NotificationChannel(AutoChannelID, name, NotificationImportance.Low);
+                channel.Description = desc;
+                channel.SetShowBadge(false);
+
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                NotificationManager notificationManager = GetSystemService(NotificationService) as NotificationManager;
+                notificationManager.CreateNotificationChannel(channel);
+            }
+        }
+
         private void RefreshJobs()
         {
             StopJobs();
 
             if (settings != null && settings.EnableAndroidNotification)
             {
+                CreateAutoJobNotificationChannel();
+
                 var jobServ = (JobScheduler)GetSystemService(JobSchedulerService);
 
                 if (settings.AutoStopWifi.Count > 0)

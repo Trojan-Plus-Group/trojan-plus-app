@@ -86,6 +86,14 @@ namespace TrojanPlusApp.Droid
 
         private TrojanPlusNotification notification = null;
 
+        public static PendingIntent CreatePendingIntent()
+        {
+            var intent = new Intent(Application.Context, typeof(MainActivity));
+            intent.SetFlags(ActivityFlags.ReorderToFront);
+
+            return PendingIntent.GetActivity(Application.Context, 0, intent, 0);
+        }
+
         public override void OnCreate()
         {
             base.OnCreate();
@@ -116,14 +124,6 @@ namespace TrojanPlusApp.Droid
         {
             OnStartCommand(intent, 0, 0);
             return false;
-        }
-
-        public PendingIntent CreatePendingIntent()
-        {
-            var intent = new Intent(Application.Context, typeof(MainActivity));
-            intent.SetFlags(ActivityFlags.ReorderToFront);
-
-            return PendingIntent.GetActivity(Application.Context, 0, intent, 0);
         }
 
         [return: GeneratedEnum]

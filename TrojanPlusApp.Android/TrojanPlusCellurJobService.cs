@@ -21,9 +21,11 @@
 
 namespace TrojanPlusApp.Droid
 {
+    using System.IO;
     using Android.App;
     using Android.App.Job;
     using Android.Runtime;
+    using Android.Support.V4.App;
     using Android.Util;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
@@ -42,6 +44,12 @@ namespace TrojanPlusApp.Droid
         public override bool OnStartJob(JobParameters parm)
         {
             Log.Debug(TAG, "OnStartJob");
+
+            if (!File.Exists(MainActivity.PrepareConfigPath))
+            {
+                Log.Debug(TAG, "PrepareConfig file is not exist");
+                return false;
+            }
 
             jobParam = parm;
             settings = JsonConvert.DeserializeObject<SettingsModel>(jobParam.Extras.GetString("settings"));
@@ -83,6 +91,7 @@ namespace TrojanPlusApp.Droid
             if (!running)
             {
                 starter.Switch(settings); // start the service
+                MainActivity.ShowAutoNotification(this, Resx.TextResource.Notification_AutoStart);
             }
 
             starter.OnJobServiceStop();

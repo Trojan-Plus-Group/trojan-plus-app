@@ -301,6 +301,18 @@
   <data name="New_ToolbarSave" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Notification_AutoChannelDescription" xml:space="preserve">
+    <value>Trojan Plus auto start and stop VPN notification, you can change this in Trojan Plus App's Settings page.</value>
+  </data>
+  <data name="Notification_AutoChannelName" xml:space="preserve">
+    <value>Trojan Plus Auto Start/Stop Notification</value>
+  </data>
+  <data name="Notification_AutoStart" xml:space="preserve">
+    <value>Trojan Plus VPN Auto Started in Cellur</value>
+  </data>
+  <data name="Notification_AutoStop" xml:space="preserve">
+    <value>Trojan Plus VPN Auto Stopped in Wifi</value>
+  </data>
   <data name="Notification_ChannelDescription" xml:space="preserve">
     <value>Trojan Plus can help you bypass GFW.</value>
   </data>

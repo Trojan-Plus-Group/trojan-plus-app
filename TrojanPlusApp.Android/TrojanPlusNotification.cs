@@ -40,7 +40,7 @@ namespace TrojanPlusApp.Droid
             builder = new NotificationCompat.Builder(service, ChannelID)
                 .SetWhen(0)
                 .SetContentTitle(Resx.TextResource.Notification_Title)
-                .SetContentIntent(service.CreatePendingIntent())
+                .SetContentIntent(TrojanPlusVPNService.CreatePendingIntent())
                 .SetSmallIcon(Resource.Mipmap.notification_small_icon)
                 .SetCategory(NotificationCompat.CategoryService)
                 .SetPriority((int)NotificationPriority.Low);

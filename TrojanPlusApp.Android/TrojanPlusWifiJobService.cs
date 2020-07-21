@@ -32,6 +32,7 @@ namespace TrojanPlusApp.Droid
     using Android.Net.Wifi;
     using Android.OS;
     using Android.Runtime;
+    using Android.Support.V4.App;
     using Android.Util;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
@@ -136,6 +137,7 @@ namespace TrojanPlusApp.Droid
                     || settings.AutoStopWifi.Contains(currSSID))
                 {
                     starter.Switch(settings); // start again to stop the service
+                    MainActivity.ShowAutoNotification(this, Resx.TextResource.Notification_AutoStop);
                 }
             }
 
@@ -147,5 +149,7 @@ namespace TrojanPlusApp.Droid
         {
             return MainActivity.PrepareConfigPath;
         }
+
+
     }
 }
