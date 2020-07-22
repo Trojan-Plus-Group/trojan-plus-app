@@ -21,26 +21,10 @@
 
 namespace TrojanPlusApp.Droid
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using Android.App;
-    using Android.App.Job;
     using Android.Content;
     using Android.Content.PM;
-    using Android.Net.Wifi;
-    using Android.OS;
-    using Android.Runtime;
-    using Android.Support.V4.App;
     using Android.Support.V7.App;
-    using Android.Util;
-    using Java.Lang;
-    using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
-    using Newtonsoft.Json;
-    using TrojanPlusApp.Models;
-    using Xamarin.Essentials;
 
     [Activity(
         Name = "com.trojan_plus.android.TrojanPlusSplashScreen",

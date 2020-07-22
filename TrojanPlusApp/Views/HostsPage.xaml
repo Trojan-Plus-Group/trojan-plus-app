@@ -37,7 +37,7 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center"
+							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center" TextColor="Black" 
                                 LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="30" />
 
