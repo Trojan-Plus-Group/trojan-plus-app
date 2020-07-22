@@ -25,8 +25,8 @@
 		</Grid.RowDefinitions>
 		<StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
 			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
-				<ContentView Padding="0,20,0,20" VerticalOptions="FillAndExpand">
-					<Image Source="trojan_plus_logo.png" VerticalOptions="Center" HeightRequest="64" BackgroundColor="Transparent"/>
+				<ContentView Padding="0,10,0,10" VerticalOptions="FillAndExpand">
+					<Image Source="trojan_plus_logo.png" VerticalOptions="Center" HeightRequest="80" BackgroundColor="Transparent"/>
 				</ContentView>
 			</StackLayout>
 		</StackLayout>

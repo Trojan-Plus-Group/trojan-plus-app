@@ -46,7 +46,6 @@ namespace TrojanPlusApp.Droid
         Label = "@string/app_name",
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
-        MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class TrojanPlusMainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
