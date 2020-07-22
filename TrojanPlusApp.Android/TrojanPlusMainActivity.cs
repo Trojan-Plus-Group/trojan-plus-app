@@ -95,8 +95,9 @@ namespace TrojanPlusApp.Droid
             }
         }
 
-        // job service to check network and vpn status to restart it 
         public const int AutoJobServiceBackoffCriteria = 30 * 1000;
+        public const int AutoJobServiceMinimumLatency = 5 * 1000;
+        public const int AutoJobServiceMaxLatency = 60 * 1000;
 
         public static readonly string PrepareConfigPath = Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
@@ -182,8 +183,7 @@ namespace TrojanPlusApp.Droid
         private void StopJobs()
         {
             var jobServ = (JobScheduler)GetSystemService(JobSchedulerService);
-            jobServ.Cancel(TrojanPlusWifiJobService.JobId);
-            jobServ.Cancel(TrojanPlusCellurJobService.JobId);
+            jobServ.Cancel(TrojanPlusAutoJobService.JobId);
 
             Log.Debug(TAG, "StopJobs");
         }
@@ -218,15 +218,16 @@ namespace TrojanPlusApp.Droid
 
                 var jobServ = (JobScheduler)GetSystemService(JobSchedulerService);
 
-                if (settings.AutoStopWifi.Count > 0)
+                if (settings.AutoStopWifi.Count > 0 || settings.AutoStartCellur)
                 {
                     JobInfo.Builder jobBuilder = new JobInfo.Builder(
-                        TrojanPlusWifiJobService.JobId,
-                        new ComponentName(this, Class.FromType(typeof(TrojanPlusWifiJobService)).Name));
+                        TrojanPlusAutoJobService.JobId,
+                        new ComponentName(this, Class.FromType(typeof(TrojanPlusAutoJobService)).Name));
 
-                    jobBuilder.SetRequiredNetworkType(NetworkType.Unmetered);
+                    jobBuilder.SetRequiredNetworkType(NetworkType.Any);
                     jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
-                    jobBuilder.SetImportantWhileForeground(true);
+                    jobBuilder.SetMinimumLatency(AutoJobServiceMinimumLatency);
+                    jobBuilder.SetOverrideDeadline(AutoJobServiceMaxLatency);
                     jobBuilder.SetPersisted(true);
 
                     PersistableBundle bundle = new PersistableBundle();
@@ -235,27 +236,7 @@ namespace TrojanPlusApp.Droid
                     jobBuilder.SetExtras(bundle);
                     var succ = jobServ.Schedule(jobBuilder.Build());
 
-                    Log.Debug(TAG, "RefreshJobs  TrojanPlusWifiJobService " + succ);
-                }
-
-                if (settings.AutoStartCellur)
-                {
-                    var jobBuilder = new JobInfo.Builder(
-                        TrojanPlusCellurJobService.JobId,
-                        new ComponentName(this, Class.FromType(typeof(TrojanPlusCellurJobService)).Name));
-
-                    jobBuilder.SetRequiredNetworkType(NetworkType.Cellular);
-                    jobBuilder.SetBackoffCriteria(AutoJobServiceBackoffCriteria, BackoffPolicy.Linear);
-                    jobBuilder.SetImportantWhileForeground(true);
-                    jobBuilder.SetPersisted(true);
-
-                    PersistableBundle bundle = new PersistableBundle();
-                    bundle.PutString("settings", JsonConvert.SerializeObject(settings));
-                    jobBuilder.SetExtras(bundle);
-
-
-                    var succ = jobServ.Schedule(jobBuilder.Build());
-                    Log.Debug(TAG, "RefreshJobs  TrojanPlusCellurJobService " + succ);
+                    Log.Debug(TAG, "RefreshJobs  TrojanPlusAutoJobService " + succ);
                 }
             }
         }
