@@ -190,5 +190,4 @@ FakesAssemblies/
 
 # visual studio auto
 .vs/
-*.designer.cs
-*.Designer.cs
+Resource.designer.cs

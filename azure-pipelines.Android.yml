@@ -1,0 +1,39 @@
+pool:
+    vmImage: windows-2019
+
+variables:
+- group: android_keystore_var
+- name: buildConfiguration
+  value: 'Release'
+- name: outputDirectory
+  value: '$(build.binariesDirectory)/$(buildConfiguration)'
+    
+steps:
+- task: NuGetToolInstaller@1
+      
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '**/*.sln'
+      
+- task: XamarinAndroid@1
+  inputs:
+    projectFile: '**/*Android*.csproj'
+    outputDirectory: '$(outputDirectory)'
+    configuration: '$(buildConfiguration)'
+
+- task: AndroidSigning@3
+  inputs: 
+    apkFiles: '$(outputDirectory)/*.apk'
+    apksign: true
+    apksignerKeystoreFile: 'trojan_plush_android_key.jks'
+    apksignerKeystorePassword: $(keystore-password)
+    apksignerKeystoreAlias: $(key-alias)
+    apksignerKeyPassword: $(key-password)
+    apksignerArguments: --out $(outputDirectory)/com.trojan_plus.android.release.apk
+    zipalign: true
+      
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(outputDirectory)/com.trojan_plus.android.release.apk'
+    ArtifactName: 'AndroidAPK'
+    publishLocation: 'Container'
