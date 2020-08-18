@@ -60,7 +60,11 @@ namespace TrojanPlusApp.Views
                     null,
                     wifiSSIDs.ToArray());
 
-                viewModel.Settings.AutoStopWifi.Add(ssid);
+                if (!string.IsNullOrEmpty(ssid) && wifiSSIDs.Contains(ssid))
+                {
+                    viewModel.Settings.AutoStopWifi.Add(ssid);
+                }
+
                 return;
             }
 
