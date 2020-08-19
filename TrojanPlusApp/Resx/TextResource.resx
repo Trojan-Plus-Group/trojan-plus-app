@@ -326,7 +326,7 @@
     <value>Auto Function Note</value>
   </data>
   <data name="Settings_AutoFunctionNoteDetail" xml:space="preserve">
-    <value>As we test, in order to saving battery, latest Android's system (Android 9/10) will limit backgroud task auto-start so that these 2 auto function do not respose as soon as condition fullfilled, they all has a uncertain delay time.</value>
+    <value>As we test, in order to saving battery, latest Android's system (Android 9/10) will limit backgroud tasks auto-start by themself so that these 2 auto function do not response as soon as condition fullfilled, they all have a uncertain delay time.</value>
   </data>
   <data name="Settings_AutoStartCellur" xml:space="preserve">
     <value>Auto Start in Cellur Network</value>

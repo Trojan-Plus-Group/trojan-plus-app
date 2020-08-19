@@ -771,7 +771,7 @@ namespace TrojanPlusApp.Resx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to As we test, in order to saving battery, latest Android&apos;s system (Android 9/10) will limit backgroud task auto-start so that these 2 auto function do not respose as soon as condition fullfilled, they all has a uncertain delay time..
+        ///   Looks up a localized string similar to As we test, in order to saving battery, latest Android&apos;s system (Android 9/10) will limit backgroud tasks auto-start by themself so that these 2 auto function do not response as soon as condition fullfilled, they all have a uncertain delay time..
         /// </summary>
         public static string Settings_AutoFunctionNoteDetail {
             get {
