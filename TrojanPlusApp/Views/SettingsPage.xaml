@@ -77,6 +77,11 @@
 						<Label Text="{x:Static resources:TextResource.Settings_AutoStopWifiDetail}" FontSize="Small" />
 					</StackLayout>
 
+					<!-- Note about auto-function -->
+					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1" IsVisible="{OnPlatform Android=True, Default=False}" />
+					<Label Text="{x:Static resources:TextResource.Settings_AutoFunctionNote}" HorizontalOptions="Start" VerticalOptions="Center"  FontSize="Medium" />
+					<Label Text="{x:Static resources:TextResource.Settings_AutoFunctionNoteDetail}" FontSize="Small" IsVisible="{OnPlatform Android=True, Default=False}" />
+
 				</StackLayout>
 
 			</StackLayout>

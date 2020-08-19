@@ -762,6 +762,24 @@ namespace TrojanPlusApp.Resx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto Function Note.
+        /// </summary>
+        public static string Settings_AutoFunctionNote {
+            get {
+                return ResourceManager.GetString("Settings_AutoFunctionNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to As we test, in order to saving battery, latest Android&apos;s system (Android 9/10) will limit backgroud task auto-start so that these 2 auto function do not respose as soon as condition fullfilled, they all has a uncertain delay time..
+        /// </summary>
+        public static string Settings_AutoFunctionNoteDetail {
+            get {
+                return ResourceManager.GetString("Settings_AutoFunctionNoteDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Start in Cellur Network.
         /// </summary>
         public static string Settings_AutoStartCellur {

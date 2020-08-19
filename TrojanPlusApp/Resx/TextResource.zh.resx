@@ -309,6 +309,12 @@
   <data name="Notification_Title" xml:space="preserve">
     <value>Trojan Plus VPN 服务正在运行</value>
   </data>
+  <data name="Settings_AutoFunctionNote" xml:space="preserve">
+    <value>自动功能说明</value>
+  </data>
+  <data name="Settings_AutoFunctionNoteDetail" xml:space="preserve">
+    <value>根据我们测试，为了省电，目前的 Android 系统（Android 9/10）都会限制后台任务的自动运行所以这两个自动功能不会在条件满足时立刻运行，而是有一个不确定的延迟。</value>
+  </data>
   <data name="Settings_AutoStartCellur" xml:space="preserve">
     <value>移动网络自动开启</value>
   </data>
