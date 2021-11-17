@@ -184,6 +184,7 @@ namespace TrojanPlusApp.Models
         "    },\n" +
         "    \"experimental\": {\n" +
         "        \"pipeline_num\": ${experimental.pipeline_num},\n" +
+        "        \"pipeline_timeout\": ${experimental.pipeline_timeout},\n" +
         "        \"pipeline_ack_window\":  ${experimental.pipeline_ack_window},\n" +
         "        \"pipeline_loadbalance_configs\": [\n" +
         "            ${experimental.pipeline_loadbalance_configs}\n" +
@@ -263,6 +264,7 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${tcp.connect_time_out}", "5");
 
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");
+            config = config.Replace("${experimental.pipeline_timeout}", "60");
             config = config.Replace("${experimental.pipeline_ack_window}", "100");
 
             if (!isLoadBalancePrepare && LoadBalance.Count > 0)
