@@ -221,22 +221,21 @@ namespace TrojanPlusApp.Models
         "    }\n" +
         "}\n";
 
+
         public string PrepareConfig(HostsViewModel hosts, bool isLoadBalancePrepare = false)
         {
             string config = ConfigTemplate;
+
             string appVersion = VersionTracking.CurrentVersion;
 
-            string version_path = Path.Combine(
-                App.Instance.DataPathParent,
-                "version_" + appVersion);
-
+            string version_path = Path.Combine(App.Instance.DataPathParent, "version");
             string gfwlist_path = Path.Combine(App.Instance.DataPathParent, "gfw_list");
             string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
             string cert_path = Path.Combine(App.Instance.DataPathParent, "cacert");
 
-            if (!File.Exists(version_path))
+            if (!File.Exists(version_path) || File.ReadAllText(version_path) != appVersion)
             {
-                File.WriteAllText(version_path, "TrojanPlus App Version: " + appVersion);
+                File.WriteAllText(version_path, appVersion);
 
                 File.WriteAllText(gfwlist_path, Resx.TextResource.gfwlist);
                 File.WriteAllText(cn_ips_path, Resx.TextResource.cn_mainland_ips);
