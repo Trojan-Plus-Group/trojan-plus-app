@@ -215,7 +215,7 @@
     <value>Enable Pipeline Mode</value>
   </data>
   <data name="New_HostEnablePipelineDetail" xml:space="preserve">
-    <value>CAUTION: Please confirm server's pipeline mode has been enabled, otherwise you won't connect host successfully.</value>
+    <value>CAUTION: Please confirm server's pipeline mode has been enabled, otherwise you won't connect host successfully. But the trojan-plus 10.0.4+ with pipeline can deal with them both pipeline and non-pipeline mode client.</value>
   </data>
   <data name="New_HostErrorNeedName" xml:space="preserve">
     <value>Please input the host of name</value>

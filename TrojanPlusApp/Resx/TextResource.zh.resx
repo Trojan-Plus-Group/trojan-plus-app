@@ -205,7 +205,7 @@
     <value>开启Pipeline模式</value>
   </data>
   <data name="New_HostEnablePipelineDetail" xml:space="preserve">
-    <value>注意：请确认你的服务器也开启了Pipeline模式，否则无法成功连接上服务器。</value>
+    <value>注意：请确认你的服务器也开启了Pipeline模式，否则无法成功连接上服务器。但是 Trojan-Plus 10.0.4+ 开启了pipeline 模式之后，可以处理不同类型的客户端（Pipeline模式和非pipeline模式）。</value>
   </data>
   <data name="New_HostErrorNeedName" xml:space="preserve">
     <value>请输入一个主机名字</value>
