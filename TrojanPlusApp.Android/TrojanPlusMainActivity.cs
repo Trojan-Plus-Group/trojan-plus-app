@@ -31,15 +31,14 @@ namespace TrojanPlusApp.Droid
     using Android.Net.Wifi;
     using Android.OS;
     using Android.Runtime;
-    using Android.Support.V4.App;
     using Android.Util;
+    using AndroidX.Core.App;
     using Java.Lang;
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
-    using Xamarin.Essentials;
 
     [Activity(
         Name = "com.trojan_plus.android.TrojanPlusMainActivity",
@@ -84,6 +83,7 @@ namespace TrojanPlusApp.Droid
 
             public List<string> GetWifiSSIDs()
             {
+                // it can return empty list in Android 10+
                 var mgr = activity.GetSystemService(WifiService) as WifiManager;
                 return mgr.ConfiguredNetworks.Select(s => s.Ssid.Replace("\"", string.Empty)).ToList();
             }

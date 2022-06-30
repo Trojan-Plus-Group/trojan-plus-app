@@ -203,9 +203,9 @@ namespace TrojanPlusApp.Droid
             string ssid = null;
 
             // this function will failed in Android Q(10) API 29
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.O || Build.VERSION.SdkInt == BuildVersionCodes.P)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.O || Build.VERSION.SdkInt >= BuildVersionCodes.P)
             {
-                WifiManager mWifiManager = (WifiManager)GetSystemService(Context.WifiService);
+                var mWifiManager = GetSystemService(WifiService) as WifiManager;
                 if (mWifiManager != null)
                 {
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
@@ -220,10 +220,10 @@ namespace TrojanPlusApp.Droid
             }
             else if (Build.VERSION.SdkInt == BuildVersionCodes.OMr1)
             {
-                ConnectivityManager connManager = (ConnectivityManager)GetSystemService(Context.ConnectivityService);
+                var connManager = GetSystemService(ConnectivityService) as ConnectivityManager;
                 if (connManager != null)
                 {
-                    NetworkInfo networkInfo = connManager.ActiveNetworkInfo;
+                    var networkInfo = connManager.ActiveNetworkInfo;
                     if (networkInfo.IsConnected)
                     {
                         if (networkInfo.ExtraInfo != null)

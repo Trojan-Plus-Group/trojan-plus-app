@@ -28,7 +28,6 @@ namespace TrojanPlusApp.Droid
     using Android.Util;
     using Microsoft.AppCenter.Crashes;
     using TrojanPlusApp.Models;
-    using Xamarin.Forms;
 
     public class TrojanPlusStarter
     {
