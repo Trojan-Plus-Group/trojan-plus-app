@@ -10,7 +10,7 @@ According we designing, all Trojan Plus mobile client app should be in same UI w
 
 We don't have a user manual to guide you, because all operations are simple with note and familiar for [Shadowsocks Android](https://github.com/shadowsocks/shadowsocks-android)'s users. But if you have any good idea, suggestion or need some help, please let us know by [report a issue](https://github.com/Trojan-Plus-Group/trojan-plus-app/issues).
 
-## Why we need a mobile client?
+## Why do we need a mobile client?
 
 In one hand, [original Trojan](https://github.com/trojan-gfw/trojan) provides a mobile (Android) client [igniter](https://github.com/trojan-gfw/igniter), it uses GoLang to process data from Android native system, so... not effective, we wrote many basic function by C/C++ process data to get 2 times speed than igniter. 
 
