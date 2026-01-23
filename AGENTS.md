@@ -1,44 +1,49 @@
 # AGENTS.md - Coding Guidelines for Trojan Plus App
 
-This document provides comprehensive guidelines for coding agents working on the Trojan Plus App, a cross-platform mobile VPN/proxy client built with Xamarin.Forms for Android, iOS, and UWP.
+This document provides comprehensive guidelines for coding agents working on the Trojan Plus App, a cross-platform mobile VPN/proxy client built with .NET MAUI for Android and iOS.
 
 ## Project Overview
 
-Trojan Plus App is a mobile client for the Trojan Plus VPN protocol, supporting Android, iOS, and Windows platforms. It uses Xamarin.Forms for cross-platform UI and native platform-specific implementations.
+Trojan Plus App is a mobile client for the Trojan Plus VPN protocol, supporting Android and iOS platforms. It uses .NET MAUI for cross-platform UI and native platform-specific implementations.
+
+## MAUI Migration (2026)
+
+The project has been successfully migrated from Xamarin.Forms to .NET MAUI:
+
+- **Framework**: Updated to .NET 10.0 with MAUI 10.0.1
+- **Removed Platforms**: UWP support discontinued
+- **API Updates**: MessagingCenter → Custom Messenger, Properties → Preferences, MasterDetailPage → FlyoutPage
+- **Build System**: Migrated from MSBuild to dotnet CLI
+- **Dependencies**: All packages updated to MAUI-compatible versions
 
 ## Build Commands
 
 ### Full Solution Build
 ```bash
-msbuild TrojanPlusApp.sln /p:Configuration=Release
+dotnet build TrojanPlusApp.sln --configuration Release
 ```
 
 ### Platform-Specific Builds
 
 #### Android
 ```bash
-msbuild TrojanPlusApp.Android/TrojanPlusApp.Android.csproj /p:Configuration=Release /t:PackageForAndroid
+dotnet build TrojanPlusApp.Android/TrojanPlusApp.Android.csproj --configuration Release
 ```
 
 #### iOS
 ```bash
-msbuild TrojanPlusApp.iOS/TrojanPlusApp.iOS.csproj /p:Configuration=Release /p:Platform=iPhone
-```
-
-#### UWP
-```bash
-msbuild TrojanPlusApp.UWP/TrojanPlusApp.UWP.csproj /p:Configuration=Release /p:Platform=x86
+dotnet build TrojanPlusApp.iOS/TrojanPlusApp.iOS.csproj --configuration Release
 ```
 
 ### Package Restore
 ```bash
-nuget restore TrojanPlusApp.sln
+dotnet restore TrojanPlusApp.sln
 ```
 
 ### Clean Build
 ```bash
-msbuild TrojanPlusApp.sln /t:Clean
-msbuild TrojanPlusApp.sln /p:Configuration=Release
+dotnet clean TrojanPlusApp.sln
+dotnet build TrojanPlusApp.sln --configuration Release
 ```
 
 ### Linting
@@ -107,8 +112,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
-using Xamarin.Essentials;
-using Xamarin.Forms;
+using Microsoft.Maui.Essentials;
+using Microsoft.Maui.Controls;
 
 using TrojanPlusApp.Behaviors;
 using TrojanPlusApp.ViewModels;
@@ -171,8 +176,6 @@ using TrojanPlusApp.ViewModels;
       // Android-specific code
   #elif __IOS__
       // iOS-specific code
-  #elif WINDOWS_UWP
-      // UWP-specific code
   #endif
   ```
 
