@@ -9,9 +9,8 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidUseAapt2>true</AndroidUseAapt2>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <MauiVersion>10.0.1</MauiVersion>
+     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+     <MauiVersion>10.0.1</MauiVersion>
     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -60,16 +59,7 @@
     <AndroidSigningKeyAlias>key0</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>123456</AndroidSigningKeyPass>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Mono.Android" />
-    <Reference Include="Mono.Android.Export" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
@@ -83,14 +73,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TrojanPlusMainActivity.cs" />
-    <Compile Include="TrojanPlusSplashScreen.cs" />
-    <Compile Include="TrojanPlusStarter.cs" />
-    <Compile Include="TrojanPlusVPNService.cs" />
-    <Compile Include="TrojanPlusNotification.cs" />
-    <Compile Include="TrojanPlusAutoJobService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidNativeLibrary Include="lib\arm64-v8a\libtrojan.so" />
