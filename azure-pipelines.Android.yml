@@ -14,10 +14,10 @@ steps:
     packageType: 'sdk'
     version: '10.0.x'
 
-- task: DotNetCoreCLI@2
+- task: PowerShell@2
   inputs:
-    command: 'workload'
-    arguments: 'install maui-android'
+    targetType: 'inline'
+    script: 'dotnet workload install maui-android --skip-sign-check'
 
 - task: DotNetCoreCLI@2
   inputs:
