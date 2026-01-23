@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-android</TargetFramework>
-    <MauiVersion>10.0.1</MauiVersion>
     <OutputType>Exe</OutputType>
     <RootNamespace>TrojanPlusApp</RootNamespace>
     <AssemblyName>TrojanPlusApp.Android</AssemblyName>
@@ -11,6 +10,7 @@
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +68,16 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TrojanPlusMainActivity.cs" />
+    <Compile Include="TrojanPlusSplashScreen.cs" />
+    <Compile Include="TrojanPlusStarter.cs" />
+    <Compile Include="TrojanPlusVPNService.cs" />
+    <Compile Include="TrojanPlusNotification.cs" />
+    <Compile Include="TrojanPlusAutoJobService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
