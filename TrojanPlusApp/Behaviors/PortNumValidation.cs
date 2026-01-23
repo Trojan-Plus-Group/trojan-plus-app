@@ -29,7 +29,7 @@ namespace TrojanPlusApp.Behaviors
         {
             ushort port;
             bool valid = ushort.TryParse(args.NewTextValue, out port) && port > 0;
-            ((Entry)sender).TextColor = valid ? Color.Default : Color.Red;
+            ((Entry)sender).TextColor = valid ? Colors.Black : Colors.Red;
         }
 
         protected override void OnAttachedTo(Entry entry)

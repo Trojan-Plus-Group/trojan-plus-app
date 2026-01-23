@@ -28,7 +28,7 @@ namespace TrojanPlusApp.Behaviors
     {
         public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
-            ((Entry)sender).TextColor = IsValid(args.NewTextValue) ? Color.Default : Color.Red;
+            ((Entry)sender).TextColor = IsValid(args.NewTextValue) ? Colors.Black : Colors.Red;
         }
 
         protected override void OnAttachedTo(Entry entry)

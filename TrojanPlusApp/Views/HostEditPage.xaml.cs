@@ -95,7 +95,7 @@ namespace TrojanPlusApp.Views
             {
                 Item.LoadBalance.Clear();
                 Item.LoadBalance.AddRange(LoadBalance);
-                MessagingCenter.Send(this, "UpdateItem", Item);
+                Messenger.Send("UpdateItem", Item);
                 await Navigation.PopModalAsync();
                 return;
             }
@@ -112,7 +112,7 @@ namespace TrojanPlusApp.Views
             Item.LoadBalance.Clear();
             Item.LoadBalance.AddRange(LoadBalance);
             LoadBalance.Clear();
-            MessagingCenter.Send(this, "AddItem", Item);
+            Messenger.Send("AddItem", Item);
             await Navigation.PopModalAsync();
         }
 
@@ -131,7 +131,7 @@ namespace TrojanPlusApp.Views
 
             if (response)
             {
-                MessagingCenter.Send(this, "DeleteItem", Item);
+                Messenger.Send("DeleteItem", Item);
                 await Navigation.PopModalAsync();
             }
         }
@@ -164,7 +164,7 @@ namespace TrojanPlusApp.Views
             newItem.LoadBalance.Clear();
             newItem.LoadBalance.AddRange(LoadBalance);
             LoadBalance.Clear();
-            MessagingCenter.Send(this, "AddItem", newItem);
+            Messenger.Send("AddItem", newItem);
             await Navigation.PopModalAsync();
         }
 

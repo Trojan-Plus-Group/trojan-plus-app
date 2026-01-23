@@ -91,7 +91,7 @@ namespace TrojanPlusApp.Models
         }
 
         [JsonIgnore]
-        public Color UI_SelectedColor => UI_Selected ? Color.Black : Color.LightGray;
+        public Color UI_SelectedColor => UI_Selected ? Colors.Black : Colors.LightGray;
 
         [JsonIgnore]
         public int UI_Route
