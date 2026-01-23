@@ -70,13 +70,13 @@ namespace TrojanPlusApp
         public void OnSetStartBtnEnabled(bool enable)
         {
             IsStartBtnEnabled = enable;
-            MessagingCenter.Send(this, "Starter_OnSetStartBtnEnabled", enable);
+            Messenger.Send("Starter_OnSetStartBtnEnabled", enable);
         }
 
         public void OnVpnIsRunning(bool running)
         {
             IsVpnServiceRunning = running;
-            MessagingCenter.Send(this, "Starter_OnVpnIsRunning", running);
+            Messenger.Send("Starter_OnVpnIsRunning", running);
         }
 
         /*

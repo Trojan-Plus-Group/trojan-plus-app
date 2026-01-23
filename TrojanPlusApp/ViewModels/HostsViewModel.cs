@@ -70,7 +70,7 @@ namespace TrojanPlusApp.ViewModels
 
             goingToRuningHostName = DataStore.Settings.HostRunningName;
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "AddItem", async (sender, item) =>
+            Messenger.Subscribe<HostModel>("AddItem", async (item) =>
             {
                 var newItem = item as HostModel;
                 if (newItem != null)
@@ -91,7 +91,7 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.AddItemAsync(newItem);
             });
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "DeleteItem", async (sender, item) =>
+            Messenger.Subscribe<HostModel>("DeleteItem", async (item) =>
             {
                 var deleteItem = item as HostModel;
                 if (deleteItem != null)
@@ -115,7 +115,7 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.DeleteItemAsync(deleteItem.HostName);
             });
 
-            MessagingCenter.Subscribe<HostEditPage, HostModel>(this, "UpdateItem", async (sender, item) =>
+            Messenger.Subscribe<HostModel>("UpdateItem", async (item) =>
             {
                 var updatedItem = item as HostModel;
                 if (updatedItem != null)
@@ -138,12 +138,12 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.UpdateItemAsync(updatedItem);
             });
 
-            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnSetStartBtnEnabled", (sender, enable) =>
+            Messenger.Subscribe<bool>("Starter_OnSetStartBtnEnabled", (enable) =>
             {
                 OnPropertyChanged("IsConnectBtnEnabled");
             });
 
-            MessagingCenter.Subscribe<App, bool>(this, "Starter_OnVpnIsRunning", (sender, running) =>
+            Messenger.Subscribe<bool>("Starter_OnVpnIsRunning", (running) =>
             {
                 OnPropertyChanged("ConnectBtnText");
 

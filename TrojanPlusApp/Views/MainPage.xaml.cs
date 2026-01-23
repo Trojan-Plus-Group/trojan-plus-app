@@ -31,14 +31,14 @@ namespace TrojanPlusApp.Views
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class MainPage : MasterDetailPage
+    public partial class MainPage : FlyoutPage
     {
         private Dictionary<int, NavigationPage> menuPages = new Dictionary<int, NavigationPage>();
         public MainPage()
         {
             InitializeComponent();
 
-            MasterBehavior = MasterBehavior.Popover;
+            FlyoutLayoutBehavior = FlyoutLayoutBehavior.Popover;
 
             menuPages.Add((int)MenuItemType.AllHost, (NavigationPage)Detail);
         }
@@ -52,19 +52,19 @@ namespace TrojanPlusApp.Views
                     case (int)MenuItemType.AllHost:
                         menuPages.Add(id, new NavigationPage(new HostsPage())
                         {
-                            BarBackgroundColor = Color.Black
+                            BarBackgroundColor = Colors.Black
                         });
                         break;
                     case (int)MenuItemType.Settings:
                         menuPages.Add(id, new NavigationPage(new SettingsPage())
                         {
-                            BarBackgroundColor = Color.Black
+                            BarBackgroundColor = Colors.Black
                         });
                         break;
                     case (int)MenuItemType.About:
                         menuPages.Add(id, new NavigationPage(new AboutPage())
                         {
-                            BarBackgroundColor = Color.Black
+                            BarBackgroundColor = Colors.Black
                         });
                         break;
                 }

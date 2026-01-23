@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -26,6 +26,7 @@ namespace TrojanPlusApp.Services
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
+    using Microsoft.Maui.Storage;
 
     public class DataStore
     {
@@ -37,18 +38,20 @@ namespace TrojanPlusApp.Services
 
         public DataStore()
         {
-            if (App.Instance.Properties.ContainsKey(HostsKey))
+            var hostsJson = Preferences.Get(HostsKey, string.Empty);
+            if (!string.IsNullOrEmpty(hostsJson))
             {
-                items = JsonConvert.DeserializeObject<List<HostModel>>(App.Instance.Properties[HostsKey] as string);
+                items = JsonConvert.DeserializeObject<List<HostModel>>(hostsJson);
             }
             else
             {
                 items = new List<HostModel>();
             }
 
-            if (App.Instance.Properties.ContainsKey(SettingsKey))
+            var settingsJson = Preferences.Get(SettingsKey, string.Empty);
+            if (!string.IsNullOrEmpty(settingsJson))
             {
-                Settings = JsonConvert.DeserializeObject<SettingsModel>(App.Instance.Properties[SettingsKey] as string);
+                Settings = JsonConvert.DeserializeObject<SettingsModel>(settingsJson);
             }
             else
             {
@@ -124,12 +127,12 @@ namespace TrojanPlusApp.Services
 
         public Task StoreToFile()
         {
-            App.Instance.Properties[HostsKey] = JsonConvert.SerializeObject(items);
-            App.Instance.Properties[SettingsKey] = JsonConvert.SerializeObject(Settings);
+            Preferences.Set(HostsKey, JsonConvert.SerializeObject(items));
+            Preferences.Set(SettingsKey, JsonConvert.SerializeObject(Settings));
 
             App.Instance.Starter.SettingsChanged(Settings);
 
-            return App.Instance.SavePropertiesAsync();
+            return Task.CompletedTask;
         }
     }
 }

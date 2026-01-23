@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
-            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-            mc:Ignorable="d"
-            xmlns:views="clr-namespace:TrojanPlusApp.Views"
-            x:Class="TrojanPlusApp.Views.MainPage">
+<?xml version="1.0" encoding="utf-8" ?>
+ <FlyoutPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:views="clr-namespace:TrojanPlusApp.Views"
+             x:Class="TrojanPlusApp.Views.MainPage">
 
-	<MasterDetailPage.Master>
-		<views:MenuPage />
-	</MasterDetailPage.Master>
+ 	<FlyoutPage.Flyout>
+ 		<views:MenuPage />
+ 	</FlyoutPage.Flyout>
 
-	<MasterDetailPage.Detail>
+ 	<FlyoutPage.Detail>
 		<NavigationPage>
 			<x:Arguments>
 				<views:HostsPage />
@@ -22,6 +22,6 @@
 				</OnPlatform>
 			</NavigationPage.Icon>
 		</NavigationPage>
-	</MasterDetailPage.Detail>
+ 	</FlyoutPage.Detail>
 
-</MasterDetailPage>
+ </FlyoutPage>
