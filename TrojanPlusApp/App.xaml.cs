@@ -23,9 +23,9 @@ namespace TrojanPlusApp
 {
     using System.Collections.Generic;
     using System.IO;
+    using Microsoft.Maui.Controls;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.Views;
-    using Microsoft.Maui.Controls;
 
     public partial class App : Application
     {

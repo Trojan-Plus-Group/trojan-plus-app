@@ -71,18 +71,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TrojanPlusMainActivity.cs" />
-    <Compile Include="TrojanPlusSplashScreen.cs" />
-    <Compile Include="TrojanPlusStarter.cs" />
-    <Compile Include="TrojanPlusVPNService.cs" />
-    <Compile Include="TrojanPlusNotification.cs" />
-    <Compile Include="TrojanPlusAutoJobService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.AppCenter" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -90,14 +83,14 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TrojanPlusAutoJobService.cs" />
-    <Compile Include="TrojanPlusSplashScreen.cs" />
     <Compile Include="TrojanPlusMainActivity.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrojanPlusNotification.cs" />
+    <Compile Include="TrojanPlusSplashScreen.cs" />
     <Compile Include="TrojanPlusStarter.cs" />
     <Compile Include="TrojanPlusVPNService.cs" />
+    <Compile Include="TrojanPlusNotification.cs" />
+    <Compile Include="TrojanPlusAutoJobService.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidNativeLibrary Include="lib\arm64-v8a\libtrojan.so" />

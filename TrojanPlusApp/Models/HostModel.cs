@@ -221,7 +221,6 @@ namespace TrojanPlusApp.Models
         "    }\n" +
         "}\n";
 
-
         public string PrepareConfig(HostsViewModel hosts, bool isLoadBalancePrepare = false)
         {
             string config = ConfigTemplate;
