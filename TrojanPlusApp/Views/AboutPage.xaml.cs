@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -22,7 +22,7 @@
 namespace TrojanPlusApp.Views
 {
     using System.ComponentModel;
-    using Xamarin.Forms;
+    using Microsoft.Maui.Controls;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer

@@ -1,10 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrojanPlusApp.UWP", "TrojanPlusApp.UWP\TrojanPlusApp.UWP.csproj", "{57EBBD14-F482-4868-9CA1-BC757F6BD720}"
-EndProject
+
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrojanPlusApp.Android", "TrojanPlusApp.Android\TrojanPlusApp.Android.csproj", "{BC448B26-25D9-4F1F-AC8C-007317C9A22C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrojanPlusApp.iOS", "TrojanPlusApp.iOS\TrojanPlusApp.iOS.csproj", "{85EA17CB-B0C2-4474-83C1-C9F2382B3D05}"
@@ -33,42 +32,8 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|Any CPU.Build.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|Any CPU.Deploy.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|ARM.ActiveCfg = Debug|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|ARM.Build.0 = Debug|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|ARM.Deploy.0 = Debug|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhone.ActiveCfg = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhone.Build.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhone.Deploy.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhoneSimulator.ActiveCfg = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhoneSimulator.Build.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|iPhoneSimulator.Deploy.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x64.ActiveCfg = Debug|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x64.Build.0 = Debug|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x64.Deploy.0 = Debug|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x86.ActiveCfg = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x86.Build.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Debug|x86.Deploy.0 = Debug|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|Any CPU.ActiveCfg = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|Any CPU.Build.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|Any CPU.Deploy.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|ARM.ActiveCfg = Release|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|ARM.Build.0 = Release|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|ARM.Deploy.0 = Release|ARM
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhone.ActiveCfg = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhone.Build.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhone.Deploy.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhoneSimulator.ActiveCfg = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhoneSimulator.Build.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|iPhoneSimulator.Deploy.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x64.ActiveCfg = Release|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x64.Build.0 = Release|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x64.Deploy.0 = Release|x64
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x86.ActiveCfg = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x86.Build.0 = Release|x86
-		{57EBBD14-F482-4868-9CA1-BC757F6BD720}.Release|x86.Deploy.0 = Release|x86
+
+
 		{BC448B26-25D9-4F1F-AC8C-007317C9A22C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC448B26-25D9-4F1F-AC8C-007317C9A22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC448B26-25D9-4F1F-AC8C-007317C9A22C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
