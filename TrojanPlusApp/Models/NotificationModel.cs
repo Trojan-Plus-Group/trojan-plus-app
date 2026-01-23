@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -50,7 +50,6 @@ namespace TrojanPlusApp.Models
             onChanged?.Invoke();
             OnPropertyChanged(propertyName);
             return true;
-        }
-
     }
+}
 }

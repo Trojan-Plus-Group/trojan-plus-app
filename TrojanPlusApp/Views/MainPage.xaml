@@ -16,11 +16,11 @@
 			<x:Arguments>
 				<views:HostsPage />
 			</x:Arguments>
-			<NavigationPage.Icon>
+			<NavigationPage.IconImageSource>
 				<OnPlatform x:TypeArguments="FileImageSource">
 					<On Platform="iOS" Value="tab_feed.png"/>
 				</OnPlatform>
-			</NavigationPage.Icon>
+			</NavigationPage.IconImageSource>
 		</NavigationPage>
  	</FlyoutPage.Detail>
 
