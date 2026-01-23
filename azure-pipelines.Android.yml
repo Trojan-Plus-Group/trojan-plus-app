@@ -22,7 +22,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    projects: '**/*.sln'
+    projects: '**/*Android*.csproj'
 
 - task: DotNetCoreCLI@2
   inputs:
