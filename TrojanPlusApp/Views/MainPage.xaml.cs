@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -25,7 +25,8 @@ namespace TrojanPlusApp.Views
     using System.ComponentModel;
     using System.Threading.Tasks;
     using TrojanPlusApp.Models;
-    using Xamarin.Forms;
+    using Microsoft.Maui.Controls;
+    using Microsoft.Maui.Devices;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -75,7 +76,7 @@ namespace TrojanPlusApp.Views
             {
                 Detail = newPage;
 
-                if (Device.RuntimePlatform == Device.Android)
+                if (DeviceInfo.Platform == DevicePlatform.Android)
                 {
                     await Task.Delay(100);
                 }

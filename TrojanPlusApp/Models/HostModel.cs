@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -27,8 +27,8 @@ namespace TrojanPlusApp.Models
     using Newtonsoft.Json;
     using TrojanPlusApp.Behaviors;
     using TrojanPlusApp.ViewModels;
-    using Xamarin.Essentials;
-    using Xamarin.Forms;
+    using Microsoft.Maui.Essentials;
+    using Microsoft.Maui.Controls;
 
     public class HostModel : NotificationModel
     {
