@@ -16,6 +16,11 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
+    command: 'workload'
+    arguments: 'install maui-android'
+
+- task: DotNetCoreCLI@2
+  inputs:
     command: 'restore'
     projects: '**/*.sln'
 
