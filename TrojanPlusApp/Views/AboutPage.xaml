@@ -4,9 +4,10 @@
              xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="TrojanPlusApp.Views.AboutPage"
-             xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
-             Title="{Binding Title}">
+              x:Class="TrojanPlusApp.Views.AboutPage"
+              xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
+              x:DataType="vm:AboutViewModel"
+              Title="{Binding Title}">
 
 	<ContentPage.BindingContext>
 		<vm:AboutViewModel />
@@ -38,7 +39,7 @@
 							<FormattedString.Spans>
 								<Span Text="Trojan Plus App " FontAttributes="Bold" FontSize="22" />
 								<Span Text=" v" />
-								<Span Text="{Binding AppVersion}" ForegroundColor="{StaticResource LightTextColor}" />
+								<Span Text="{Binding AppVersion}" TextColor="{StaticResource LightTextColor}" />
 							</FormattedString.Spans>
 						</FormattedString>
 					</Label.FormattedText>
@@ -90,8 +91,8 @@ You should have received a copy of the GNU General Public License along with thi
                                           CommandParameter="https://github.com/Trojan-Plus-Group/trojan-plus" />
 									</Span.GestureRecognizers>
 								</Span>
-								<Span Text=" v" ForegroundColor="{StaticResource LightTextColor}"/>
-								<Span Text="{Binding TrojanPlusVersion}" ForegroundColor="{StaticResource LightTextColor}" />
+								<Span Text=" v" TextColor="{StaticResource LightTextColor}"/>
+								<Span Text="{Binding TrojanPlusVersion}" TextColor="{StaticResource LightTextColor}" />
 							</FormattedString.Spans>
 						</FormattedString>
 					</Label.FormattedText>

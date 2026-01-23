@@ -27,13 +27,13 @@ namespace TrojanPlusApp
 {
     public static class Messenger
     {
-        private static readonly Dictionary<string, List<Delegate>> _subscribers = new Dictionary<string, List<Delegate>>();
+        private static readonly Dictionary<string, List<Delegate>> Subscribers = new Dictionary<string, List<Delegate>>();
 
         public static void Send<T>(string message, T args)
         {
-            if (_subscribers.TryGetValue(message, out var subscribers))
+            if (Subscribers.TryGetValue(message, out var list))
             {
-                foreach (var subscriber in subscribers)
+                foreach (var subscriber in list)
                 {
                     if (subscriber is Action<T> action)
                     {
@@ -49,20 +49,20 @@ namespace TrojanPlusApp
 
         public static void Subscribe<T>(string message, Action<T> callback)
         {
-            if (!_subscribers.ContainsKey(message))
+            if (!Subscribers.ContainsKey(message))
             {
-                _subscribers[message] = new List<Delegate>();
+                Subscribers[message] = new List<Delegate>();
             }
-            _subscribers[message].Add(callback);
+            Subscribers[message].Add(callback);
         }
 
         public static void Subscribe<T>(string message, Func<object, T, Task> callback)
         {
-            if (!_subscribers.ContainsKey(message))
+            if (!Subscribers.ContainsKey(message))
             {
-                _subscribers[message] = new List<Delegate>();
+                Subscribers[message] = new List<Delegate>();
             }
-            _subscribers[message].Add(callback);
+            Subscribers[message].Add(callback);
         }
     }
 }

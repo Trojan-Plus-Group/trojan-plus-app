@@ -4,10 +4,12 @@
              xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="TrojanPlusApp.Views.HostEditPage"
-             Title="{Binding PageTitle}"
-			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
-			 xmlns:behaviors="clr-namespace:TrojanPlusApp.Behaviors">
+              x:Class="TrojanPlusApp.Views.HostEditPage"
+              Title="{Binding PageTitle}"
+ 			 xmlns:local="clr-namespace:TrojanPlusApp.Views"
+ 			 x:DataType="local:HostEditPage"
+ 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+ 			 xmlns:behaviors="clr-namespace:TrojanPlusApp.Behaviors">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="{x:Static resources:TextResource.New_ToolbarCancel}" Clicked="Cancel_Clicked" />
