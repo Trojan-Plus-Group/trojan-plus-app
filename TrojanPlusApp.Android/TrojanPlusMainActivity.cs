@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -46,7 +46,7 @@ namespace TrojanPlusApp.Droid
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class TrojanPlusMainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class TrojanPlusMainActivity : global::Microsoft.Maui.MauiAppCompatActivity
     {
         public class Communicator : TrojanPlusStarter.IActivityCommunicator, App.IStart
         {
@@ -145,8 +145,8 @@ namespace TrojanPlusApp.Droid
 
             base.OnCreate(savedInstanceState);
 
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Microsoft.Maui.ApplicationModel.Platform.Init(this, savedInstanceState);
+            global::Microsoft.Maui.MauiApp.Init(this, savedInstanceState);
 
             var com = new Communicator(this);
             starter = new TrojanPlusStarter(this, com);
