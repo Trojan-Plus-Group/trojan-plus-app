@@ -7,6 +7,7 @@
              x:Class="TrojanPlusApp.Views.SettingsPage"
              xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+			 x:DataType="vm:SettingsViewModel"
              Title="{Binding Title}">
 
 	<ContentPage.Content>
@@ -65,7 +66,7 @@
 								</x:Array>
 							</d:BindableLayout.ItemsSource>
 							<BindableLayout.ItemTemplate>
-								<DataTemplate>
+								<DataTemplate x:DataType="x:String">
 									<StackLayout Margin="10,0,0,0" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
 										<ImageButton Margin="0,0,10,0" Source="icon_delete.png" HeightRequest="30" BackgroundColor="Transparent"
 										 HorizontalOptions="Start" WidthRequest="30" VerticalOptions="Center" Clicked="OnDeleteWifiClicked" />
