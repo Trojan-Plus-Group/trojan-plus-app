@@ -11,6 +11,23 @@
 			<!--Global Styles-->
 			<Color x:Key="NavigationPrimary">#000000</Color>
 			<Color x:Key="NavigationSecond">#404040</Color>
+            
+            <Color x:Key="PrimaryTextColor">#000000</Color>
+            <Color x:Key="PrimaryTextColorDark">#FFFFFF</Color>
+
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
+            </Style>
+            
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
+                <Setter Property="PlaceholderColor" Value="Gray" />
+            </Style>
+
+            <Style TargetType="Picker">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
+            </Style>
+
 			<Style TargetType="NavigationPage">
 				<Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
 				<Setter Property="BarTextColor" Value="White" />

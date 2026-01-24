@@ -39,9 +39,9 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center" TextColor="Black" 
-                                LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
-                                FontSize="30" />
+							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center" 
+                                 LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
+                                 FontSize="30" />
 
 							<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
 										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" 
