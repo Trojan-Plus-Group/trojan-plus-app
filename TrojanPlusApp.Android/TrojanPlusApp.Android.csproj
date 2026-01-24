@@ -107,6 +107,11 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\notification_small_icon.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\notification_small_icon.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\notification_small_icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\notification_small_icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\notification_small_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrojanPlusApp\TrojanPlusApp.csproj" />

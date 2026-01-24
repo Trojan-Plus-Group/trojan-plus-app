@@ -6,7 +6,7 @@ using Microsoft.Maui.Hosting;
 
 namespace TrojanPlusApp.Droid;
 
-[Application]
+[Application(Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round")]
 public class MainApplication : MauiApplication
 {
 	public MainApplication(IntPtr handle, JniHandleOwnership ownership)
