@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TrojanPlusApp</RootNamespace>
     <AssemblyName>TrojanPlusApp.Android</AssemblyName>
-    <ApplicationId>com.trojan_plus.app</ApplicationId>
+    <ApplicationId>com.trojan_plus.android</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
@@ -107,11 +107,7 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\notification_small_icon.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\notification_small_icon.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\notification_small_icon.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\notification_small_icon.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\notification_small_icon.png" />
+    <AndroidResource Include="Resources\drawable\notification_small_icon.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrojanPlusApp\TrojanPlusApp.csproj" />

@@ -10,7 +10,7 @@
 		<ApplicationTitle>Trojan Plus App</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.trojan_plus.app</ApplicationId>
+		<ApplicationId>com.trojan_plus.android</ApplicationId>
 		<ApplicationIdGuid>9c9c8b7b-8c8b-4b4b-8b8b-8c8c8c8c8c8c</ApplicationIdGuid>
 
 		<!-- Versions -->
