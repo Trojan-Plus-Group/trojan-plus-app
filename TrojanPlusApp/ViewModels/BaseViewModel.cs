@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -21,15 +21,16 @@
 
 namespace TrojanPlusApp.ViewModels
 {
+    using System;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.Services;
 
     public class BaseViewModel : NotificationModel
     {
-        private static readonly DataStore DataStoreValue = new DataStore();
+        private static readonly Lazy<DataStore> DataStoreValue = new Lazy<DataStore>(() => new DataStore());
         public DataStore DataStore
         {
-            get { return DataStoreValue; }
+            get { return DataStoreValue.Value; }
         }
 
         private string title = string.Empty;
