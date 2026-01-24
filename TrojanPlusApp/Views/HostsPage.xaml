@@ -7,6 +7,8 @@
              x:Class="TrojanPlusApp.Views.HostsPage"
 			 xmlns:models="clr-namespace:TrojanPlusApp.Models"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
+			 xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
+			 x:DataType="vm:HostsViewModel"
 			 Title="{Binding Title}">
 
 	<ContentPage.ToolbarItems>
@@ -22,7 +24,7 @@
 				</x:Array>
 			</d:CollectionView.ItemsSource>
 			<CollectionView.ItemTemplate>
-				<DataTemplate>
+				<DataTemplate x:DataType="models:HostModel">
 					<StackLayout Padding="5" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
 						<BoxView WidthRequest="5" Color="{Binding UI_SelectedColor}"/>
 						<Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
