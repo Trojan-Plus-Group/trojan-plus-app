@@ -3,7 +3,7 @@
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
  * for more experimental features.
- * Copyright (C) 2020 The Trojan Plus Group Authors.
+ * Copyright (C) 2026 The Trojan Plus Group Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
