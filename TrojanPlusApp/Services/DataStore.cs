@@ -58,7 +58,11 @@ namespace TrojanPlusApp.Services
                 Settings = new SettingsModel();
             }
 
-            App.Instance.Starter.SettingsChanged(Settings);
+            // Only call SettingsChanged if Starter is initialized
+            if (App.Instance.Starter != null)
+            {
+                App.Instance.Starter.SettingsChanged(Settings);
+            }
         }
 
         public void FillHosts(IList<HostModel> list)
@@ -130,7 +134,11 @@ namespace TrojanPlusApp.Services
             Preferences.Set(HostsKey, JsonConvert.SerializeObject(items));
             Preferences.Set(SettingsKey, JsonConvert.SerializeObject(Settings));
 
-            App.Instance.Starter.SettingsChanged(Settings);
+            // Only call SettingsChanged if Starter is initialized
+            if (App.Instance.Starter != null)
+            {
+                App.Instance.Starter.SettingsChanged(Settings);
+            }
 
             return Task.CompletedTask;
         }
