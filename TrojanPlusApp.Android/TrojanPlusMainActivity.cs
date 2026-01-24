@@ -147,6 +147,14 @@ namespace TrojanPlusApp.Droid
             var com = new Communicator(this);
             starter = new TrojanPlusStarter(this, com);
             App.Instance.Initialize(PrepareConfigPath, com);
+
+            if (Build.VERSION.SdkInt >= (BuildVersionCodes)33)
+            {
+                if (CheckSelfPermission("android.permission.POST_NOTIFICATIONS") != Permission.Granted)
+                {
+                    RequestPermissions(new string[] { "android.permission.POST_NOTIFICATIONS" }, 0);
+                }
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
