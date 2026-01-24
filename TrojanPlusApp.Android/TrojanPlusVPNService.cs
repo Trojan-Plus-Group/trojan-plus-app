@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -40,7 +40,8 @@ namespace TrojanPlusApp.Droid
             Enabled = true,
             Permission = "android.permission.BIND_VPN_SERVICE",
             Process = ":vpn_remote",
-            Exported = true)]
+            Exported = true,
+            ForegroundServiceType = Android.Content.PM.ForegroundService.TypeSpecialUse)]
     [IntentFilter(new string[] { "android.net.VpnService" })]
     public class TrojanPlusVPNService : Android.Net.VpnService
     {
@@ -91,7 +92,13 @@ namespace TrojanPlusApp.Droid
             var intent = new Intent(Application.Context, typeof(TrojanPlusMainActivity));
             intent.SetFlags(ActivityFlags.ReorderToFront);
 
-            return PendingIntent.GetActivity(Application.Context, 0, intent, 0);
+            var flags = PendingIntentFlags.UpdateCurrent;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                flags |= PendingIntentFlags.Immutable;
+            }
+
+            return PendingIntent.GetActivity(Application.Context, 0, intent, flags);
         }
 
         public override void OnCreate()
