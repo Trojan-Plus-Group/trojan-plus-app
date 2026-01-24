@@ -54,10 +54,10 @@
     <MandroidI18n />
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\trojan_plush_android_key.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass>123456</AndroidSigningStorePass>
-    <AndroidSigningKeyAlias>key0</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass>123456</AndroidSigningKeyPass>
+    <AndroidSigningKeyStore>debug.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>android</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>androiddebugkey</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>android</AndroidSigningKeyPass>
   </PropertyGroup>
 
   <ItemGroup>

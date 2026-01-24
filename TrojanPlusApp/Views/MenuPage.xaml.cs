@@ -31,7 +31,7 @@ namespace TrojanPlusApp.Views
     [DesignTimeVisible(false)]
     public partial class MenuPage : ContentPage
     {
-        public MainPage RootPage { get => Application.Current.MainPage as MainPage; }
+        public MainPage RootPage { get => Application.Current.Windows.FirstOrDefault()?.Page as MainPage ?? throw new InvalidOperationException("No window available"); }
 
         private List<HomeMenuItem> menuItems;
 
@@ -46,16 +46,17 @@ namespace TrojanPlusApp.Views
                 new HomeMenuItem { Id = MenuItemType.About, Title = Resx.TextResource.Menu_AboutTitle }
             };
 
-            ListViewMenu.ItemsSource = menuItems;
-            ListViewMenu.SelectedItem = menuItems[0];
-            ListViewMenu.ItemSelected += async (sender, e) =>
+            CollectionViewMenu.ItemsSource = menuItems;
+            CollectionViewMenu.SelectedItem = menuItems[0];
+            CollectionViewMenu.SelectionChanged += async (sender, e) =>
             {
-                if (e.SelectedItem == null)
+                var selectedItem = e.CurrentSelection.FirstOrDefault();
+                if (selectedItem == null)
                 {
                     return;
                 }
 
-                var id = (int)((HomeMenuItem)e.SelectedItem).Id;
+                var id = (int)((HomeMenuItem)selectedItem).Id;
                 await RootPage.NavigateFromMenu(id);
             };
         }

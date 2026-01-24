@@ -8,24 +8,21 @@
              Title="Menu">
 
 	<StackLayout VerticalOptions="FillAndExpand">
-		<ListView x:Name="ListViewMenu"
-                    HasUnevenRows="True">
-			<d:ListView.ItemsSource>
+		<CollectionView x:Name="CollectionViewMenu">
+			<CollectionView.ItemsSource>
 				<x:Array Type="{x:Type x:String}">
 					<x:String>Item 1</x:String>
 					<x:String>Item 2</x:String>
 				</x:Array>
-			</d:ListView.ItemsSource>
-			<ListView.ItemTemplate>
+			</CollectionView.ItemsSource>
+			<CollectionView.ItemTemplate>
 				<DataTemplate>
-					<ViewCell>
-						<Grid Padding="10">
-							<Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="20" TextColor="Gray"/>
-						</Grid>
-					</ViewCell>
+					<Grid Padding="10">
+						<Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="20" TextColor="Gray"/>
+					</Grid>
 				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
 	</StackLayout>
 
 </ContentPage>

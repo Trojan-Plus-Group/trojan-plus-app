@@ -28,7 +28,7 @@ namespace TrojanPlusApp.Models
 
     public class NotificationModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -39,7 +39,7 @@ namespace TrojanPlusApp.Models
            ref T backingStore,
            T value,
            [CallerMemberName] string propertyName = "",
-           Action onChanged = null)
+           Action? onChanged = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
             {
