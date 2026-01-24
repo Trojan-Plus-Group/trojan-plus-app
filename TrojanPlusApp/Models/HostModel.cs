@@ -232,6 +232,11 @@ namespace TrojanPlusApp.Models
             string cn_ips_path = Path.Combine(App.Instance.DataPathParent, "cn_ips_list");
             string cert_path = Path.Combine(App.Instance.DataPathParent, "cacert");
 
+            if (!Directory.Exists(App.Instance.DataPathParent))
+            {
+                Directory.CreateDirectory(App.Instance.DataPathParent);
+            }
+
             if (!File.Exists(version_path) || File.ReadAllText(version_path) != appVersion)
             {
                 File.WriteAllText(version_path, appVersion);

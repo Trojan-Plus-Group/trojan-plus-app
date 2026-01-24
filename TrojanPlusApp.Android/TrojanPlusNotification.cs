@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Trojan Plus project.
  * Trojan is an unidentifiable mechanism that helps you bypass GFW.
  * Trojan Plus is derived from original trojan project and writing
@@ -48,7 +48,14 @@ namespace TrojanPlusApp.Droid
 
         public void Show()
         {
-            service.StartForeground(1, builder.Build());
+            if (Build.VERSION.SdkInt >= (BuildVersionCodes)34)
+            {
+                service.StartForeground(1, builder.Build(), Android.Content.PM.ForegroundService.TypeSpecialUse);
+            }
+            else
+            {
+                service.StartForeground(1, builder.Build());
+            }
         }
 
         public void Destroy()

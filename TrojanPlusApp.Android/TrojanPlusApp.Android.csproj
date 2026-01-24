@@ -11,7 +11,7 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
      <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
      <MauiVersion>10.0.1</MauiVersion>
-     <SupportedOSPlatformVersion>31.0</SupportedOSPlatformVersion>
+     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
