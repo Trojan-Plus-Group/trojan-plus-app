@@ -46,7 +46,7 @@
 				</Label>
 				<Label HorizontalOptions="StartAndExpand">
 					<Label.Text>
-						Trojan Plus App can help you to bypass some firewalls without being detected, this Android/iOS/UWP app is based on Xamarim Forms Framework and Trojan Plus open source project.
+						Trojan Plus App can help you to bypass some firewalls without being detected, this Android/iOS app is based on .NET MAUI Framework and Trojan Plus open source project.
 
 Copyright (C) 2020 by Trojan-Plus-Group Authors
 						
@@ -70,10 +70,10 @@ You should have received a copy of the GNU General Public License along with thi
 					<Label.FormattedText>
 						<FormattedString>
 							<FormattedString.Spans>
-								<Span Text="Xamarin.Forms" TextColor="Blue" TextDecorations="Underline">
+								<Span Text=".NET MAUI" TextColor="Blue" TextDecorations="Underline">
 									<Span.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding ClickCommand}"
-                                          CommandParameter="https://xamarin.com" />
+                                          CommandParameter="https://dotnet.microsoft.com/en-us/apps/maui" />
 									</Span.GestureRecognizers>
 								</Span>
 
