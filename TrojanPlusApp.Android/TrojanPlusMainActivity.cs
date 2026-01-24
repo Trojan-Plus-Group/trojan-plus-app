@@ -131,7 +131,7 @@ namespace TrojanPlusApp.Droid
             string[] permissions,
             [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Microsoft.Maui.ApplicationModel.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -140,19 +140,13 @@ namespace TrojanPlusApp.Droid
         {
             AppCenter.Start("ac977bfd-2c63-4663-8fe1-4d3ea3f4750c", typeof(Analytics), typeof(Crashes));
 
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
-
             base.OnCreate(savedInstanceState);
 
             Microsoft.Maui.ApplicationModel.Platform.Init(this, savedInstanceState);
-            global::Microsoft.Maui.MauiApp.Init(this, savedInstanceState);
 
             var com = new Communicator(this);
             starter = new TrojanPlusStarter(this, com);
             app = new App(PrepareConfigPath, com);
-
-            LoadApplication(app);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
