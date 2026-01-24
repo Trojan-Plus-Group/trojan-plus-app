@@ -64,7 +64,7 @@ namespace TrojanPlusApp.Resx {
         ///   Looks up a localized string similar to ##
         ///## Bundle of CA Root Certificates
         ///##
-        ///## Certificate data from Mozilla as of: Wed Jan  1 04:12:10 2020 GMT
+        ///## Certificate data from Mozilla as of: Wed Jan  1 04:12:10 2026 GMT
         ///##
         ///## This is a bundle of X.509 certificates of public Certificate Authorities
         ///## (CA). These were automatically extracted from Mozilla&apos;s root certificates
