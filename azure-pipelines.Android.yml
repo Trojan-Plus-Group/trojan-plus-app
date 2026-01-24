@@ -6,7 +6,7 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - name: outputDirectory
-  value: '$(build.binariesDirectory)/$(buildConfiguration)'
+  value: '$(Build.SourcesDirectory)/TrojanPlusApp.Android/bin/$(buildConfiguration)/net10.0-android'
 
 steps:
 - task: UseDotNet@2
@@ -26,14 +26,13 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: '**/*Android*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(outputDirectory) --framework net10.0-android'
+    command: 'build'
+    projects: 'TrojanPlusApp.Android/TrojanPlusApp.Android.csproj'
+    arguments: '--configuration $(buildConfiguration) --framework net10.0-android'
 
 - task: AndroidSigning@3
-  inputs: 
-    apkFiles: '$(outputDirectory)/*.apk'
+  inputs:
+    apkFiles: '$(outputDirectory)/com.trojan_plus.android.apk'
     apksign: true
     apksignerKeystoreFile: 'trojan_plush_android_key.jks'
     apksignerKeystorePassword: $(keystore-password)

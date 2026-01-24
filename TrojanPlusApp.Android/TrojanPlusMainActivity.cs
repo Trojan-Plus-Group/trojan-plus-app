@@ -37,6 +37,7 @@ namespace TrojanPlusApp.Droid
     using Microsoft.AppCenter;
     using Microsoft.AppCenter.Analytics;
     using Microsoft.AppCenter.Crashes;
+    using Microsoft.Maui.Controls;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
 
@@ -58,12 +59,12 @@ namespace TrojanPlusApp.Droid
 
             public void SetStartBtnEnabled(bool enable)
             {
-                activity.app.OnSetStartBtnEnabled(enable);
+                App.Instance.OnSetStartBtnEnabled(enable);
             }
 
             public void OnVpnIsRunning(bool running)
             {
-                activity.app.OnVpnIsRunning(running);
+                App.Instance.OnVpnIsRunning(running);
             }
 
             public string GetConfigPath()
@@ -122,7 +123,6 @@ namespace TrojanPlusApp.Droid
         }
 
         private static readonly string TAG = typeof(TrojanPlusMainActivity).Name;
-        private App app;
         private TrojanPlusStarter starter;
         private SettingsModel settings = null;
 
@@ -146,7 +146,7 @@ namespace TrojanPlusApp.Droid
 
             var com = new Communicator(this);
             starter = new TrojanPlusStarter(this, com);
-            app = new App(PrepareConfigPath, com);
+            App.Instance.Initialize(PrepareConfigPath, com);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
