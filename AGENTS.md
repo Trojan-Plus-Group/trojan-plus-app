@@ -52,6 +52,17 @@ dotnet build TrojanPlusApp.sln --configuration Release
 dotnet build TrojanPlusApp/TrojanPlusApp.csproj --no-restore
 ```
 
+### Android Build & Install Script
+A helper script is provided to build and install the Android app automatically to a connected device/emulator:
+```bash
+# Make executable
+chmod +x build_and_install.sh
+
+# Run build and install
+./build_and_install.sh
+```
+The script uses `dotnet publish` to generate the signed APK and `adb install` for deployment.
+
 ## Testing
 
 Currently, there are no automated unit or integration tests configured. Manual testing is performed on physical devices and emulators.

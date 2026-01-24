@@ -41,7 +41,7 @@ namespace TrojanPlusApp.Droid
             Permission = "android.permission.BIND_VPN_SERVICE",
             Process = ":vpn_remote",
             Exported = true,
-            ForegroundServiceType = Android.Content.PM.ForegroundService.TypeSpecialUse)]
+            ForegroundServiceType = (Android.Content.PM.ForegroundService)0x40000000)]
     [IntentFilter(new string[] { "android.net.VpnService" })]
     public class TrojanPlusVPNService : Android.Net.VpnService
     {

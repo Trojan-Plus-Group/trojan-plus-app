@@ -48,9 +48,9 @@ namespace TrojanPlusApp.Droid
 
         public void Show()
         {
-            if (Build.VERSION.SdkInt >= (BuildVersionCodes)34)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                service.StartForeground(1, builder.Build(), Android.Content.PM.ForegroundService.TypeSpecialUse);
+                service.StartForeground(1, builder.Build(), (Android.Content.PM.ForegroundService)0x40000000);
             }
             else
             {
