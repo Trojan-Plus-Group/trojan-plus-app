@@ -52,13 +52,16 @@ namespace TrojanPlusApp
         public bool IsStartBtnEnabled { get; private set; }
         public bool IsVpnServiceRunning { get; private set; }
 
-        public App(string configPath, IStart starter)
+        public App()
+        {
+            InitializeComponent();
+        }
+
+        public void Initialize(string configPath, IStart starter)
         {
             Starter = starter;
             DataPathParent = configPath.Substring(0, configPath.LastIndexOf(Path.DirectorySeparatorChar));
             ConfigPath = configPath;
-
-            InitializeComponent();
         }
 
         protected override Window CreateWindow(IActivationState activationState)

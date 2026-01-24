@@ -9,12 +9,6 @@
 
 	<StackLayout VerticalOptions="FillAndExpand">
 		<CollectionView x:Name="CollectionViewMenu">
-			<CollectionView.ItemsSource>
-				<x:Array Type="{x:Type x:String}">
-					<x:String>Item 1</x:String>
-					<x:String>Item 2</x:String>
-				</x:Array>
-			</CollectionView.ItemsSource>
 			<CollectionView.ItemTemplate>
 				<DataTemplate>
 					<Grid Padding="10">

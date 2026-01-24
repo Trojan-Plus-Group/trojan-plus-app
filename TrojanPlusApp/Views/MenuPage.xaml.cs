@@ -23,6 +23,7 @@ namespace TrojanPlusApp.Views
 {
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
     using TrojanPlusApp.Models;
     using Microsoft.Maui.Controls;
 
