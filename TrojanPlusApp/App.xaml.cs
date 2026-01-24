@@ -59,7 +59,11 @@ namespace TrojanPlusApp
             ConfigPath = configPath;
 
             InitializeComponent();
-            MainPage = new MainPage();
+        }
+
+        protected override Window CreateWindow(IActivationState activationState)
+        {
+            return new Window(new MainPage());
         }
 
         public void Start(SettingsModel settings)

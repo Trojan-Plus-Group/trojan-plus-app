@@ -50,7 +50,7 @@ namespace TrojanPlusApp.Views
             }
         }
 
-        public HostEditPage(HostsViewModel viewModel, HostModel editHost)
+        public HostEditPage(HostsViewModel viewModel, HostModel? editHost)
         {
             InitializeComponent();
 

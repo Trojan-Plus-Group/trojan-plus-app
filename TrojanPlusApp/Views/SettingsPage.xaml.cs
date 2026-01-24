@@ -92,7 +92,10 @@ namespace TrojanPlusApp.Views
             {
                 var layout = (BindableObject)sender;
                 var ssid = layout.BindingContext as string;
-                viewModel.Settings.AutoStopWifi.Remove(ssid);
+                if (ssid != null)
+                {
+                    viewModel.Settings.AutoStopWifi.Remove(ssid);
+                }
             }
         }
 
