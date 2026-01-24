@@ -48,18 +48,17 @@ namespace TrojanPlusApp.Views
             };
 
             CollectionViewMenu.ItemsSource = menuItems;
-            CollectionViewMenu.SelectedItem = menuItems[0];
-            CollectionViewMenu.SelectionChanged += async (sender, e) =>
-            {
-                var selectedItem = e.CurrentSelection.FirstOrDefault();
-                if (selectedItem == null)
-                {
-                    return;
-                }
+        }
 
-                var id = (int)((HomeMenuItem)selectedItem).Id;
-                await RootPage.NavigateFromMenu(id);
-            };
+        private async void OnMenuTapped(object sender, System.EventArgs e)
+        {
+            var grid = (Grid)sender;
+            var item = (HomeMenuItem)grid.BindingContext;
+
+            if (item != null)
+            {
+                await RootPage.NavigateFromMenu((int)item.Id);
+            }
         }
     }
 }

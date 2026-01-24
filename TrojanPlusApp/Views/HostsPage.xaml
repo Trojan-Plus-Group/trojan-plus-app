@@ -15,8 +15,8 @@
 		<ToolbarItem Text="{x:Static resources:TextResource.Menu_HostsToolbarAdd}" Clicked="AddItem_Clicked" />
 	</ContentPage.ToolbarItems>
 
-	<StackLayout>
-		<CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}">
+	<Grid RowDefinitions="*, Auto">
+		<CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}" Grid.Row="0">
 			<d:CollectionView.ItemsSource>
 				<x:Array Type="{x:Type models:HostModel}">
 					<models:HostModel HostName="Host 1 Name" HostAddress="vpn.example.com" HostPort="443"/>
@@ -77,7 +77,7 @@
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 		</CollectionView>
-		<Grid HeightRequest="100" >
+		<Grid HeightRequest="100" Grid.Row="1">
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
@@ -86,6 +86,6 @@
 					WidthRequest="120" Style="{StaticResource buttonStyle}"/>
 		</Grid>
 
-	</StackLayout>
+	</Grid>
 
 </ContentPage>
