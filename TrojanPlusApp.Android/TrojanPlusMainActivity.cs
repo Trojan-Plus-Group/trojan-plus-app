@@ -114,7 +114,7 @@ namespace TrojanPlusApp.Droid
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TrojanPlusMainActivity.AutoChannelID)
                 .SetContentTitle(title)
                 .SetContentIntent(TrojanPlusVPNService.CreatePendingIntent())
-                .SetSmallIcon(Resource.Mipmap.notification_small_icon)
+                .SetSmallIcon(Resource.Drawable.notification_small_icon)
                 .SetPriority((int)NotificationPriority.Low)
                 .SetAutoCancel(true);
 
