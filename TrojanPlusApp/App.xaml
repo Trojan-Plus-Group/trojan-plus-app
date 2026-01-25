@@ -13,24 +13,46 @@
 			<Color x:Key="NavigationSecond">#404040</Color>
             
             <Color x:Key="PrimaryTextColor">#000000</Color>
-            <Color x:Key="PrimaryTextColorDark">#FFFFFF</Color>
+            <Color x:Key="PrimaryTextColorDark">#E0E0E0</Color>
 
-            <Style TargetType="Label">
+            <Color x:Key="PrimaryBackgroundColor">#FFFFFF</Color>
+            <Color x:Key="PrimaryBackgroundColorDark">#1C1C1C</Color>
+
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}" />
+            </Style>
+
+            <Style TargetType="FlyoutPage" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}" />
+            </Style>
+
+            <Style TargetType="Label" ApplyToDerivedTypes="True">
                 <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
             </Style>
+
+            <Style x:Key="ListItemTextStyle" TargetType="Label" ApplyToDerivedTypes="True">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
+                <Setter Property="FontSize" Value="30" />
+            </Style>
+
+            <Style x:Key="ListItemDetailTextStyle" TargetType="Label" ApplyToDerivedTypes="True">
+                <Setter Property="TextColor" Value="Gray" />
+                <Setter Property="FontSize" Value="20" />
+            </Style>
             
-            <Style TargetType="Entry">
+            <Style TargetType="Entry" ApplyToDerivedTypes="True">
                 <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
                 <Setter Property="PlaceholderColor" Value="Gray" />
             </Style>
 
-            <Style TargetType="Picker">
+            <Style TargetType="Picker" ApplyToDerivedTypes="True">
                 <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource PrimaryTextColorDark}}" />
             </Style>
 
 			<Style TargetType="NavigationPage">
 				<Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
 				<Setter Property="BarTextColor" Value="White" />
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}" />
 			</Style>
 
 			<Style x:Key="buttonStyle" TargetType="Button">

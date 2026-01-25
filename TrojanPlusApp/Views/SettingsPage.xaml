@@ -8,7 +8,8 @@
              xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
 			 x:DataType="vm:SettingsViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}">
 
 	<ContentPage.Content>
 		<ScrollView>

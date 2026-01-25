@@ -4,10 +4,12 @@
              xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-              x:Class="TrojanPlusApp.Views.AboutPage"
-              xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
-              x:DataType="vm:AboutViewModel"
-              Title="{Binding Title}">
+               x:Class="TrojanPlusApp.Views.AboutPage"
+               xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
+               x:DataType="vm:AboutViewModel"
+               Title="{Binding Title}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}">
+
 
 	<ContentPage.BindingContext>
 		<vm:AboutViewModel />
@@ -24,7 +26,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+		<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
 			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
 				<ContentView Padding="0,10,0,10" VerticalOptions="FillAndExpand">
 					<Image Source="trojan_plus_logo.png" VerticalOptions="Center" HeightRequest="80" BackgroundColor="Transparent"/>

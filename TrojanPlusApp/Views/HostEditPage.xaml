@@ -4,9 +4,11 @@
              xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-              x:Class="TrojanPlusApp.Views.HostEditPage"
-              Title="{Binding PageTitle}"
+               x:Class="TrojanPlusApp.Views.HostEditPage"
+               Title="{Binding PageTitle}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}"
  			 xmlns:local="clr-namespace:TrojanPlusApp.Views"
+
  			 x:DataType="local:HostEditPage"
  			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
  			 xmlns:behaviors="clr-namespace:TrojanPlusApp.Behaviors">
