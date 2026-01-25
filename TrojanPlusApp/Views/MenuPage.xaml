@@ -6,14 +6,15 @@
              xmlns:models="clr-namespace:TrojanPlusApp.Models"
              mc:Ignorable="d"
              x:Class="TrojanPlusApp.Views.MenuPage"
-             Title="Menu">
+             Title="Menu"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}">
 
 	<StackLayout VerticalOptions="FillAndExpand">
 		<CollectionView x:Name="CollectionViewMenu" SelectionMode="None">
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="models:HomeMenuItem">
 					<Grid Padding="10">
-						<Label Text="{Binding Title}" FontSize="20" TextColor="Gray"/>
+						<Label Text="{Binding Title}" FontSize="20"/>
 						<Grid.GestureRecognizers>
 							<TapGestureRecognizer Tapped="OnMenuTapped" />
 						</Grid.GestureRecognizers>

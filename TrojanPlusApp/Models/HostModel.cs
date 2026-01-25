@@ -87,11 +87,8 @@ namespace TrojanPlusApp.Models
         public bool UI_Selected
         {
             get { return uiSelected; }
-            set { SetProperty(ref uiSelected, value, "UI_SelectedColor"); }
+            set { SetProperty(ref uiSelected, value); }
         }
-
-        [JsonIgnore]
-        public Color UI_SelectedColor => UI_Selected ? Colors.Black : Colors.LightGray;
 
         [JsonIgnore]
         public int UI_Route

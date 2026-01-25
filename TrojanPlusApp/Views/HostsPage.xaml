@@ -9,7 +9,8 @@
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
 			 xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
 			 x:DataType="vm:HostsViewModel"
-			 Title="{Binding Title}">
+			 Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="{x:Static resources:TextResource.Menu_HostsToolbarAdd}" Clicked="AddItem_Clicked" />
@@ -26,7 +27,13 @@
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="models:HostModel">
 					<StackLayout Padding="5" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
-						<BoxView WidthRequest="5" Color="{Binding UI_SelectedColor}"/>
+						<BoxView WidthRequest="5" Color="Transparent">
+                            <BoxView.Triggers>
+                                <DataTrigger TargetType="BoxView" Binding="{Binding UI_Selected}" Value="True">
+                                    <Setter Property="Color" Value="{AppThemeBinding Light=Black, Dark={StaticResource PrimaryTextColorDark}}" />
+                                </DataTrigger>
+                            </BoxView.Triggers>
+                        </BoxView>
 						<Grid HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto"/>
@@ -81,7 +88,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition/>
 			</Grid.RowDefinitions>
-			<BoxView VerticalOptions="Fill" BackgroundColor="LightGray"/>
+			<BoxView VerticalOptions="Fill" BackgroundColor="{AppThemeBinding Light=LightGray, Dark=#333333}"/>
 			<Button Text="{Binding ConnectBtnText}" Clicked="OnConnectBtnClicked" IsEnabled="{Binding IsConnectBtnEnabled}"
 					WidthRequest="120" Style="{StaticResource buttonStyle}"/>
 		</Grid>

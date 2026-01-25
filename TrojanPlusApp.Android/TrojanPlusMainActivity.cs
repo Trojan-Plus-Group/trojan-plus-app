@@ -46,7 +46,7 @@ namespace TrojanPlusApp.Droid
         Label = "@string/app_name",
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode)]
     public class TrojanPlusMainActivity : global::Microsoft.Maui.MauiAppCompatActivity
     {
         public class Communicator : TrojanPlusStarter.IActivityCommunicator, App.IStart
