@@ -20,7 +20,7 @@ In the other hand, [Trojan Plus](https://github.com/Trojan-Plus-Group/trojan-plu
 
 ## Android
 
-You can [download](https://github.com/Trojan-Plus-Group/trojan-plus-app/releases/tag/0.0.1) the **beta version** APK file to help us to improve this app. If you has any issue, please let us know by this project's [issue reporting page](https://github.com/Trojan-Plus-Group/trojan-plus-app/issues).
+You can [download](https://github.com/Trojan-Plus-Group/trojan-plus-app/releases) APK file to help us to improve this app. If you has any issue, please let us know by this project's [issue reporting page](https://github.com/Trojan-Plus-Group/trojan-plus-app/issues).
 
 Here's a known "issue", becuase users can select route rules in this app same as other Shadowsocks' client so that all network data of whole device's app have to be transferred to this app from native system.
 
@@ -30,7 +30,7 @@ Maybe, it's not a issue, because each mobile proxy app used for bypass some fire
 
 ## iOS
 
-The iOS version is available and can be built from source.
+The iOS version is unavailable now.
 
 
 ## License 
