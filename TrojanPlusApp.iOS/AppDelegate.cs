@@ -39,26 +39,71 @@ namespace TrojanPlusApp.iOS
 
         public class Stater : TrojanPlusApp.App.IStart
         {
+            private TrojanPlusVPNManager vpnManager;
+
+            public Stater()
+            {
+                vpnManager = new TrojanPlusVPNManager();
+                _ = vpnManager.InitializeAsync();
+            }
+
             public string GetTrojanPlusLibVersion()
             {
-                throw new NotImplementedException();
+                return NativeInterop.GetTrojanVersion();
             }
 
             public List<string> GetWifiSSIDs()
             {
-                throw new NotImplementedException();
+                // iOS restricts WiFi SSID access
+                // Requires location permission and specific entitlements
+                // For now, return empty list
+                var ssids = new List<string>();
+
+                // TODO: Implement WiFi SSID retrieval if needed
+                // Requires: Hotspot Configuration entitlement
+                // and NEHotspotHelper API
+
+                return ssids;
             }
 
             public void SettingsChanged(SettingsModel settings)
             {
-                throw new NotImplementedException();
+                // Handle settings changes
+                // If VPN is running, may need to restart with new settings
+                if (vpnManager.IsConnected)
+                {
+                    Console.WriteLine("Settings changed while VPN is connected");
+                    // TODO: Decide whether to restart VPN automatically
+                }
             }
 
-            public void Switch(SettingsModel settings)
+            public async void Switch(SettingsModel settings)
             {
-                throw new NotImplementedException();
-            }
+                try
+                {
+                    if (vpnManager.IsConnected)
+                    {
+                        vpnManager.StopVPN();
+                        TrojanPlusApp.App.Instance?.OnSetStartBtnEnabled(true);
+                    }
+                    else
+                    {
+                        TrojanPlusApp.App.Instance?.OnSetStartBtnEnabled(false);
+                        bool success = await vpnManager.StartVPNAsync(settings);
 
+                        if (!success)
+                        {
+                            Console.WriteLine("Failed to start VPN");
+                            TrojanPlusApp.App.Instance?.OnSetStartBtnEnabled(true);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Switch error: {ex.Message}");
+                    TrojanPlusApp.App.Instance?.OnSetStartBtnEnabled(true);
+                }
+            }
         }
     }
 }
