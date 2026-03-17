@@ -15,6 +15,14 @@
 		<ScrollView>
 			<StackLayout Spacing="10" Padding="10">
 
+				<!-- iOS Platform Note -->
+				<Label Text="当前没有什么需要设置的"
+					   HorizontalOptions="Center"
+					   VerticalOptions="Center"
+					   FontSize="Medium"
+					   Margin="0,20,0,0"
+					   IsVisible="{OnPlatform iOS=True, Default=False}" />
+
 				<!-- Enabling Android Notification  -->
 				<Grid Margin="0,10,0,0" IsVisible="{OnPlatform Android=True, Default=False}">
 					<Grid.ColumnDefinitions>
@@ -81,7 +89,7 @@
 
 					<!-- Note about auto-function -->
 					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1" IsVisible="{OnPlatform Android=True, Default=False}" />
-					<Label Text="{x:Static resources:TextResource.Settings_AutoFunctionNote}" HorizontalOptions="Start" VerticalOptions="Center"  FontSize="Medium" />
+					<Label Text="{x:Static resources:TextResource.Settings_AutoFunctionNote}" HorizontalOptions="Start" VerticalOptions="Center"  FontSize="Medium" IsVisible="{OnPlatform Android=True, Default=False}" />
 					<Label Text="{x:Static resources:TextResource.Settings_AutoFunctionNoteDetail}" FontSize="Small" IsVisible="{OnPlatform Android=True, Default=False}" />
 
 				</StackLayout>

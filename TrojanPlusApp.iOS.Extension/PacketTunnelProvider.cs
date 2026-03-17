@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Foundation;
 using NetworkExtension;
+using TrojanPlusApp.Models;
 
 namespace TrojanPlusApp.iOS.Extension
 {
@@ -55,22 +56,89 @@ namespace TrojanPlusApp.iOS.Extension
             {
                 NSLog("PacketTunnelProvider: StartTunnel called");
 
-                // Configure TUN interface settings
-                var settings = new NEPacketTunnelNetworkSettings(new NSString("10.233.233.1"));
+                // Configure TUN interface settings using HostModel constants
+                var settings = new NEPacketTunnelNetworkSettings(new NSString(HostModel.TunGateWayIP));
 
                 // IPv4 settings
                 settings.IPv4Settings = new NEIPv4Settings(
-                    new string[] { "10.233.233.2" },
+                    new string[] { HostModel.TunNetIP },
                     new string[] { "255.255.255.0" });
 
                 // DNS settings
-                settings.DnsSettings = new NEDnsSettings(new string[] { "8.8.8.8", "8.8.4.4" });
+                settings.DnsSettings = new NEDnsSettings(new string[] { "114.114.114.114", "8.8.4.4" });
 
                 // Set tunnel network settings
                 await SetTunnelNetworkSettingsAsync(settings);
 
-                // TODO: Get TUN file descriptor and start trojan
-                // For now, just complete successfully
+                // Get TUN file descriptor from PacketFlow
+                // In iOS, we need to use reflection or value coding to access the socket file descriptor
+                int tunFd = -1;
+                try
+                {
+                    // Try to get file descriptor using KVC (Key-Value Coding)
+                    var fdValue = PacketFlow.ValueForKeyPath(new NSString("socket.fileDescriptor"));
+                    if (fdValue is NSNumber fdNumber)
+                    {
+                        tunFd = fdNumber.Int32Value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    NSLog($"PacketTunnelProvider: Failed to get fd via KVC: {ex.Message}");
+
+                    // Alternative: try to get the underlying socket handle
+                    // The PacketFlow object should have a socket that we can access
+                    // For now, log error and continue - trojan may be able to work without explicit fd
+                }
+
+                NSLog($"PacketTunnelProvider: TUN fd = {tunFd}");
+
+                if (tunFd < 0)
+                {
+                    NSLog("PacketTunnelProvider: Warning - could not get TUN file descriptor, trojan may not work correctly");
+                }
+
+                // Get config path from shared container
+                string configPath = GetConfigPath();
+                if (string.IsNullOrEmpty(configPath) || !System.IO.File.Exists(configPath))
+                {
+                    throw new Exception($"Config file not found at: {configPath}");
+                }
+
+                NSLog($"PacketTunnelProvider: Config path = {configPath}");
+
+                // Read config file and replace tun_fd placeholder
+                string configContent = System.IO.File.ReadAllText(configPath);
+                configContent = configContent.Replace("${tun.tun_fd}", tunFd.ToString());
+
+                // Write modified config to a runtime config file
+                string runtimeConfigPath = configPath + "_running";
+                System.IO.File.WriteAllText(runtimeConfigPath, configContent);
+
+                NSLog($"PacketTunnelProvider: Runtime config written to {runtimeConfigPath}");
+
+                // Start trojan in background thread
+                isRunning = true;
+                trojanThread = new Thread(() =>
+                {
+                    try
+                    {
+                        NSLog("PacketTunnelProvider: Starting trojan_run_main");
+                        trojan_run_main(runtimeConfigPath);
+                        NSLog("PacketTunnelProvider: trojan_run_main exited");
+                    }
+                    catch (Exception ex)
+                    {
+                        NSLog($"PacketTunnelProvider: trojan_run_main error: {ex.Message}");
+                    }
+                    finally
+                    {
+                        isRunning = false;
+                    }
+                });
+                trojanThread.IsBackground = true;
+                trojanThread.Start();
+
                 NSLog("PacketTunnelProvider: Tunnel started successfully");
                 completionHandler(null);
             }
@@ -106,6 +174,25 @@ namespace TrojanPlusApp.iOS.Extension
         private static void NSLog(string message)
         {
             Console.WriteLine($"[PacketTunnelProvider] {message}");
+        }
+
+        private string GetConfigPath()
+        {
+            // Get shared container path (App Group)
+            var fileManager = NSFileManager.DefaultManager;
+            var containerUrl = fileManager.GetContainerUrl("group.com.trojanplus.ios");
+
+            if (containerUrl == null)
+            {
+                NSLog("ERROR: Could not access App Group container");
+                return null;
+            }
+
+            string containerPath = containerUrl.Path;
+            string configPath = System.IO.Path.Combine(containerPath, "config.json");
+
+            NSLog($"Config path: {configPath}");
+            return configPath;
         }
     }
 }

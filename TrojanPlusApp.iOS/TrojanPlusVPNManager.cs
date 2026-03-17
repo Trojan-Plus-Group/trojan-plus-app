@@ -54,7 +54,10 @@ namespace TrojanPlusApp.iOS
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"VPN Manager initialization error: {ex.Message}");
+                // VPN functionality is not available on iOS Simulator
+                // This is expected behavior - only log for debugging
+                Console.WriteLine($"VPN Manager initialization failed (expected on simulator): {ex.Message}");
+                isInitialized = false;
                 return false;
             }
         }

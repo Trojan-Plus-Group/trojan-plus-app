@@ -46,18 +46,25 @@ namespace TrojanPlusApp.iOS
                     return false;
                 }
 
-                // Save settings to shared container
-                // TODO: Implement proper config generation based on selected host
-                // For now, just create a placeholder file
-                var configPath = Path.Combine(sharedPath, "trojan_config.json");
-                File.WriteAllText(configPath, "{}");
+                // Get the config file path from main app
+                string sourceConfigPath = TrojanPlusApp.App.Instance.ConfigPath;
+                if (string.IsNullOrEmpty(sourceConfigPath) || !File.Exists(sourceConfigPath))
+                {
+                    Console.WriteLine($"ERROR: Source config file not found at: {sourceConfigPath}");
+                    return false;
+                }
 
-                Console.WriteLine($"Config saved to: {configPath}");
+                // Copy config file to shared container
+                var destConfigPath = Path.Combine(sharedPath, "config.json");
+                File.Copy(sourceConfigPath, destConfigPath, overwrite: true);
+
+                Console.WriteLine($"Config copied from {sourceConfigPath} to {destConfigPath}");
                 return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"ERROR saving config: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return false;
             }
         }

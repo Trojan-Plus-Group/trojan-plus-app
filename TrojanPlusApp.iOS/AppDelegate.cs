@@ -37,6 +37,23 @@ namespace TrojanPlusApp.iOS
     {
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 
+        public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+        {
+            // Call base first to create App instance
+            bool result = base.FinishedLaunching(application, launchOptions);
+
+            // Initialize App with config path and Starter
+            string configPath = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "..",
+                "Library",
+                "config.json");
+
+            TrojanPlusApp.App.Instance.Initialize(configPath, new Stater());
+
+            return result;
+        }
+
         public class Stater : TrojanPlusApp.App.IStart
         {
             private TrojanPlusVPNManager vpnManager;

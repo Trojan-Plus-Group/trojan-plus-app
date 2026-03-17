@@ -192,3 +192,6 @@ FakesAssemblies/
 .vs/
 .idea/
 Resource.designer.cs
+
+# Environment variables with sensitive data
+.env

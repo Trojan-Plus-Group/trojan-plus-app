@@ -59,15 +59,16 @@
 				<Setter Property="HorizontalOptions" Value="CenterAndExpand" />
 				<Setter Property="VerticalOptions" Value="CenterAndExpand" />
 				<Setter Property="CornerRadius" Value="5" />
-				<Setter Property="BorderWidth" Value="5" />
-				<Setter Property="TextColor" Value="White" />
-				<Setter Property="BackgroundColor" Value="{StaticResource NavigationPrimary}"/>
+				<Setter Property="BorderWidth" Value="0" />
+				<Setter Property="BorderColor" Value="Transparent" />
+				<Setter Property="TextColor" Value="#FFFFFF" />
+				<Setter Property="BackgroundColor" Value="#000000"/>
 				<Style.Triggers>
 					<Trigger TargetType="Button"
                              Property="IsEnabled"
                              Value="False">
-						<Setter Property="TextColor" Value="Gray" />
-						<Setter Property="BackgroundColor" Value="{StaticResource NavigationSecond}"/>
+						<Setter Property="TextColor" Value="#808080" />
+						<Setter Property="BackgroundColor" Value="#404040"/>
 					</Trigger>
 				</Style.Triggers>
 			</Style>

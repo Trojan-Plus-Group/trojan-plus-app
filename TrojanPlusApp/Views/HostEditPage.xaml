@@ -77,15 +77,15 @@
 
 				<Grid Margin="0,10,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="0.5*" />
-						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_HostSSLVerify}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Item.SSLVerify}" Grid.Column="1" VerticalOptions="Center" />
+					<Switch IsToggled="{Binding Item.SSLVerify}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_HostSSLVerifyDetail}" FontSize="Small" />
 
@@ -93,15 +93,15 @@
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="0.5*" />
-						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_HostEnablePipeline}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch x:Name="Switch_EnablingPipeline" IsToggled="{Binding Item.EnablePipeline}" Grid.Column="1" VerticalOptions="Center" />
+					<Switch x:Name="Switch_EnablingPipeline" IsToggled="{Binding Item.EnablePipeline}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_HostEnablePipelineDetail}" FontSize="Small" />
 
@@ -138,15 +138,15 @@
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="0.5*" />
-						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_EnableFastOpen}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Item.EnableTCPFastOpen}" Grid.Column="1" VerticalOptions="Center" />
+					<Switch IsToggled="{Binding Item.EnableTCPFastOpen}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_EnableFastOpenDetail}" FontSize="Small" />
 
@@ -154,15 +154,15 @@
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="0.5*" />
-						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Item.EnableDebugLog}" Grid.Column="1" VerticalOptions="Center" />
+					<Switch IsToggled="{Binding Item.EnableDebugLog}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log_Detail}" FontSize="Small" />
 

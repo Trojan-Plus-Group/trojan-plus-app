@@ -34,6 +34,9 @@ chmod +x build_and_install.sh
 
 ### iOS Build
 ```bash
+# Set your Apple Developer certificate (required for device builds)
+export IOS_CODESIGN_KEY="Apple Development: Your Name (TEAM_ID)"
+
 # Build main app
 dotnet build TrojanPlusApp.iOS/TrojanPlusApp.iOS.csproj --configuration Debug
 
@@ -41,6 +44,7 @@ dotnet build TrojanPlusApp.iOS/TrojanPlusApp.iOS.csproj --configuration Debug
 dotnet build TrojanPlusApp.iOS.Extension/TrojanPlusApp.iOS.Extension.csproj --configuration Debug
 
 # Note: iOS requires physical device for VPN testing (simulator not supported)
+# Find your certificate identity: security find-identity -v -p codesigning
 ```
 
 ### Platform-Specific Builds
