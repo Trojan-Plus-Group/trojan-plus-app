@@ -5,8 +5,8 @@
     <RootNamespace>TrojanPlusApp</RootNamespace>
     <AssemblyName>TrojanPlusApp.Android</AssemblyName>
     <ApplicationId>com.trojan_plus.android</ApplicationId>
-    <ApplicationVersion>10</ApplicationVersion>
-    <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>11</ApplicationVersion>
+    <ApplicationDisplayVersion>0.2.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidUseAapt2>true</AndroidUseAapt2>
      <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
