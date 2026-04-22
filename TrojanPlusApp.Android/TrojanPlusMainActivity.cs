@@ -40,6 +40,7 @@ namespace TrojanPlusApp.Droid
     using Microsoft.Maui.Controls;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
+    using AndroidX.Core.View;
 
     [Activity(
         Name = "com.trojan_plus.android.TrojanPlusMainActivity",
@@ -142,6 +143,12 @@ namespace TrojanPlusApp.Droid
 
             base.OnCreate(savedInstanceState);
 
+            // make status bar dark not black
+            Window.SetStatusBarColor(Android.Graphics.Color.ParseColor("#212121"));
+            var windowInsetsController = new WindowInsetsControllerCompat(Window, Window.DecorView);
+            windowInsetsController.AppearanceLightStatusBars = false;
+
+            // start MAUI
             Microsoft.Maui.ApplicationModel.Platform.Init(this, savedInstanceState);
 
             var com = new Communicator(this);
@@ -155,6 +162,8 @@ namespace TrojanPlusApp.Droid
                     RequestPermissions(new string[] { "android.permission.POST_NOTIFICATIONS" }, 0);
                 }
             }
+
+
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
