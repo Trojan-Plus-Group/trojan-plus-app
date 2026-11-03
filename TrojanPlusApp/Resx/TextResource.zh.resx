@@ -186,6 +186,12 @@
   <data name="New_EnableQuic" xml:space="preserve">
     <value>优先使用 Quic</value>
   </data>
+  <data name="New_EnableQuicClearSNI" xml:space="preserve">
+    <value>清空 QUIC SNI</value>
+  </data>
+  <data name="New_EnableQuicClearSNIDetail" xml:space="preserve">
+    <value>部分网络在 QUIC 握手包中检测到 SNI 后会立即阻断与服务器的连接。开启后 QUIC 握手不发送 SNI，服务器证书仍按主机域名校验。</value>
+  </data>
   <data name="New_EnableQuicDetail" xml:space="preserve">
     <value>尝试优先使用 Quic (HTTP/3) 协议进行连接（需要服务器开启对 Quic 协议的支持）。如果连接失败会自动回退。</value>
   </data>

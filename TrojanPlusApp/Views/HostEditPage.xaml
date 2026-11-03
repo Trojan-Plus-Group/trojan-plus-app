@@ -166,6 +166,22 @@
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_EnableQuicDetail}" FontSize="Small" />
 
+				<!-- Clear Quic SNI -->
+				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
+				<Grid Margin="0,10,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Label Text="{x:Static resources:TextResource.New_EnableQuicClearSNI}" VerticalOptions="Center"  FontSize="Medium" />
+					<Switch IsToggled="{Binding Item.EnableQuicClearSNI}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
+				</Grid>
+				<Label Text="{x:Static resources:TextResource.New_EnableQuicClearSNIDetail}" FontSize="Small" />
+
 				<!-- Only Quic For Debug -->
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">

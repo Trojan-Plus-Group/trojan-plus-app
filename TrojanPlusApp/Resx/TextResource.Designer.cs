@@ -384,6 +384,24 @@ namespace TrojanPlusApp.Resx {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Clear QUIC SNI.
+        /// </summary>
+        public static string New_EnableQuicClearSNI {
+            get {
+                return ResourceManager.GetString("New_EnableQuicClearSNI", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Some networks cut the connection to the server as soon as a QUIC handshake carries an SNI. When enabled, QUIC handshakes are sent without SNI; the server certificate is still verified against the host name.
+        /// </summary>
+        public static string New_EnableQuicClearSNIDetail {
+            get {
+                return ResourceManager.GetString("New_EnableQuicClearSNIDetail", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Prioritize Quic (HTTP/3) connection. Requires the server to support the Quic protocol..
         /// </summary>
         public static string New_EnableQuicDetail {

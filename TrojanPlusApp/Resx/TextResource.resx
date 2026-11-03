@@ -196,6 +196,12 @@
   <data name="New_EnableQuic" xml:space="preserve">
     <value>Prefer Quic</value>
   </data>
+  <data name="New_EnableQuicClearSNI" xml:space="preserve">
+    <value>Clear QUIC SNI</value>
+  </data>
+  <data name="New_EnableQuicClearSNIDetail" xml:space="preserve">
+    <value>Some networks cut the connection to the server as soon as a QUIC handshake carries an SNI. When enabled, QUIC handshakes are sent without SNI; the server certificate is still verified against the host name.</value>
+  </data>
   <data name="New_EnableQuicDetail" xml:space="preserve">
     <value>Prioritize Quic (HTTP/3) connection. Requires the server to support the Quic protocol.</value>
   </data>
