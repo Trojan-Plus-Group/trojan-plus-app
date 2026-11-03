@@ -28,6 +28,7 @@ namespace TrojanPlusApp.Droid
 
     public class TrojanPlusNotification
     {
+        private const int NotificationId = 1;
         private static readonly string ChannelID = "TrojanPlusNotificationChannel";
         private readonly NotificationCompat.Builder builder;
         private TrojanPlusVPNService service;
@@ -50,17 +51,26 @@ namespace TrojanPlusApp.Droid
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                service.StartForeground(1, builder.Build(), (Android.Content.PM.ForegroundService)0x40000000);
+                service.StartForeground(NotificationId, builder.Build(), (Android.Content.PM.ForegroundService)0x40000000);
             }
             else
             {
-                service.StartForeground(1, builder.Build());
+                service.StartForeground(NotificationId, builder.Build());
             }
         }
 
         public void Destroy()
         {
-            service.StopForeground(true);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                service.StopForeground(StopForegroundFlags.Remove);
+            }
+            else
+            {
+                service.StopForeground(true);
+            }
+            var manager = (NotificationManager)service.GetSystemService(Context.NotificationService);
+            manager.Cancel(NotificationId);
         }
 
         private void CreateNotificationChannel()

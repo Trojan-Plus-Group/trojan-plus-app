@@ -332,7 +332,7 @@
     <value>Trojan Plus Notification</value>
   </data>
   <data name="Notification_Title" xml:space="preserve">
-    <value>Trojan Plus Service is runing as VPN</value>
+    <value>Trojan Plus Service is running as VPN</value>
   </data>
   <data name="Settings_AutoFunctionNote" xml:space="preserve">
     <value>Auto Function Note</value>
