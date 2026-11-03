@@ -86,6 +86,50 @@ namespace TrojanPlusApp.Droid
         private bool showNotification = true;
 
         private TrojanPlusNotification notification = null;
+        private readonly Handler mainHandler = new Handler(Looper.MainLooper);
+        private bool stopping;
+        private bool stopped;
+
+        private void StopVPN()
+        {
+            if (stopping)
+            {
+                return;
+            }
+
+            stopping = true;
+            Log.Info(TAG, "Stopping VPN: removing notification and requesting native stop");
+            notification?.Destroy();
+            if (worker != null)
+            {
+                StopMain(IntPtr.Zero, IntPtr.Zero);
+                return;
+            }
+
+            FinishStop();
+        }
+
+        private void FinishStop()
+        {
+            if (stopped)
+            {
+                return;
+            }
+
+            stopped = true;
+            stopping = true;
+            Log.Info(TAG, "Finishing VPN stop: closing TUN");
+            notification?.Destroy();
+            CloseFD();
+            worker = null;
+            StopSelf();
+            BroadcastStatus(false);
+        }
+
+        public override void OnRevoke()
+        {
+            mainHandler.Post(StopVPN);
+        }
 
         public static PendingIntent CreatePendingIntent()
         {
@@ -112,28 +156,28 @@ namespace TrojanPlusApp.Droid
         public override IBinder OnBind(Intent intent)
         {
             Log.Debug(TAG, "OnBind");
-            return messenger.Binder;
+            return intent?.Action == ServiceInterface ? base.OnBind(intent) : messenger.Binder;
         }
 
         public override void OnDestroy()
         {
             Log.Debug(TAG, "OnDestroy");
+            StopVPN();
             messenger.Dispose();
-            currentService = null;
-
             base.OnDestroy();
 
-            // kill this service to reset memory, otherwise libtrojan.so won't work
-            // Delay the kill to avoid DeadObjectException during unbinding
-            new Handler(Looper.MainLooper).PostDelayed(() =>
+            // Run after OnDestroy and queued unbind callbacks, allowing system_server to drain teardown.
+            mainHandler.PostDelayed(() =>
             {
+                Log.Info(TAG, "VPN teardown complete; resetting native process");
+                currentService = null;
+                // libtrojan.so requires a fresh process for the next session.
                 Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
             }, 500);
         }
 
         public override bool OnUnbind(Intent intent)
         {
-            OnStartCommand(intent, 0, 0);
             return false;
         }
 
@@ -152,7 +196,15 @@ namespace TrojanPlusApp.Droid
                 msg.Data = new Bundle();
                 msg.Data.PutBoolean("start", started);
 
-                replyMessenger.Send(msg);
+                try
+                {
+                    replyMessenger.Send(msg);
+                }
+                catch (RemoteException)
+                {
+                    // The activity may have been removed from recents.
+                    replyMessenger = null;
+                }
             }
         }
 
@@ -223,8 +275,6 @@ namespace TrojanPlusApp.Droid
 
                     configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
 
-                    Log.Debug(TAG, "DEBUG: config.json content:\n" + configFile);
-
                     runConfigPath = prepareConfigPath + TrojanPlusMainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
 
@@ -233,6 +283,7 @@ namespace TrojanPlusApp.Droid
                         notification = new TrojanPlusNotification(this);
                     }
 
+                    notification?.Show();
                     worker = new Thread(new WorkerThread(this).Run);
                     worker.Start();
                 }
@@ -241,8 +292,7 @@ namespace TrojanPlusApp.Droid
                     Crashes.TrackError(ex);
                     Log.Error(TAG, ex.StackTrace);
 
-                    CloseFD();
-                    StopSelf();
+                    StopVPN();
                 }
             }
         }
@@ -284,11 +334,6 @@ namespace TrojanPlusApp.Droid
                 IntPtr path = JNIEnv.NewString(service.runConfigPath);
                 try
                 {
-                    if (service.notification != null)
-                    {
-                        service.notification.Show();
-                    }
-
                     service.BroadcastStatus(true);
 
                     var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
@@ -304,15 +349,11 @@ namespace TrojanPlusApp.Droid
                     JNIEnv.DeleteLocalRef(path);
                 }
 
-                if (service.notification != null)
+                service.mainHandler.Post(() =>
                 {
-                    service.notification.Destroy();
-                }
-
-                service.CloseFD();
-                service.StopSelf();
-                service.worker = null;
-                service.BroadcastStatus(false);
+                    Log.Info(TAG, "RunMain returned; stopping VPN");
+                    service.FinishStop();
+                });
             }
         }
 
@@ -330,7 +371,7 @@ namespace TrojanPlusApp.Droid
                 switch (msg.What)
                 {
                     case TrojanPlusStarter.VPN_START:
-                        if (service.worker == null)
+                        if (service.worker == null && !service.stopping)
                         {
                             Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_START");
                             service.prepareConfigPath = msg.Data.GetString("config");
@@ -351,15 +392,8 @@ namespace TrojanPlusApp.Droid
 
                         break;
                     case TrojanPlusStarter.VPN_STOP:
-                        if (service.worker != null)
-                        {
-                            Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_STOP");
-                            StopMain(IntPtr.Zero, IntPtr.Zero);
-                        }
-                        else
-                        {
-                            service.StopSelf();
-                        }
+                        Log.Debug(TAG, "on VpnServiceHandler.HandleMessage VPN_STOP");
+                        service.StopVPN();
 
                         break;
                     default:
