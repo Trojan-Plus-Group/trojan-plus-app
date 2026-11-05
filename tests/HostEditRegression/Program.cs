@@ -102,4 +102,29 @@ foreach (var pipeline in new[] { false, true })
     }
 }
 
-Console.WriteLine("PASS: clone cancel isolation; update references/flags/index; rename references/settings; persistence; QUIC descriptions.");
+// Persisted JSON null must fall back to usable empty hosts and default settings.
+Microsoft.Maui.Storage.Preferences.Set(DataStore.HostsKey, "null");
+Microsoft.Maui.Storage.Preferences.Set(DataStore.SettingsKey, "null");
+var nullStore = new DataStore();
+var nullHosts = new List<HostModel>();
+nullStore.FillHosts(nullHosts);
+Check(nullHosts.Count == 0 && nullStore.Settings.EnableAndroidNotification,
+    "JSON null must produce empty hosts and default settings");
+await nullStore.AddItemAsync(Host("fallback"));
+Check(nullStore.HasHost("fallback"), "Fallback host collection must accept new hosts");
+
+Microsoft.Maui.Storage.Preferences.Set(DataStore.HostsKey, "[]");
+Microsoft.Maui.Storage.Preferences.Set(DataStore.SettingsKey, "{}");
+var emptyStore = new DataStore();
+Check(await emptyStore.DeleteItemAsync("missing"), "Missing delete on empty store must remain successful");
+await emptyStore.AddItemAsync(Host("remaining"));
+try
+{
+    await emptyStore.DeleteItemAsync("missing");
+    throw new InvalidOperationException("Missing delete on nonempty store must fail when reading old host");
+}
+catch (NullReferenceException)
+{
+}
+
+Console.WriteLine("PASS: clone cancel isolation; update references/flags/index; rename references/settings; persistence; QUIC descriptions; JSON null fallbacks and missing deletes.");

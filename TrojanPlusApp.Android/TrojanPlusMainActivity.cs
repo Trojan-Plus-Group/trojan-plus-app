@@ -33,11 +33,11 @@ namespace TrojanPlusApp.Droid
     using Android.Runtime;
     using Android.Util;
     using AndroidX.Core.App;
+    using AndroidX.Core.View;
     using Java.Lang;
     using Microsoft.Maui.Controls;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
-    using AndroidX.Core.View;
 
     [Activity(
         Name = "com.trojan_plus.android.TrojanPlusMainActivity",
@@ -84,7 +84,9 @@ namespace TrojanPlusApp.Droid
             {
                 // it can return empty list in Android 10+
                 var mgr = activity.GetSystemService(WifiService) as WifiManager;
+#pragma warning disable CA1422 // No equivalent lists saved SSIDs; retain existing Wi-Fi selection behavior.
                 return mgr.ConfiguredNetworks.Select(s => s.Ssid.Replace("\"", string.Empty)).ToList();
+#pragma warning restore CA1422
             }
 
             public void SettingsChanged(SettingsModel settings)
@@ -139,7 +141,11 @@ namespace TrojanPlusApp.Droid
             base.OnCreate(savedInstanceState);
 
             // make status bar dark not black
-            Window.SetStatusBarColor(Android.Graphics.Color.ParseColor("#212121"));
+            if (!System.OperatingSystem.IsAndroidVersionAtLeast(35))
+            {
+                Window.SetStatusBarColor(Android.Graphics.Color.ParseColor("#212121"));
+            }
+
             var windowInsetsController = new WindowInsetsControllerCompat(Window, Window.DecorView);
             windowInsetsController.AppearanceLightStatusBars = false;
 
@@ -157,8 +163,6 @@ namespace TrojanPlusApp.Droid
                     RequestPermissions(new string[] { "android.permission.POST_NOTIFICATIONS" }, 0);
                 }
             }
-
-
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -197,7 +201,7 @@ namespace TrojanPlusApp.Droid
         {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 var name = Resx.TextResource.Notification_AutoChannelName;
                 var desc = Resx.TextResource.Notification_AutoChannelDescription;

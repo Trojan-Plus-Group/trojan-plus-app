@@ -24,11 +24,11 @@ namespace TrojanPlusApp.Models
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using Microsoft.Maui.Controls;
+    using Microsoft.Maui.Essentials;
     using Newtonsoft.Json;
     using TrojanPlusApp.Behaviors;
     using TrojanPlusApp.ViewModels;
-    using Microsoft.Maui.Essentials;
-    using Microsoft.Maui.Controls;
 
     public class HostModel : NotificationModel
     {
@@ -46,10 +46,10 @@ namespace TrojanPlusApp.Models
             Route_cn_mainland = 5,
         }
 
-        public string HostName { get; set; }
-        public string HostAddress { get; set; }
+        public string HostName { get; set; } = string.Empty;
+        public string HostAddress { get; set; } = string.Empty;
         public ushort HostPort { get; set; } = 443;
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
         public bool SSLVerify { get; set; } = true;
         public RouteType Route { get; set; } = RouteType.Route_all;
         public string UpStreamNS { get; set; } = "114.114.114.114";
@@ -130,10 +130,10 @@ namespace TrojanPlusApp.Models
         }
 
         // Utils
-        public HostModel Duplicate(string newHostName)
+        public HostModel Duplicate(string? newHostName)
         {
             var newOne = (HostModel)MemberwiseClone();
-            newOne.HostName = newHostName;
+            newOne.HostName = newHostName ?? string.Empty;
             newOne.uiSelected = false;
             newOne.uiNotRunning = true;
             newOne.LoadBalance = new List<string>();

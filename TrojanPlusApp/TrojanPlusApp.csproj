@@ -5,6 +5,8 @@
 		<UseMaui>true</UseMaui>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<!-- StyleCop XML documentation analysis is intentionally disabled. -->
+		<NoWarn>$(NoWarn);SA0001</NoWarn>
 		<MauiVersion>10.0.1</MauiVersion>
 
 		<!-- Display name -->

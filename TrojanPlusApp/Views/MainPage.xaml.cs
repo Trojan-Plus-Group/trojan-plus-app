@@ -24,9 +24,9 @@ namespace TrojanPlusApp.Views
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Threading.Tasks;
-    using TrojanPlusApp.Models;
     using Microsoft.Maui.Controls;
     using Microsoft.Maui.Devices;
+    using TrojanPlusApp.Models;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer

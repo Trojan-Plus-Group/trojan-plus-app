@@ -26,9 +26,9 @@ namespace TrojanPlusApp.Behaviors
 
     public class HostAddressValidation : Behavior<Entry>
     {
-        public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        public void OnEntryTextChanged(object? sender, TextChangedEventArgs args)
         {
-            var entry = (Entry)sender;
+            var entry = (Entry)sender!;
             if (IsValid(args.NewTextValue))
             {
                 entry.SetAppThemeColor(Entry.TextColorProperty, Colors.Black, Colors.White);
@@ -54,7 +54,7 @@ namespace TrojanPlusApp.Behaviors
         private static readonly string DomainPatternString =
             "^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$";
 
-        public static bool IsValid(string address)
+        public static bool IsValid(string? address)
         {
             return !string.IsNullOrEmpty(address) &&
                 (IPAddressValidation.IsValid(address) || Regex.IsMatch(address, DomainPatternString));

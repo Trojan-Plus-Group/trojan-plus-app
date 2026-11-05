@@ -22,13 +22,13 @@
 namespace TrojanPlusApp.ViewModels
 {
     using System.Collections.ObjectModel;
+    using Microsoft.Maui.Controls;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.Views;
-    using Microsoft.Maui.Controls;
 
     public class HostsViewModel : BaseViewModel
     {
-        private string goingToRuningHostName;
+        private string? goingToRuningHostName;
         public ObservableCollection<HostModel> Items { get; set; }
         public int CurrSelectHostIdx
         {
@@ -36,7 +36,7 @@ namespace TrojanPlusApp.ViewModels
             set { DataStore.SetCurrSelectHostIdx(value); }
         }
 
-        public HostModel CurretSelectHost
+        public HostModel? CurretSelectHost
         {
             get { return CurrSelectHostIdx < Items.Count ? Items[CurrSelectHostIdx] : null; }
         }
@@ -72,7 +72,7 @@ namespace TrojanPlusApp.ViewModels
 
             Messenger.Subscribe<HostModel>("AddItem", async (item) =>
             {
-                var newItem = item as HostModel;
+                var newItem = item;
                 if (newItem != null)
                 {
                     if (DataStore.HasHost(newItem.HostName))
@@ -81,19 +81,19 @@ namespace TrojanPlusApp.ViewModels
                     }
                 }
 
-                Items.Add(newItem);
+                Items.Add(newItem!);
 
                 if (Items.Count == 1)
                 {
-                    SelectedHostItem(newItem.HostName);
+                    SelectedHostItem(newItem!.HostName);
                 }
 
-                await DataStore.AddItemAsync(newItem);
+                await DataStore.AddItemAsync(newItem!);
             });
 
             Messenger.Subscribe<HostModel>("DeleteItem", async (item) =>
             {
-                var deleteItem = item as HostModel;
+                var deleteItem = item;
                 if (deleteItem != null)
                 {
                     if (!DataStore.HasHost(deleteItem.HostName))
@@ -102,9 +102,9 @@ namespace TrojanPlusApp.ViewModels
                     }
                 }
 
-                Items.RemoveAll(i => i.HostName.Equals(deleteItem.HostName));
+                Items.RemoveAll(i => i.HostName.Equals(deleteItem!.HostName));
 
-                if (deleteItem.UI_Selected)
+                if (deleteItem!.UI_Selected)
                 {
                     if (Items.Count > 0)
                     {
@@ -153,7 +153,7 @@ namespace TrojanPlusApp.ViewModels
             });
         }
 
-        public async System.Threading.Tasks.Task UpdateItemAsync(string originalName, HostModel item)
+        public async System.Threading.Tasks.Task UpdateItemAsync(string? originalName, HostModel item)
         {
             for (int i = 0; i < Items.Count; i++)
             {
@@ -168,7 +168,7 @@ namespace TrojanPlusApp.ViewModels
             }
         }
 
-        public void SelectedHostItem(string hostName)
+        public void SelectedHostItem(string? hostName)
         {
             for (int i = 0; i < Items.Count; i++)
             {
@@ -184,12 +184,12 @@ namespace TrojanPlusApp.ViewModels
             }
         }
 
-        public HostModel FindHostByName(string hostName)
+        public HostModel? FindHostByName(string? hostName)
         {
             return Items.FindOrNull(i => i.HostName.Equals(hostName));
         }
 
-        public void SetHostGoingToRun(string hostName)
+        public void SetHostGoingToRun(string? hostName)
         {
             goingToRuningHostName = hostName;
         }

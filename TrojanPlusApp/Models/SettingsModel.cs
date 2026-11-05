@@ -27,7 +27,7 @@ namespace TrojanPlusApp.Models
     public class SettingsModel : NotificationModel
     {
         public int HostSelectedIdx { get; set; }
-        public string HostRunningName { get; set; }
+        public string? HostRunningName { get; set; }
 
         public bool EnableAndroidNotification { get; set; } = true;
         public bool AutoStartCellur { get; set; }

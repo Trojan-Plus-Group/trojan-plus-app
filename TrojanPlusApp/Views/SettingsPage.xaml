@@ -40,7 +40,7 @@
 					   Text="{x:Static resources:TextResource.Settings_EnableAndroidNotificationDetail}" FontSize="Small" />
 
 				<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" 
-							 IsVisible="{Binding Source={x:Reference EnableNotification}, Path=IsToggled, Mode=OneWay}" >
+							 IsVisible="{Binding Source={x:Reference EnableNotification}, Path=IsToggled, Mode=OneWay, x:DataType=Switch}" >
 
 					<!-- Enabling Auto Start Cellur -->
 					<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>

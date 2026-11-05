@@ -25,9 +25,9 @@ namespace TrojanPlusApp.Behaviors
 
     public class PortNumValidation : Behavior<Entry>
     {
-        public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        public void OnEntryTextChanged(object? sender, TextChangedEventArgs args)
         {
-            var entry = (Entry)sender;
+            var entry = (Entry)sender!;
             ushort port;
             bool valid = ushort.TryParse(args.NewTextValue, out port) && port > 0;
             if (valid)

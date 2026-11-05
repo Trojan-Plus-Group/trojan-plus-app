@@ -76,6 +76,7 @@ namespace TrojanPlusApp.Droid
 
         private static TrojanPlusVPNService currentService = null;
 
+        private readonly Handler mainHandler = new Handler(Looper.MainLooper);
         private Messenger messenger = null;
         private ParcelFileDescriptor vpnFD = null;
 
@@ -86,9 +87,73 @@ namespace TrojanPlusApp.Droid
         private bool showNotification = true;
 
         private TrojanPlusNotification notification = null;
-        private readonly Handler mainHandler = new Handler(Looper.MainLooper);
         private bool stopping;
         private bool stopped;
+
+        public static PendingIntent CreatePendingIntent()
+        {
+            var intent = new Intent(Application.Context, typeof(TrojanPlusMainActivity));
+            intent.SetFlags(ActivityFlags.ReorderToFront);
+
+            var flags = PendingIntentFlags.UpdateCurrent;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                flags |= PendingIntentFlags.Immutable;
+            }
+
+            return PendingIntent.GetActivity(Application.Context, 0, intent, flags);
+        }
+
+        public override void OnRevoke()
+        {
+            mainHandler.Post(StopVPN);
+        }
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+
+            messenger = new Messenger(new VpnServiceHandler(this));
+            currentService = this;
+        }
+
+        public override IBinder OnBind(Intent intent)
+        {
+            Log.Debug(TAG, "OnBind");
+            return intent?.Action == ServiceInterface ? base.OnBind(intent) : messenger.Binder;
+        }
+
+        public override void OnDestroy()
+        {
+            Log.Debug(TAG, "OnDestroy");
+            StopVPN();
+            messenger.Dispose();
+            base.OnDestroy();
+
+            // Run after OnDestroy and queued unbind callbacks, allowing system_server to drain teardown.
+            mainHandler.PostDelayed(
+                () =>
+                {
+                    Log.Info(TAG, "VPN teardown complete; resetting native process");
+                    currentService = null;
+
+                    // libtrojan.so requires a fresh process for the next session.
+                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+                },
+                500);
+        }
+
+        public override bool OnUnbind(Intent intent)
+        {
+            return false;
+        }
+
+        [return: GeneratedEnum]
+        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
+        {
+            Log.Debug(TAG, "TrojanPlusVPNService.onStartCommand");
+            return StartCommandResult.Sticky;
+        }
 
         private void StopVPN()
         {
@@ -124,68 +189,6 @@ namespace TrojanPlusApp.Droid
             worker = null;
             StopSelf();
             BroadcastStatus(false);
-        }
-
-        public override void OnRevoke()
-        {
-            mainHandler.Post(StopVPN);
-        }
-
-        public static PendingIntent CreatePendingIntent()
-        {
-            var intent = new Intent(Application.Context, typeof(TrojanPlusMainActivity));
-            intent.SetFlags(ActivityFlags.ReorderToFront);
-
-            var flags = PendingIntentFlags.UpdateCurrent;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-            {
-                flags |= PendingIntentFlags.Immutable;
-            }
-
-            return PendingIntent.GetActivity(Application.Context, 0, intent, flags);
-        }
-
-        public override void OnCreate()
-        {
-            base.OnCreate();
-
-            messenger = new Messenger(new VpnServiceHandler(this));
-            currentService = this;
-        }
-
-        public override IBinder OnBind(Intent intent)
-        {
-            Log.Debug(TAG, "OnBind");
-            return intent?.Action == ServiceInterface ? base.OnBind(intent) : messenger.Binder;
-        }
-
-        public override void OnDestroy()
-        {
-            Log.Debug(TAG, "OnDestroy");
-            StopVPN();
-            messenger.Dispose();
-            base.OnDestroy();
-
-            // Run after OnDestroy and queued unbind callbacks, allowing system_server to drain teardown.
-            mainHandler.PostDelayed(() =>
-            {
-                Log.Info(TAG, "VPN teardown complete; resetting native process");
-                currentService = null;
-                // libtrojan.so requires a fresh process for the next session.
-                Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-            }, 500);
-        }
-
-        public override bool OnUnbind(Intent intent)
-        {
-            return false;
-        }
-
-        [return: GeneratedEnum]
-        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
-        {
-            Log.Debug(TAG, "TrojanPlusVPNService.onStartCommand");
-            return StartCommandResult.Sticky;
         }
 
         private void BroadcastStatus(bool started)

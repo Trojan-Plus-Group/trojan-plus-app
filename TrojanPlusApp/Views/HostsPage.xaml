@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              mc:Ignorable="d"
              x:Class="TrojanPlusApp.Views.HostsPage"
 			 xmlns:models="clr-namespace:TrojanPlusApp.Models"
@@ -13,7 +12,7 @@
 			 x:DataType="vm:HostsViewModel"
 			 Title="{Binding Title}"
              BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryBackgroundColor}, Dark={StaticResource PrimaryBackgroundColorDark}}"
-             ios:Page.UseSafeArea="False">
+             SafeAreaEdges="None">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="{x:Static resources:TextResource.Menu_HostsToolbarAdd}" Clicked="AddItem_Clicked" />
