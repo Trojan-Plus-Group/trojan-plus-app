@@ -35,7 +35,8 @@ namespace TrojanPlusApp.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : global::Microsoft.Maui.MauiUIApplicationDelegate
     {
-        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp(handlers =>
+            handlers.AddHandler<TrojanPlusApp.Views.HostTextLabel, HostTextLabelHandler>());
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {

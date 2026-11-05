@@ -115,29 +115,6 @@ namespace TrojanPlusApp.ViewModels
                 await DataStore.DeleteItemAsync(deleteItem.HostName);
             });
 
-            Messenger.Subscribe<HostModel>("UpdateItem", async (item) =>
-            {
-                var updatedItem = item as HostModel;
-                if (updatedItem != null)
-                {
-                    if (!DataStore.HasHost(updatedItem.HostName))
-                    {
-                        return;
-                    }
-                }
-
-                for (int i = 0; i < Items.Count; i++)
-                {
-                    if (Items[i].HostName.Equals(updatedItem.HostName))
-                    {
-                        Items[i] = updatedItem;
-                        break;
-                    }
-                }
-
-                await DataStore.UpdateItemAsync(updatedItem);
-            });
-
             Messenger.Subscribe<bool>("Starter_OnSetStartBtnEnabled", (enable) =>
             {
                 OnPropertyChanged("IsConnectBtnEnabled");
@@ -174,6 +151,21 @@ namespace TrojanPlusApp.ViewModels
                     DataStore.SetHostRunningName(string.Empty);
                 }
             });
+        }
+
+        public async System.Threading.Tasks.Task UpdateItemAsync(string originalName, HostModel item)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].HostName.Equals(originalName))
+                {
+                    item.UI_Selected = Items[i].UI_Selected;
+                    item.UI_NotRunning = Items[i].UI_NotRunning;
+                    await DataStore.UpdateItemAsync(originalName, item);
+                    Items[i] = item;
+                    return;
+                }
+            }
         }
 
         public void SelectedHostItem(string hostName)

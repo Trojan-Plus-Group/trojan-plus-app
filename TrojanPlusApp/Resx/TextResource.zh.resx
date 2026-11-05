@@ -228,6 +228,9 @@
   <data name="New_HostHasBeenAdded" xml:space="preserve">
     <value>名为 [{0}] 的主机已经添加过了，请重新命名你要添加的新主机。</value>
   </data>
+  <data name="New_HostNameDuplicate" xml:space="preserve">
+    <value>有重名主机名字</value>
+  </data>
   <data name="New_HostNameHolder" xml:space="preserve">
     <value>输入一个好辨识的名字</value>
   </data>

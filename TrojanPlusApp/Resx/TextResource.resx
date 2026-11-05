@@ -238,6 +238,9 @@
   <data name="New_HostHasBeenAdded" xml:space="preserve">
     <value>The Host named [{0}] has been added, please rename your new host.</value>
   </data>
+  <data name="New_HostNameDuplicate" xml:space="preserve">
+    <value>A host with this name already exists</value>
+  </data>
   <data name="New_HostNameHolder" xml:space="preserve">
     <value>Input A Identified Name for Your Host</value>
   </data>

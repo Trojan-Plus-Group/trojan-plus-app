@@ -37,11 +37,11 @@ namespace TrojanPlusApp.Views
     {
         private readonly HostsViewModel hostsModel;
         private readonly bool addedOrEdit;
+        private readonly string? originalName;
         public ObservableCollection<string> LoadBalance { get; set; } = new ObservableCollection<string>();
 
         public HostModel Item { get; set; }
         public bool ShowDeleteBtn { get; set; }
-        public bool EnableEditHostName { get; set; }
         public string PageTitle
         {
             get
@@ -56,9 +56,9 @@ namespace TrojanPlusApp.Views
 
             hostsModel = viewModel;
             addedOrEdit = editHost == null;
-            Item = editHost ?? new HostModel() { SSLVerify = true };
+            originalName = editHost?.HostName;
+            Item = editHost?.Duplicate(originalName!) ?? new HostModel() { SSLVerify = true };
             ShowDeleteBtn = !addedOrEdit;
-            EnableEditHostName = addedOrEdit;
 
             foreach (var h in Item.LoadBalance)
             {
@@ -79,24 +79,12 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
-            if (addedOrEdit)
+            if (Item.HostName != originalName && hostsModel.DataStore.HasHost(Item.HostName))
             {
-                if (hostsModel.DataStore.HasHost(Item.HostName))
-                {
-                    await DisplayAlert(
-                        Resx.TextResource.Common_ErrorTitle,
-                        string.Format(Resx.TextResource.New_HostHasBeenAdded, Item.HostName),
-                        Resx.TextResource.Common_OK);
-
-                    return;
-                }
-            }
-            else
-            {
-                Item.LoadBalance.Clear();
-                Item.LoadBalance.AddRange(LoadBalance);
-                Messenger.Send("UpdateItem", Item);
-                await Navigation.PopModalAsync();
+                await DisplayAlert(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_HostNameDuplicate,
+                    Resx.TextResource.Common_OK);
                 return;
             }
 
@@ -112,7 +100,15 @@ namespace TrojanPlusApp.Views
             Item.LoadBalance.Clear();
             Item.LoadBalance.AddRange(LoadBalance);
             LoadBalance.Clear();
-            Messenger.Send("AddItem", Item);
+            if (addedOrEdit)
+            {
+                Messenger.Send("AddItem", Item);
+            }
+            else
+            {
+                await hostsModel.UpdateItemAsync(originalName!, Item);
+            }
+
             await Navigation.PopModalAsync();
         }
 
@@ -131,7 +127,7 @@ namespace TrojanPlusApp.Views
 
             if (response)
             {
-                Messenger.Send("DeleteItem", Item);
+                Messenger.Send("DeleteItem", hostsModel.FindHostByName(originalName!));
                 await Navigation.PopModalAsync();
             }
         }
@@ -184,7 +180,7 @@ namespace TrojanPlusApp.Views
                 hosts = hostsModel.Items
                     .Where(h => h.EnablePipeline
                             && !LoadBalance.Contains(h.HostName)
-                            && !h.HostName.Equals(Item.HostName))
+                            && !h.HostName.Equals(originalName))
                     .Select(h => h.HostName)
                     .ToList();
             }
