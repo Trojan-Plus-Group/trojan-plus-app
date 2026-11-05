@@ -24,9 +24,9 @@ namespace TrojanPlusApp.Views
     using System;
     using System.ComponentModel;
     using System.Linq;
-    using TrojanPlusApp.ViewModels;
-    using Microsoft.Maui.Essentials;
     using Microsoft.Maui.Controls;
+    using Microsoft.Maui.Essentials;
+    using TrojanPlusApp.ViewModels;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -54,7 +54,7 @@ namespace TrojanPlusApp.Views
                     return;
                 }
 
-                ssid = await DisplayActionSheet(
+                ssid = await DisplayActionSheetAsync(
                     Resx.TextResource.Settings_AutoStopWifiAdd,
                     Resx.TextResource.Common_Cancel,
                     null,
@@ -82,7 +82,7 @@ namespace TrojanPlusApp.Views
 
         public async void OnDeleteWifiClicked(object sender, EventArgs e)
         {
-            bool response = await DisplayAlert(
+            bool response = await DisplayAlertAsync(
                Resx.TextResource.Common_AskTitle,
                Resx.TextResource.Settings_AutoStopWifiDelete,
                Resx.TextResource.Common_Yes,

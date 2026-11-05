@@ -1,4 +1,3 @@
-
 namespace TrojanPlusApp.Droid
 {
     using System.IO;
@@ -45,7 +44,11 @@ namespace TrojanPlusApp.Droid
             {
                 var builder = new NetworkRequest.Builder();
                 builder.AddTransportType(TransportType.Wifi);
-                builder.AddTransportType(TransportType.WifiAware);
+                if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
+                {
+                    builder.AddTransportType(TransportType.WifiAware);
+                }
+
                 builder.AddTransportType(TransportType.Cellular);
 
                 connectivityCallback = new ConnectivitiyCallback(this);
@@ -207,6 +210,7 @@ namespace TrojanPlusApp.Droid
                 var mWifiManager = GetSystemService(WifiService) as WifiManager;
                 if (mWifiManager != null)
                 {
+#pragma warning disable CA1422 // No equivalent preserves synchronous SSID lookup and existing Wi-Fi auto-connect behavior.
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                     {
                         return mWifiManager.ConnectionInfo.SSID;
@@ -215,6 +219,7 @@ namespace TrojanPlusApp.Droid
                     {
                         return mWifiManager.ConnectionInfo.SSID.Replace("\"", string.Empty);
                     }
+#pragma warning restore CA1422
                 }
             }
             else if (Build.VERSION.SdkInt == BuildVersionCodes.OMr1)
@@ -222,6 +227,7 @@ namespace TrojanPlusApp.Droid
                 var connManager = GetSystemService(ConnectivityService) as ConnectivityManager;
                 if (connManager != null)
                 {
+#pragma warning disable CA1422 // No equivalent preserves Android 8.1 active-network SSID fallback for Wi-Fi auto-connect.
                     var networkInfo = connManager.ActiveNetworkInfo;
                     if (networkInfo.IsConnected)
                     {
@@ -230,6 +236,7 @@ namespace TrojanPlusApp.Droid
                             return networkInfo.ExtraInfo.Replace("\"", string.Empty);
                         }
                     }
+#pragma warning restore CA1422
                 }
             }
 
@@ -247,7 +254,8 @@ namespace TrojanPlusApp.Droid
             public override void OnCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities)
             {
                 if (networkCapabilities.HasTransport(TransportType.Wifi)
-                    || networkCapabilities.HasTransport(TransportType.WifiAware))
+                    || (System.OperatingSystem.IsAndroidVersionAtLeast(26)
+                        && networkCapabilities.HasTransport(TransportType.WifiAware)))
                 {
                     service.OnConnectivityGot(ConnectivityType.Wifi);
                 }

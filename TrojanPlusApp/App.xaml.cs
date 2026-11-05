@@ -41,13 +41,13 @@ namespace TrojanPlusApp
 
         public static App Instance
         {
-            get { return (App)Current; }
+            get { return (App)Current!; }
         }
 
-        public IStart Starter { get; private set; }
+        public IStart Starter { get; private set; } = null!;
 
-        public string ConfigPath { get; private set; }
-        public string DataPathParent { get; private set; }
+        public string ConfigPath { get; private set; } = null!;
+        public string DataPathParent { get; private set; } = null!;
 
         public bool IsStartBtnEnabled { get; private set; }
         public bool IsVpnServiceRunning { get; private set; }
@@ -62,11 +62,6 @@ namespace TrojanPlusApp
             Starter = starter;
             DataPathParent = configPath.Substring(0, configPath.LastIndexOf(Path.DirectorySeparatorChar));
             ConfigPath = configPath;
-        }
-
-        protected override Window CreateWindow(IActivationState activationState)
-        {
-            return new Window(new MainPage());
         }
 
         public void Start(SettingsModel settings)
@@ -84,6 +79,11 @@ namespace TrojanPlusApp
         {
             IsVpnServiceRunning = running;
             Messenger.Send("Starter_OnVpnIsRunning", running);
+        }
+
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(new MainPage());
         }
 
         /*

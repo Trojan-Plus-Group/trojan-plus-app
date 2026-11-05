@@ -39,7 +39,7 @@ namespace TrojanPlusApp
                     {
                         action(args);
                     }
-                    else if (subscriber is Func<object, T, Task> func && args != null)
+                    else if (subscriber is Func<object?, T, Task> func && args != null)
                     {
                         Task.Run(() => func(null, args));
                     }
@@ -53,15 +53,17 @@ namespace TrojanPlusApp
             {
                 Subscribers[message] = new List<Delegate>();
             }
+
             Subscribers[message].Add(callback);
         }
 
-        public static void Subscribe<T>(string message, Func<object, T, Task> callback)
+        public static void Subscribe<T>(string message, Func<object?, T, Task> callback)
         {
             if (!Subscribers.ContainsKey(message))
             {
                 Subscribers[message] = new List<Delegate>();
             }
+
             Subscribers[message].Add(callback);
         }
     }

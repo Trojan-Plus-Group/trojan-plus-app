@@ -25,9 +25,9 @@ namespace TrojanPlusApp.Views
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using Microsoft.Maui.Controls;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.ViewModels;
-    using Microsoft.Maui.Controls;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -66,7 +66,7 @@ namespace TrojanPlusApp.Views
             var host = viewModel.CurretSelectHost;
             if (host == null)
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     Resx.TextResource.Common_AlertTitle,
                     Resx.TextResource.Hosts_PleaseAddHost,
                     Resx.TextResource.Common_OK);
@@ -84,7 +84,7 @@ namespace TrojanPlusApp.Views
 
                 if (hasInvalid)
                 {
-                    await DisplayAlert(
+                    await DisplayAlertAsync(
                        Resx.TextResource.Common_AlertTitle,
                        Resx.TextResource.Hosts_LoadBalanceNodeError,
                        Resx.TextResource.Common_OK);

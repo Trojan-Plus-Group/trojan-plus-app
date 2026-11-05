@@ -24,9 +24,9 @@ namespace TrojanPlusApp.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Maui.Storage;
     using Newtonsoft.Json;
     using TrojanPlusApp.Models;
-    using Microsoft.Maui.Storage;
 
     public class DataStore
     {
@@ -41,7 +41,7 @@ namespace TrojanPlusApp.Services
             var hostsJson = Preferences.Get(HostsKey, string.Empty);
             if (!string.IsNullOrEmpty(hostsJson))
             {
-                items = JsonConvert.DeserializeObject<List<HostModel>>(hostsJson);
+                items = JsonConvert.DeserializeObject<List<HostModel>>(hostsJson) ?? new List<HostModel>();
             }
             else
             {
@@ -51,7 +51,7 @@ namespace TrojanPlusApp.Services
             var settingsJson = Preferences.Get(SettingsKey, string.Empty);
             if (!string.IsNullOrEmpty(settingsJson))
             {
-                Settings = JsonConvert.DeserializeObject<SettingsModel>(settingsJson);
+                Settings = JsonConvert.DeserializeObject<SettingsModel>(settingsJson) ?? new SettingsModel();
             }
             else
             {
@@ -79,13 +79,13 @@ namespace TrojanPlusApp.Services
             await StoreToFile();
         }
 
-        public async void SetHostRunningName(string hostName)
+        public async void SetHostRunningName(string? hostName)
         {
             Settings.HostRunningName = hostName;
             await StoreToFile();
         }
 
-        public bool HasHost(string hostName)
+        public bool HasHost(string? hostName)
         {
             return items.FindIndex(i => i.HostName.Equals(hostName)) != -1;
         }
@@ -98,7 +98,7 @@ namespace TrojanPlusApp.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateItemAsync(string originalName, HostModel item)
+        public async Task<bool> UpdateItemAsync(string? originalName, HostModel item)
         {
             for (int i = 0; i < items.Count; i++)
             {
@@ -109,7 +109,7 @@ namespace TrojanPlusApp.Services
                     {
                         foreach (var host in items)
                         {
-                            if (host.LoadBalance.Contains(originalName))
+                            if (originalName != null && host.LoadBalance.Contains(originalName))
                             {
                                 host.LoadBalance = host.LoadBalance
                                     .Select(name => name == originalName ? item.HostName : name).ToList();
@@ -132,14 +132,14 @@ namespace TrojanPlusApp.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteItemAsync(string id)
+        public async Task<bool> DeleteItemAsync(string? id)
         {
             var oldItem = items.Where(h => h.HostName == id).FirstOrDefault();
-            items.Remove(oldItem);
+            items.Remove(oldItem!);
 
             foreach (var h in items)
             {
-                h.LoadBalance.Remove(oldItem.HostName);
+                h.LoadBalance.Remove(oldItem!.HostName);
             }
 
             await StoreToFile();

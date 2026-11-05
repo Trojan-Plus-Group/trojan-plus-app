@@ -51,7 +51,7 @@ namespace TrojanPlusApp.Models
                    && (type.GetGenericTypeDefinition() == typeof(Nullable<>));
         }
 
-        public static T FindOrNull<T>(this IList<T> list, Predicate<T> pre)
+        public static T? FindOrNull<T>(this IList<T> list, Predicate<T> pre)
             where T : class
         {
             foreach (T i in list)

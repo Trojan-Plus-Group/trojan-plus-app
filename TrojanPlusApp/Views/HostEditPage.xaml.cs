@@ -26,9 +26,9 @@ namespace TrojanPlusApp.Views
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using Microsoft.Maui.Controls;
     using TrojanPlusApp.Models;
     using TrojanPlusApp.ViewModels;
-    using Microsoft.Maui.Controls;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
@@ -57,7 +57,7 @@ namespace TrojanPlusApp.Views
             hostsModel = viewModel;
             addedOrEdit = editHost == null;
             originalName = editHost?.HostName;
-            Item = editHost?.Duplicate(originalName!) ?? new HostModel() { SSLVerify = true };
+            Item = editHost?.Duplicate(originalName) ?? new HostModel() { SSLVerify = true };
             ShowDeleteBtn = !addedOrEdit;
 
             foreach (var h in Item.LoadBalance)
@@ -72,7 +72,7 @@ namespace TrojanPlusApp.Views
         {
             if (string.IsNullOrEmpty(Item.HostName))
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     Resx.TextResource.Common_ErrorTitle,
                     Resx.TextResource.New_HostErrorNeedName,
                     Resx.TextResource.Common_OK);
@@ -81,7 +81,7 @@ namespace TrojanPlusApp.Views
 
             if (Item.HostName != originalName && hostsModel.DataStore.HasHost(Item.HostName))
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     Resx.TextResource.Common_ErrorTitle,
                     Resx.TextResource.New_HostNameDuplicate,
                     Resx.TextResource.Common_OK);
@@ -90,7 +90,7 @@ namespace TrojanPlusApp.Views
 
             if (!Item.IsValid())
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                         Resx.TextResource.Common_ErrorTitle,
                         string.Format(Resx.TextResource.New_ErrorAttributes, Item.HostName),
                         Resx.TextResource.Common_OK);
@@ -106,7 +106,7 @@ namespace TrojanPlusApp.Views
             }
             else
             {
-                await hostsModel.UpdateItemAsync(originalName!, Item);
+                await hostsModel.UpdateItemAsync(originalName, Item);
             }
 
             await Navigation.PopModalAsync();
@@ -119,7 +119,7 @@ namespace TrojanPlusApp.Views
 
         public async void OnDeleteBtnClicked(object sender, EventArgs e)
         {
-            bool response = await DisplayAlert(
+            bool response = await DisplayAlertAsync(
                 Resx.TextResource.Common_AskTitle,
                 Resx.TextResource.New_HostDeleteAskText,
                 Resx.TextResource.Common_Yes,
@@ -127,7 +127,7 @@ namespace TrojanPlusApp.Views
 
             if (response)
             {
-                Messenger.Send("DeleteItem", hostsModel.FindHostByName(originalName!));
+                Messenger.Send("DeleteItem", hostsModel.FindHostByName(originalName));
                 await Navigation.PopModalAsync();
             }
         }
@@ -148,7 +148,7 @@ namespace TrojanPlusApp.Views
 
             if (hostsModel.DataStore.HasHost(name))
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     Resx.TextResource.Common_ErrorTitle,
                     string.Format(Resx.TextResource.New_HostHasBeenAdded, name),
                     Resx.TextResource.Common_OK);
@@ -166,7 +166,7 @@ namespace TrojanPlusApp.Views
 
         public async void OnAddLoadbalanceClicked(object sender, EventArgs e)
         {
-            List<string> hosts = null;
+            List<string> hosts;
             if (addedOrEdit)
             {
                 hosts = hostsModel.Items
@@ -187,7 +187,7 @@ namespace TrojanPlusApp.Views
 
             if (hosts.Count == 0)
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     Resx.TextResource.Common_ErrorTitle,
                     Resx.TextResource.New_LoadBalanceHost_Error,
                     Resx.TextResource.Common_Yes);
@@ -195,7 +195,7 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
-            string action = await DisplayActionSheet(
+            string action = await DisplayActionSheetAsync(
                 Resx.TextResource.New_LoadBalanceHost_Title,
                 Resx.TextResource.Common_Cancel,
                 null,
@@ -212,7 +212,7 @@ namespace TrojanPlusApp.Views
             var layout = (BindableObject)sender;
             var hostName = layout.BindingContext as string;
 
-            bool response = await DisplayAlert(
+            bool response = await DisplayAlertAsync(
                 Resx.TextResource.Common_AskTitle,
                 string.Format(Resx.TextResource.New_LoadBalanceDelHostAsk, hostName),
                 Resx.TextResource.Common_Yes,
@@ -220,7 +220,7 @@ namespace TrojanPlusApp.Views
 
             if (response)
             {
-                LoadBalance.Remove(hostName);
+                LoadBalance.Remove(hostName!);
             }
         }
     }

@@ -38,8 +38,13 @@ namespace TrojanPlusApp.Droid
             string GetConfigPath();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310", Justification = "Public IPC message identifier; preserve interop name.")]
         public const int VPN_START = 1000;
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310", Justification = "Public IPC message identifier; preserve interop name.")]
         public const int VPN_STOP = 1001;
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310", Justification = "Public IPC message identifier; preserve interop name.")]
         public const int VPN_STATUS_ASK = 1002;
 
         private static readonly string TAG = typeof(TrojanPlusStarter).Name;
@@ -176,7 +181,8 @@ namespace TrojanPlusApp.Droid
             if (serviceConnection.Messenger != null)
             {
                 Intent serviceToStart = new Intent(context, typeof(TrojanPlusVPNService));
-                if (settings == null || settings.EnableAndroidNotification)
+                if (System.OperatingSystem.IsAndroidVersionAtLeast(26)
+                    && (settings == null || settings.EnableAndroidNotification))
                 {
                     context.StartForegroundService(serviceToStart);
                 }
@@ -228,8 +234,6 @@ namespace TrojanPlusApp.Droid
                 }
             }
         }
-
-
 
         private void StartVPNService()
         {

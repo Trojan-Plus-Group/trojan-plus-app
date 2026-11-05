@@ -49,7 +49,7 @@ namespace TrojanPlusApp.Droid
 
         public void Show()
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (System.OperatingSystem.IsAndroidVersionAtLeast(29))
             {
                 service.StartForeground(NotificationId, builder.Build(), (Android.Content.PM.ForegroundService)0x40000000);
             }
@@ -61,14 +61,8 @@ namespace TrojanPlusApp.Droid
 
         public void Destroy()
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-            {
-                service.StopForeground(StopForegroundFlags.Remove);
-            }
-            else
-            {
-                service.StopForeground(true);
-            }
+            service.StopForeground(StopForegroundFlags.Remove);
+
             var manager = (NotificationManager)service.GetSystemService(Context.NotificationService);
             manager.Cancel(NotificationId);
         }
@@ -77,7 +71,7 @@ namespace TrojanPlusApp.Droid
         {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
             {
                 var name = Resx.TextResource.Notification_ChannelName;
                 var desc = Resx.TextResource.Notification_ChannelDescription;

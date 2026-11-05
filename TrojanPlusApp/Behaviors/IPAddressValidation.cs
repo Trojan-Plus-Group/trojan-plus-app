@@ -26,9 +26,9 @@ namespace TrojanPlusApp.Behaviors
 
     public class IPAddressValidation : Behavior<Entry>
     {
-        public void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        public void OnEntryTextChanged(object? sender, TextChangedEventArgs args)
         {
-            var entry = (Entry)sender;
+            var entry = (Entry)sender!;
             if (IsValid(args.NewTextValue))
             {
                 entry.SetAppThemeColor(Entry.TextColorProperty, Colors.Black, Colors.White);
@@ -53,7 +53,7 @@ namespace TrojanPlusApp.Behaviors
 
         private static readonly string PatternString = "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$";
 
-        public static bool IsValid(string address)
+        public static bool IsValid(string? address)
         {
             return !string.IsNullOrEmpty(address) && Regex.IsMatch(address, PatternString);
         }

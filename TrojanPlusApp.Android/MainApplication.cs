@@ -9,11 +9,11 @@ namespace TrojanPlusApp.Droid;
 [Application(Icon = "@mipmap/icon", RoundIcon = "@mipmap/icon_round")]
 public class MainApplication : MauiApplication
 {
-	public MainApplication(IntPtr handle, JniHandleOwnership ownership)
-		: base(handle, ownership)
-	{
-	}
+    public MainApplication(IntPtr handle, JniHandleOwnership ownership)
+        : base(handle, ownership)
+    {
+    }
 
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp(handlers =>
-		handlers.AddHandler<TrojanPlusApp.Views.HostTextLabel, HostTextLabelHandler>());
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp(handlers =>
+        handlers.AddHandler<TrojanPlusApp.Views.HostTextLabel, HostTextLabelHandler>());
 }

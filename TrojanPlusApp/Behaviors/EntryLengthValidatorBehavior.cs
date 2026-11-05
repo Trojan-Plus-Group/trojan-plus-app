@@ -39,9 +39,9 @@ namespace TrojanPlusApp.Behaviors
             bindable.TextChanged -= OnEntryTextChanged;
         }
 
-        private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
+        private void OnEntryTextChanged(object? sender, TextChangedEventArgs e)
         {
-            var entry = (Entry)sender;
+            var entry = (Entry)sender!;
 
             // if Entry text is longer then valid length
             if (entry.Text.Length > this.MaxLength)

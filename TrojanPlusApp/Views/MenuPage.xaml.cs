@@ -24,15 +24,15 @@ namespace TrojanPlusApp.Views
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
-    using TrojanPlusApp.Models;
     using Microsoft.Maui.Controls;
+    using TrojanPlusApp.Models;
 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
     public partial class MenuPage : ContentPage
     {
-        public MainPage RootPage { get => Application.Current.Windows.FirstOrDefault()?.Page as MainPage ?? throw new InvalidOperationException("No window available"); }
+        public MainPage RootPage { get => Application.Current!.Windows.FirstOrDefault()?.Page as MainPage ?? throw new InvalidOperationException("No window available"); }
 
         private List<HomeMenuItem> menuItems;
 

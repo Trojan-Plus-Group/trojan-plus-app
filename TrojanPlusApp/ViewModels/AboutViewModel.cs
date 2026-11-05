@@ -22,8 +22,8 @@
 namespace TrojanPlusApp.ViewModels
 {
     using System.Windows.Input;
-    using Microsoft.Maui.Essentials;
     using Microsoft.Maui.Controls;
+    using Microsoft.Maui.Essentials;
 
     public class AboutViewModel : BaseViewModel
     {
