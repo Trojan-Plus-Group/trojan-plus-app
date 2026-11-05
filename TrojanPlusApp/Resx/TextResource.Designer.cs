@@ -510,6 +510,15 @@ namespace TrojanPlusApp.Resx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A host with this name already exists.
+        /// </summary>
+        public static string New_HostNameDuplicate {
+            get {
+                return ResourceManager.GetString("New_HostNameDuplicate", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Input A Identified Name for Your Host.
         /// </summary>
         public static string New_HostNameHolder {

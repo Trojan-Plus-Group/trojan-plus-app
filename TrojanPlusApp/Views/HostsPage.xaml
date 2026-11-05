@@ -7,6 +7,7 @@
              mc:Ignorable="d"
              x:Class="TrojanPlusApp.Views.HostsPage"
 			 xmlns:models="clr-namespace:TrojanPlusApp.Models"
+             xmlns:views="clr-namespace:TrojanPlusApp.Views"
 			 xmlns:resources="clr-namespace:TrojanPlusApp.Resx"
 			 xmlns:vm="clr-namespace:TrojanPlusApp.ViewModels"
 			 x:DataType="vm:HostsViewModel"
@@ -44,20 +45,23 @@
 								<RowDefinition Height="1"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
+								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<Label Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center" 
-                                 LineBreakMode="NoWrap" HorizontalOptions="Start" Style="{DynamicResource ListItemTextStyle}" 
-                                 FontSize="30" />
+							<views:HostTextLabel Text="{Binding HostName}" Grid.Row="0" VerticalOptions="Center"
+                                 LineBreakMode="TailTruncation" MaxLines="1" HorizontalOptions="Fill"
+                                 IsSelected="{Binding UI_Selected}"
+                                 Style="{DynamicResource ListItemTextStyle}" FontSize="30" />
 
 							<ImageButton Source="icon_host_edit.png" Grid.Row="0" Grid.Column="1" HeightRequest="40" BackgroundColor="Transparent"
 										 HorizontalOptions="EndAndExpand" WidthRequest="40" VerticalOptions="Center" Clicked="OnItemEdit" 
 										 IsEnabled="{Binding UI_NotRunning}" Opacity="{Binding UI_NotRunningOpacity}"/>
 
-							<Label Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
-                                LineBreakMode="NoWrap" HorizontalOptions="StartAndExpand" Style="{DynamicResource ListItemDetailTextStyle}"
+							<views:HostTextLabel Text="{Binding UI_Description}" Grid.Row="1" Grid.ColumnSpan="2"
+                                LineBreakMode="TailTruncation" MaxLines="1" HorizontalOptions="Fill"
+                                IsSelected="{Binding UI_Selected}"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="20" VerticalOptions="Center" />
 
 							<StackLayout Grid.Row="2" IsVisible="{Binding EnablePipeline}" Orientation="Vertical" 
@@ -69,7 +73,7 @@
 									</x:Array>
 								</d:BindableLayout.ItemsSource>
 								<BindableLayout.ItemTemplate>
-									<DataTemplate>
+									<DataTemplate x:DataType="x:String">
 										<StackLayout Margin="10,0,0,0" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
 											<Label Text=" + " VerticalOptions="Center"  FontSize="20" />
 											<Label Text="{Binding .}" VerticalOptions="Center"  FontSize="20" />

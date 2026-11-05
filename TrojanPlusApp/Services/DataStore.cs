@@ -98,13 +98,31 @@ namespace TrojanPlusApp.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateItemAsync(HostModel item)
+        public async Task<bool> UpdateItemAsync(string originalName, HostModel item)
         {
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].HostName.Equals(item.HostName))
+                if (items[i].HostName.Equals(originalName))
                 {
                     items[i] = item;
+                    if (originalName != item.HostName)
+                    {
+                        foreach (var host in items)
+                        {
+                            if (host.LoadBalance.Contains(originalName))
+                            {
+                                host.LoadBalance = host.LoadBalance
+                                    .Select(name => name == originalName ? item.HostName : name).ToList();
+                                host.OnPropertyChanged(nameof(HostModel.LoadBalance));
+                            }
+                        }
+
+                        if (Settings.HostRunningName == originalName)
+                        {
+                            Settings.HostRunningName = item.HostName;
+                        }
+                    }
+
                     break;
                 }
             }

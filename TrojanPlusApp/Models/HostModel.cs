@@ -79,6 +79,11 @@ namespace TrojanPlusApp.Models
                     res += " (Pipeline Mode)";
                 }
 
+                if (EnableQuic)
+                {
+                    res += " (QUIC)";
+                }
+
                 return res;
             }
         }

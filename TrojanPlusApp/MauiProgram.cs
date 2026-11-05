@@ -2,7 +2,7 @@ namespace TrojanPlusApp;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
+	public static MauiApp CreateMauiApp(Action<Microsoft.Maui.Hosting.IMauiHandlersCollection>? configureHandlers = null)
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
@@ -12,6 +12,11 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
+
+		if (configureHandlers != null)
+		{
+			builder.ConfigureMauiHandlers(configureHandlers);
+		}
 
 		return builder.Build();
 	}
