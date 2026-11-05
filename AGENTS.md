@@ -1,247 +1,51 @@
-# AGENTS.md - Coding Guidelines for Trojan Plus App
+# AGENTS.md
 
-This document provides comprehensive guidelines for coding agents working on the Trojan Plus App, a cross-platform mobile VPN/proxy client built with .NET MAUI for Android and iOS.
+Trojan Plus App: .NET MAUI (net10.0, MAUI 10.0.1) VPN client for the Trojan Plus protocol. Android ships;
+iOS code exists but is untested. The proxy itself is the native trojan-plus core (`libtrojan.so`), called through
+P/Invoke. The app supports only the Trojan / Trojan Plus protocols.
 
-## Project Overview
+## Layout
+- `TrojanPlusApp/`: shared UI (MVVM). `Models/HostModel.cs` builds the core config (`PrepareConfig`,
+  `ConfigTemplate`); `Services/DataStore.cs` persists hosts/settings as JSON in MAUI `Preferences`;
+  `Messenger.cs` is the pub/sub used instead of MessagingCenter; `Resx/` holds en + zh strings and bundled data
+  (CA bundle, gfwlist, CN IP list; regenerate with `Resources/update.sh`).
+- `TrojanPlusApp.Android/`: `TrojanPlusVPNService` runs in the separate `:vpn_remote` process and calls the core;
+  `TrojanPlusStarter` talks to it over IPC. Custom handlers are registered in `MainApplication.cs`.
+- `TrojanPlusApp.iOS/` + `TrojanPlusApp.iOS.Extension/`: NEPacketTunnelProvider; needs Apple signing
+  (`.env.example`) and a physical device.
+- `tests/HostEditRegression/`: console check that compiles the production model/store/view-model sources.
 
-Trojan Plus App is a mobile client for the Trojan Plus VPN protocol, supporting Android and iOS platforms. It uses .NET MAUI for cross-platform UI and native platform-specific implementations.
-
-## MAUI Migration (2026)
-
-The project has been successfully migrated from Xamarin.Forms to .NET MAUI:
-
-- **Framework**: Updated to .NET 10.0 with MAUI 10.0.1
-- **Removed Platforms**: UWP support discontinued
-- **API Updates**: MessagingCenter → Custom Messenger, Properties → Preferences, MasterDetailPage → FlyoutPage
-- **Build System**: Migrated from MSBuild to dotnet CLI
-- **Dependencies**: All packages updated to MAUI-compatible versions
-
-## Build Commands
-
-### Full Solution Build
+## Build and test
 ```bash
-dotnet build TrojanPlusApp.sln --configuration Release
+dotnet publish TrojanPlusApp.Android/TrojanPlusApp.Android.csproj -f net10.0-android -c Release
+dotnet run --project tests/HostEditRegression/HostEditRegression.csproj
+./build_and_install.sh   # publish + adb install to the first connected device
 ```
+- CI (`azure-pipelines.Android.yml`) builds Android only and publishes the signed APK as artifact `AndroidAPK`.
+- Keep the Android build at 0 warnings from project code (only the toolchain warning XA0033 may appear). Fix
+  warnings in code; suppress only with a targeted attribute/pragma and a reason.
+- UI changes need an emulator/device check; there is no UI test suite.
 
-### Platform-Specific Builds
+## Rules that are easy to break
+- Saved data: `HostModel` and `SettingsModel` are serialized with Newtonsoft.Json. Never rename or remove their
+  public properties; new options need a safe default (a property initializer survives deserialization of old
+  data). UI-only members get `[JsonIgnore]`.
+- Hosts are keyed by `HostName`. Renaming must update other hosts' `LoadBalance` lists and
+  `Settings.HostRunningName`; names must stay unique.
+- Native core: `TrojanPlusApp.Android/lib/{arm64-v8a,x86_64}/libtrojan.so` are prebuilt from trojan-plus and
+  committed. The csproj removes auto-imported `.so` items and lists both explicitly; keep that. New config keys
+  need a matching core build.
+- The core needs a fresh process per VPN session; keep the delayed process kill in `TrojanPlusVPNService`.
+- `TrojanPlusApp.csproj` has `<Nullable>enable</Nullable>`: annotate with `?`, and use `!` only where the value is
+  non-null by lifecycle.
+- minSdk is 24: guard newer APIs with `OperatingSystem.IsAndroidVersionAtLeast(n)`.
+- User-visible strings go in both `TextResource.resx` and `TextResource.zh.resx`, plus `TextResource.Designer.cs`.
+- Never log passwords or full configs. Keep SSL verification on by default.
 
-#### Android
-```bash
-dotnet build TrojanPlusApp.Android/TrojanPlusApp.Android.csproj --configuration Release
-```
-
-#### iOS
-```bash
-dotnet build TrojanPlusApp.iOS/TrojanPlusApp.iOS.csproj --configuration Release
-```
-
-### Package Restore
-```bash
-dotnet restore TrojanPlusApp.sln
-```
-
-### Clean Build
-```bash
-dotnet clean TrojanPlusApp.sln
-dotnet build TrojanPlusApp.sln --configuration Release
-```
-
-### Linting
-```bash
-# StyleCop analysis is included in build process
-dotnet build TrojanPlusApp/TrojanPlusApp.csproj --no-restore
-```
-
-### Android Build & Install Script
-A helper script is provided to build and install the Android app automatically to a connected device/emulator:
-```bash
-# Make executable
-chmod +x build_and_install.sh
-
-# Run build and install
-./build_and_install.sh
-```
-The script uses `dotnet publish` to generate the signed APK and `adb install` for deployment.
-
-## Testing
-
-Currently, there are no automated unit or integration tests configured. Manual testing is performed on physical devices and emulators.
-
-## Code Style Guidelines
-
-### General Principles
-
-- Follow the established patterns in the codebase
-- Use meaningful, descriptive names
-- Keep methods focused on single responsibilities
-- Use proper error handling and validation
-- Follow the MVVM pattern consistently
-- Use async/await for asynchronous operations
-
-### Formatting (from .editorconfig)
-
-#### Indentation and Spacing
-- Use 4 spaces for indentation
-- Use CRLF line endings
-- Maximum line length: 120 characters
-- Place opening braces on new lines for all control structures
-
-#### Naming Conventions
-- **Types**: PascalCase (e.g., `HostModel`, `SettingsViewModel`)
-- **Interfaces**: PascalCase with 'I' prefix (e.g., `INotifyPropertyChanged`)
-- **Methods**: PascalCase (e.g., `PrepareConfig()`, `IsValid()`)
-- **Properties**: PascalCase (e.g., `HostName`, `SSLVerify`)
-- **Fields**: camelCase with underscore prefix for private fields (e.g., `private string title`)
-- **Constants**: PascalCase (e.g., `TunGateWayIP`)
-- **Enums**: PascalCase (e.g., `RouteType.Route_all`)
-
-#### C# Specific Styles
-- Use `var` for built-in types where the type is apparent
-- Prefer expression-bodied members for simple getters/setters:
-  ```csharp
-  public Color UI_SelectedColor => UI_Selected ? Color.Black : Color.LightGray;
-  ```
-- Use object initializers and collection initializers
-- Prefer conditional expressions over assignments
-- Use null propagation operator (`?.`)
-- Use pattern matching where appropriate
-- Prefer `is null` check over reference equality method
-- Use simplified boolean expressions
-- Use simplified interpolation
-- Prefer `readonly` fields where appropriate
-
-### Imports and Using Directives
-
-- Place `using` directives outside namespaces
-- Group system directives first, then third-party, then project-specific
-- Remove unused `using` directives
-- Use fully qualified names when there are conflicts
-
-Example:
-```csharp
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Newtonsoft.Json;
-using Microsoft.Maui.Essentials;
-using Microsoft.Maui.Controls;
-
-using TrojanPlusApp.Behaviors;
-using TrojanPlusApp.ViewModels;
-```
-
-### Comments and Documentation
-
-- Use XML documentation comments for public APIs
-- Use single-line comments for implementation details
-- Avoid unnecessary comments that restate what the code does
-- Use TODO comments for planned improvements
-- GPL license headers are required for all source files
-
-### Error Handling
-
-- Use try-catch blocks for expected exceptions
-- Validate input parameters, especially for public methods
-- Use custom exceptions for business logic errors
-- Log errors appropriately (currently uses basic logging)
-- Handle platform-specific exceptions (Android/iOS/UWP differences)
-
-### Asynchronous Programming
-
-- Use `async`/`await` pattern consistently
-- Name async methods with `Async` suffix
-- Use `Task` for fire-and-forget operations
-- Handle exceptions in async methods properly
-- Avoid blocking calls in UI threads
-
-### MVVM Pattern Implementation
-
-#### ViewModels
-- Inherit from `BaseViewModel` or `NotificationModel`
-- Implement `INotifyPropertyChanged` via base classes
-- Use `SetProperty` method for property changes:
-  ```csharp
-  private string title = string.Empty;
-  public string Title
-  {
-      get { return title; }
-      set { SetProperty(ref title, value); }
-  }
-  ```
-
-#### Models
-- Use data validation methods (e.g., `IsValid()`)
-- Implement serialization support with `JsonIgnore` for UI properties
-- Use computed properties for UI display logic
-
-#### Views
-- Use XAML for UI definition
-- Bind to ViewModel properties
-- Use platform-specific renderers when needed
-
-### Platform-Specific Code
-
-- Use conditional compilation for platform differences:
-  ```csharp
-  #if __ANDROID__
-      // Android-specific code
-  #elif __IOS__
-      // iOS-specific code
-  #endif
-  ```
-
-- Implement platform interfaces in respective projects
-- Use dependency injection for platform services
-
-### File Organization
-
-- **Models/**: Data models and business logic
-- **ViewModels/**: MVVM view models
-- **Views/**: XAML pages and code-behind
-- **Services/**: Application services (data store, etc.)
-- **Behaviors/**: Xamarin.Forms behaviors for validation
-- **Resx/**: Resource files for localization
-
-### Security Considerations
-
-- Never log sensitive information (passwords, keys)
-- Validate SSL certificates properly
-- Use secure storage for sensitive data
-- Follow principle of least privilege
-- Validate all user inputs
-
-### Performance Guidelines
-
-- Use lazy loading for expensive operations
-- Cache frequently accessed data
-- Minimize UI thread blocking
-- Use appropriate data structures
-- Profile memory usage on mobile devices
-
-### Code Analysis Rules
-
-StyleCop rules are enforced (see .editorconfig for specific settings):
-- SA1101: Prefix local calls with this (disabled)
-- SA1200: Using directives must be placed correctly
-- SA1201: Elements must appear in correct order (disabled)
-- SA1413: Use trailing comma in multi-line initializers (disabled)
-- SA1516: Elements must be separated by blank line (disabled)
-- SA1600-SA1602: Documentation rules (disabled)
-
-## Commit Guidelines
-
-- Use descriptive commit messages following conventional format
-- Keep commits focused on single changes
-- Reference issue numbers when applicable
-- Ensure builds pass before committing
-
-## Code Review Checklist
-
-- [ ] Code follows established patterns and style guidelines
-- [ ] No sensitive information logged or committed
-- [ ] Proper error handling implemented
-- [ ] Tests pass (when available)
-- [ ] Documentation updated if needed
-- [ ] Performance considerations addressed
-- [ ] Platform-specific code properly isolated</content>
-<parameter name="filePath">/Users/tianzhizhi/Documents/trojan-plus-app/AGENTS.md
+## Style
+- Follow `.editorconfig` and StyleCop (runs in the build). Match the surrounding file: most files put `using`
+  directives inside the namespace and use 4-space indents; private fields are camelCase without a prefix.
+- New source files get the GPL-3.0 license header (SPDX form is fine).
+- Repo text (code, comments, docs, commits, PRs) is English; Chinese only in `*.zh.resx`.
+- Version: `ApplicationDisplayVersion`/`ApplicationVersion` in both csproj files and
+  `versionName`/`versionCode` in `TrojanPlusApp.Android/Properties/AndroidManifest.xml`; bump all together.
