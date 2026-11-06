@@ -197,10 +197,20 @@ namespace TrojanPlusApp.Droid
             stopping = true;
             Log.Info(TAG, "Finishing VPN stop: closing TUN");
             notification?.Destroy();
-            CloseFD();
-            worker = null;
-            StopSelf();
-            BroadcastStatus(false);
+            try
+            {
+                CloseFD();
+            }
+            catch (Exception)
+            {
+                Log.Error(TAG, "VPN cleanup failed.");
+            }
+            finally
+            {
+                worker = null;
+                StopSelf();
+                BroadcastStatus(false);
+            }
         }
 
         private void BroadcastStatus(bool started)
@@ -257,17 +267,17 @@ namespace TrojanPlusApp.Droid
             {
                 try
                 {
+                    // Satisfy foreground startup before config, metadata or TUN setup can fail.
+                    if (showNotification)
+                    {
+                        notification = new TrojanPlusNotification(this);
+                        notification.Show();
+                    }
+
                     var configFile = File.ReadAllText(prepareConfigPath);
                     var route = ParseType(configFile);
                     string metadataPath = prepareConfigPath + ".log-host";
                     string logHost = File.Exists(metadataPath) ? File.ReadAllText(metadataPath) : string.Empty;
-
-                    // Require both explicit host opt-in and native detailed level.
-                    var config = Newtonsoft.Json.Linq.JObject.Parse(configFile);
-                    if (logHost.Length > 0 && (int?)config["log_level"] == 0)
-                    {
-                        debugLogPath = TrojanPlusApp.Services.DebugLogFiles.PathForHost(logHost);
-                    }
 
                     Log.Debug(TAG, "VPN Route Type: " + route);
 
@@ -296,18 +306,17 @@ namespace TrojanPlusApp.Droid
                     }
 
                     vpnFD = builder.Establish();
+                    if (vpnFD == null)
+                    {
+                        throw new InvalidOperationException("VPN interface establishment failed.");
+                    }
 
-                    configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
+                    configFile = VpnRunConfig.Resolve(configFile, vpnFD.Fd);
+                    debugLogPath = VpnRunConfig.GetDebugLogPath(configFile, logHost);
 
                     runConfigPath = prepareConfigPath + TrojanPlusMainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
 
-                    if (showNotification)
-                    {
-                        notification = new TrojanPlusNotification(this);
-                    }
-
-                    notification?.Show();
                     worker = new Thread(new WorkerThread(this).Run);
                     worker.Start();
                 }
