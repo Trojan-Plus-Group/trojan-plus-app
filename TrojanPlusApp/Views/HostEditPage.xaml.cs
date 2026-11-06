@@ -75,140 +75,9 @@ namespace TrojanPlusApp.Views
             BindingContext = this;
         }
 
-        public bool CanExportDebugLog => Services.DebugLogFiles.CanExport(
-            Item.EnableDebugLog,
-            !App.Instance.IsVpnServiceRunning && App.Instance.IsStartBtnEnabled
-                && string.IsNullOrEmpty(hostsModel.DataStore.Settings.HostRunningName));
+        public bool CanExportDebugLog => Services.DebugLogFiles.CanExport(Item.EnableDebugLog, IsProxyStopped());
 
         public bool IsDebugLogExportEnabled => !exportingDebugLog;
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            pageVisible = true;
-            hostsModel.PropertyChanged += OnHostsPropertyChanged;
-            RefreshDebugLogActions();
-        }
-
-        protected override void OnDisappearing()
-        {
-            pageVisible = false;
-            hostsModel.PropertyChanged -= OnHostsPropertyChanged;
-            base.OnDisappearing();
-        }
-
-        private void OnHostsPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            Dispatcher.Dispatch(RefreshDebugLogActions);
-        }
-
-        private void OnDebugLogToggled(object sender, ToggledEventArgs e)
-        {
-            if (BindingContext == this)
-            {
-                RefreshDebugLogActions();
-            }
-        }
-
-        private void RefreshDebugLogActions()
-        {
-            OnPropertyChanged(nameof(CanExportDebugLog));
-            OnPropertyChanged(nameof(IsDebugLogExportEnabled));
-        }
-
-        private async void OnCopyDebugLogClicked(object sender, EventArgs e)
-        {
-            await ExportDebugLogAsync(false);
-        }
-
-        private async void OnShareDebugLogClicked(object sender, EventArgs e)
-        {
-            await ExportDebugLogAsync(true);
-        }
-
-        private async Task ExportDebugLogAsync(bool share)
-        {
-            if (exportingDebugLog || !pageVisible || !CanExportDebugLog)
-            {
-                return;
-            }
-
-            exportingDebugLog = true;
-            RefreshDebugLogActions();
-            try
-            {
-                bool confirmed = await DisplayAlertAsync(
-                    Resx.TextResource.New_DebugLogPrivacyTitle,
-                    Resx.TextResource.New_DebugLogPrivacyWarning,
-                    share ? Resx.TextResource.New_ShareDebugLog : Resx.TextResource.New_CopyDebugLog,
-                    Resx.TextResource.Common_Cancel);
-                if (!confirmed || !pageVisible)
-                {
-                    return;
-                }
-
-                if (!CanExportDebugLog)
-                {
-                    await DisplayAlertAsync(Resx.TextResource.Common_ErrorTitle,
-                        Resx.TextResource.New_DebugLogStopFirst, Resx.TextResource.Common_OK);
-                    return;
-                }
-
-                // Keep snapshot read synchronous: no UI yield between stopped check and file read.
-                byte[] snapshot = Services.DebugLogFiles.ReadSnapshot(
-                    Services.DebugLogFiles.PathForHost(originalName ?? Item.HostName));
-                if (snapshot.Length == 0)
-                {
-                    await DisplayAlertAsync(Resx.TextResource.Common_ErrorTitle,
-                        Resx.TextResource.New_DebugLogEmpty, Resx.TextResource.Common_OK);
-                    return;
-                }
-
-                if (share)
-                {
-                    string directory = Path.Combine(FileSystem.CacheDirectory, "debug-log-exports");
-                    Directory.CreateDirectory(directory);
-                    // Keep at most one temporary export; next share revokes old snapshot availability.
-                    foreach (string oldFile in Directory.GetFiles(directory, "debug-log-*.txt"))
-                    {
-                        File.Delete(oldFile);
-                    }
-
-                    string path = Path.Combine(directory, $"debug-log-{Guid.NewGuid():N}.txt");
-                    File.WriteAllBytes(path, snapshot);
-                    // Recipient may read after chooser closes; leave temporary file in OS-managed cache.
-                    await Share.Default.RequestAsync(new ShareFileRequest
-                    {
-                        Title = Resx.TextResource.New_ShareDebugLog,
-                        File = new ShareFile(path, "text/plain"),
-                    });
-                }
-                else
-                {
-                    await Clipboard.Default.SetTextAsync(Encoding.UTF8.GetString(snapshot));
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                await DisplayAlertAsync(Resx.TextResource.Common_ErrorTitle,
-                    Resx.TextResource.New_DebugLogEmpty, Resx.TextResource.Common_OK);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                await DisplayAlertAsync(Resx.TextResource.Common_ErrorTitle,
-                    Resx.TextResource.New_DebugLogEmpty, Resx.TextResource.Common_OK);
-            }
-            catch (Exception)
-            {
-                await DisplayAlertAsync(Resx.TextResource.Common_ErrorTitle,
-                    Resx.TextResource.New_DebugLogExportFailed, Resx.TextResource.Common_OK);
-            }
-            finally
-            {
-                exportingDebugLog = false;
-                RefreshDebugLogActions();
-            }
-        }
 
         public async void Save_Clicked(object sender, EventArgs e)
         {
@@ -363,6 +232,152 @@ namespace TrojanPlusApp.Views
             if (response)
             {
                 LoadBalance.Remove(hostName!);
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            pageVisible = true;
+            hostsModel.PropertyChanged += OnHostsPropertyChanged;
+            RefreshDebugLogActions();
+        }
+
+        protected override void OnDisappearing()
+        {
+            pageVisible = false;
+            hostsModel.PropertyChanged -= OnHostsPropertyChanged;
+            base.OnDisappearing();
+        }
+
+        private bool IsProxyStopped()
+        {
+            return !App.Instance.IsVpnServiceRunning && App.Instance.IsStartBtnEnabled
+                && string.IsNullOrEmpty(hostsModel.DataStore.Settings.HostRunningName);
+        }
+
+        private void OnHostsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            Dispatcher.Dispatch(RefreshDebugLogActions);
+        }
+
+        private void OnDebugLogToggled(object sender, ToggledEventArgs e)
+        {
+            if (BindingContext == this)
+            {
+                RefreshDebugLogActions();
+            }
+        }
+
+        private void RefreshDebugLogActions()
+        {
+            OnPropertyChanged(nameof(CanExportDebugLog));
+            OnPropertyChanged(nameof(IsDebugLogExportEnabled));
+        }
+
+        private async void OnCopyDebugLogClicked(object sender, EventArgs e)
+        {
+            await ExportDebugLogAsync(false);
+        }
+
+        private async void OnShareDebugLogClicked(object sender, EventArgs e)
+        {
+            await ExportDebugLogAsync(true);
+        }
+
+        private async Task ExportDebugLogAsync(bool share)
+        {
+            if (exportingDebugLog || !pageVisible || !CanExportDebugLog)
+            {
+                return;
+            }
+
+            exportingDebugLog = true;
+            RefreshDebugLogActions();
+            try
+            {
+                bool confirmed = await DisplayAlertAsync(
+                    Resx.TextResource.New_DebugLogPrivacyTitle,
+                    Resx.TextResource.New_DebugLogPrivacyWarning,
+                    share ? Resx.TextResource.New_ShareDebugLog : Resx.TextResource.New_CopyDebugLog,
+                    Resx.TextResource.Common_Cancel);
+                if (!confirmed || !pageVisible)
+                {
+                    return;
+                }
+
+                if (!CanExportDebugLog)
+                {
+                    await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_DebugLogStopFirst,
+                    Resx.TextResource.Common_OK);
+                    return;
+                }
+
+                // Keep snapshot read synchronous: no UI yield between stopped check and file read.
+                byte[] snapshot = Services.DebugLogFiles.ReadSnapshot(
+                    Services.DebugLogFiles.PathForHost(originalName ?? Item.HostName));
+                if (snapshot.Length == 0)
+                {
+                    await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_DebugLogEmpty,
+                    Resx.TextResource.Common_OK);
+                    return;
+                }
+
+                if (share)
+                {
+                    string directory = Path.Combine(FileSystem.CacheDirectory, "debug-log-exports");
+                    Directory.CreateDirectory(directory);
+
+                    // Keep at most one temporary export; next share revokes old snapshot availability.
+                    foreach (string oldFile in Directory.GetFiles(directory, "debug-log-*.txt"))
+                    {
+                        File.Delete(oldFile);
+                    }
+
+                    string path = Path.Combine(directory, $"debug-log-{Guid.NewGuid():N}.txt");
+                    File.WriteAllBytes(path, snapshot);
+
+                    // Recipient may read after chooser closes; leave temporary file in OS-managed cache.
+                    await Share.Default.RequestAsync(new ShareFileRequest
+                    {
+                        Title = Resx.TextResource.New_ShareDebugLog,
+                        File = new ShareFile(path, "text/plain"),
+                    });
+                }
+                else
+                {
+                    await Clipboard.Default.SetTextAsync(Encoding.UTF8.GetString(snapshot));
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_DebugLogEmpty,
+                    Resx.TextResource.Common_OK);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_DebugLogEmpty,
+                    Resx.TextResource.Common_OK);
+            }
+            catch (Exception)
+            {
+                await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_DebugLogExportFailed,
+                    Resx.TextResource.Common_OK);
+            }
+            finally
+            {
+                exportingDebugLog = false;
+                RefreshDebugLogActions();
             }
         }
     }

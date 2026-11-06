@@ -18,8 +18,9 @@ namespace TrojanPlusApp.Services
 
         public static void RemoveOtherHosts(string path)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            foreach (string file in Directory.GetFiles(Path.GetDirectoryName(path)!, "*.log"))
+            string directory = Path.GetDirectoryName(path) ?? ".";
+            Directory.CreateDirectory(directory);
+            foreach (string file in Directory.GetFiles(directory, "*.log"))
             {
                 if (file != path)
                 {

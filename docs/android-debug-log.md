@@ -3,10 +3,13 @@
 ## Status and native dependency
 
 App integration targets `trojan_set_log_callback` documented in core branch
-`feat/android-log-callback`, initially reviewed at `a431302`. Existing packaged
-libraries have NOT been replaced: enabled sessions fail closed at registration
-until matching callback-capable libraries are integrated. Disabled sessions do not
-resolve or call the new export. This commit is not a release-ready APK.
+`feat/android-log-callback`, initially reviewed at `a431302`. Native artifacts are
+built from exact core SHA `8f6aa764f1f3c58508e6516eb187eb684d9d7b99` using
+NDK 27.2.12479018, API 31, static libc++, Android logging and 16 KiB page support,
+with SSL key logging disabled. Build uses isolated Git archive including recursive
+submodules; core source state is checked before and after. See
+`TrojanPlusApp.Android/lib/provenance.json` for SHA-256 hashes. Disabled sessions
+do not resolve or call new callback export.
 
 Coordinate native artifact replacement with separate app core49 work. Build both
 ABIs from one exact approved core SHA in isolated build directories, record source
@@ -50,10 +53,12 @@ exposes confirmed text to platform clipboard policy. Core must suppress credenti
 raw payloads and TLS keys before callback delivery; app does not claim arbitrary
 native message redaction.
 
-## Checks (not run while core agent active)
+## Checks
 
 ```
 dotnet run --project tests/LogRegression/LogRegression.csproj
+dotnet run --project tests/NativeLogRegression/NativeLogRegression.csproj
+dotnet run --project tests/LogUiRegression/LogUiRegression.csproj
 dotnet run --project tests/HostEditRegression/HostEditRegression.csproj
 dotnet publish TrojanPlusApp.Android/TrojanPlusApp.Android.csproj -f net10.0-android -c Release
 ```
@@ -62,3 +67,10 @@ Device acceptance still required after native artifacts: no-server/loopback fixt
 disabled/enabled and stop/start lifecycle, real file content/size, privacy cancel,
 share recipient access and clipboard, missing log, repeated clicks and failure UI.
 Coordinate shared emulator use and run builds/tests sequentially with core owner.
+
+## Verification record
+
+- Native libs: core `8f6aa764f1f3c58508e6516eb187eb684d9d7b99`, hashes in `TrojanPlusApp.Android/lib/provenance.json`. APK-packaged libs match both hashes.
+- Release publish: exit 0, 0 project warnings (toolchain XA0033 only). 16 KiB LOAD alignment and `zipalign -P 16` pass. Log-callback and service exports present in both ABIs.
+- Host tests pass: `LogRegression` (10), `HostEditRegression`, `NativeLogRegression`, `LogUiRegression` (14).
+- Not verified on device: `mobile_install_app` reports "App file not found" for the host APK path (MCP server does not share this filesystem) and local adb to 127.0.0.1:6555 is refused. Share sheet, clipboard, private file contents and real-device 1 MiB bound remain untested.

@@ -150,6 +150,9 @@ namespace TrojanPlusApp.ViewModels
 
                     DataStore.SetHostRunningName(string.Empty);
                 }
+
+                // Export gating must observe settled host-running metadata, not previous session state.
+                OnPropertyChanged(nameof(IsConnectBtnEnabled));
             });
         }
 
