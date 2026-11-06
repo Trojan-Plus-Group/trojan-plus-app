@@ -363,9 +363,16 @@ namespace TrojanPlusApp.Droid
 
             public void Run()
             {
-                IntPtr path = JNIEnv.NewString(service.runConfigPath);
+                IntPtr path = IntPtr.Zero;
+                IntPtr jclass = IntPtr.Zero;
                 try
                 {
+                    path = JNIEnv.NewString(service.runConfigPath);
+                    if (path == IntPtr.Zero)
+                    {
+                        throw new InvalidOperationException("Native VPN config path allocation failed.");
+                    }
+
                     if (service.debugLogPath != null)
                     {
                         // Missing callback ABI fails closed; never silently run without requested capture.
@@ -374,7 +381,13 @@ namespace TrojanPlusApp.Droid
 
                     service.BroadcastStatus(true);
 
-                    var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
+                    // FindClass uses JNI binary names and returns an owned global reference.
+                    jclass = JNIEnv.FindClass("com/trojan_plus/android/TrojanPlusVPNService");
+                    if (jclass == IntPtr.Zero)
+                    {
+                        throw new InvalidOperationException("Native VPN service class lookup failed.");
+                    }
+
                     RunMain(JNIEnv.Handle, jclass, path);
                 }
                 catch (Exception)
@@ -384,6 +397,8 @@ namespace TrojanPlusApp.Droid
                 }
                 finally
                 {
+                    // Core borrows this class until RunMain returns; never release it earlier.
+                    JNIEnv.DeleteGlobalRef(jclass);
                     JNIEnv.DeleteLocalRef(path);
                     if (service.debugLog != null)
                     {
