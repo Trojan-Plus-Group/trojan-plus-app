@@ -12,13 +12,14 @@ namespace TrojanPlusApp.Droid
     internal sealed class NativeDebugLog
     {
         private const int MessageLimit = 16 * 1024;
+        private static readonly object Lifecycle = new object();
+        private static readonly LogCallback Callback = Receive;
+        private static NativeDebugLog active;
         private readonly Channel<byte[]> queue = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(32)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true,
         });
-        private static readonly LogCallback Callback = Receive;
-        private static NativeDebugLog active;
         private readonly LogCallback callback;
         private readonly Task writer;
         private long dropped;
@@ -64,45 +65,60 @@ namespace TrojanPlusApp.Droid
 
         public static NativeDebugLog Start(string path)
         {
-            var log = new NativeDebugLog(path);
-            try
+            lock (Lifecycle)
             {
-                active = log;
-                if (SetCallback(log.callback, IntPtr.Zero) != 0)
+                if (active != null)
                 {
-                    throw new InvalidOperationException("Native log callback registration failed.");
+                    throw new InvalidOperationException("Native log callback already owned.");
                 }
 
-                return log;
-            }
-            catch
-            {
-                active = null;
-                log.queue.Writer.TryComplete();
-                log.writer.GetAwaiter().GetResult();
-                throw;
+                var log = new NativeDebugLog(path);
+                try
+                {
+                    Volatile.Write(ref active, log);
+                    if (SetCallback(log.callback, IntPtr.Zero) != 0)
+                    {
+                        throw new InvalidOperationException("Native log callback registration failed.");
+                    }
+
+                    return log;
+                }
+                catch
+                {
+                    Volatile.Write(ref active, null);
+                    log.queue.Writer.TryComplete();
+                    log.writer.GetAwaiter().GetResult();
+                    throw;
+                }
             }
         }
 
         public bool Stop()
         {
-            if (ClearCallback(IntPtr.Zero, IntPtr.Zero) != 0)
+            lock (Lifecycle)
             {
-                // Caller must retain this instance/delegate until process termination.
-                return false;
-            }
+                if (active != this)
+                {
+                    return true;
+                }
 
-            active = null;
-            queue.Writer.TryComplete();
-            writer.GetAwaiter().GetResult();
-            GC.KeepAlive(callback);
-            return true;
+                if (ClearCallback(IntPtr.Zero, IntPtr.Zero) != 0)
+                {
+                    // Caller must retain this instance/delegate until process termination.
+                    return false;
+                }
+
+                queue.Writer.TryComplete();
+                writer.GetAwaiter().GetResult();
+                Volatile.Write(ref active, null);
+                GC.KeepAlive(callback);
+                return true;
+            }
         }
 
-        [Android.Runtime.Preserve]
         private static void Receive(IntPtr message, UIntPtr length, int level, IntPtr context)
         {
-            active?.Enqueue(message, length);
+            Volatile.Read(ref active)?.Enqueue(message, length);
         }
 
         private void Enqueue(IntPtr message, UIntPtr length)

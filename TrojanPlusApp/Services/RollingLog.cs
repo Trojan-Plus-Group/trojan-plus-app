@@ -14,7 +14,8 @@ namespace TrojanPlusApp.Services
 
         public RollingLog(string path)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            string directory = Path.GetDirectoryName(path) ?? ".";
+            Directory.CreateDirectory(directory);
             stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             if (stream.Length > Capacity)
             {

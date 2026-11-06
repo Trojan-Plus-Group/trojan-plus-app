@@ -1,0 +1,18 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../TrojanPlusApp.Android/NativeDebugLog.cs" Link="NativeDebugLog.cs" />
+    <Compile Include="../../TrojanPlusApp/Services/RollingLog.cs" Link="RollingLog.cs" />
+    <Compile Include="../../TrojanPlusApp/Services/DebugLogFiles.cs" Link="DebugLogFiles.cs" />
+  </ItemGroup>
+  <Target Name="BuildNativeLogShim" BeforeTargets="CoreCompile">
+    <MakeDir Directories="$(OutDir)" />
+    <Exec Command="cc -std=c11 -shared -fPIC -Wall -Wextra -Werror &quot;$(MSBuildProjectDirectory)/shim.c&quot; -o &quot;$(OutDir)libtrojan.so&quot;" />
+  </Target>
+</Project>

@@ -141,6 +141,18 @@ namespace TrojanPlusApp.Droid
                 500);
         }
 
+        public override bool OnUnbind(Intent intent)
+        {
+            return false;
+        }
+
+        [return: GeneratedEnum]
+        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
+        {
+            Log.Debug(TAG, "TrojanPlusVPNService.onStartCommand");
+            return StartCommandResult.Sticky;
+        }
+
         private void ResetProcessWhenStopped()
         {
             if (worker != null)
@@ -153,18 +165,6 @@ namespace TrojanPlusApp.Droid
             Log.Info(TAG, "VPN teardown complete; resetting native process");
             currentService = null;
             Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-        }
-
-        public override bool OnUnbind(Intent intent)
-        {
-            return false;
-        }
-
-        [return: GeneratedEnum]
-        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
-        {
-            Log.Debug(TAG, "TrojanPlusVPNService.onStartCommand");
-            return StartCommandResult.Sticky;
         }
 
         private void StopVPN()
@@ -261,6 +261,7 @@ namespace TrojanPlusApp.Droid
                     var route = ParseType(configFile);
                     string metadataPath = prepareConfigPath + ".log-host";
                     string logHost = File.Exists(metadataPath) ? File.ReadAllText(metadataPath) : string.Empty;
+
                     // Require both explicit host opt-in and native detailed level.
                     var config = Newtonsoft.Json.Linq.JObject.Parse(configFile);
                     if (logHost.Length > 0 && (int?)config["log_level"] == 0)
@@ -310,11 +311,10 @@ namespace TrojanPlusApp.Droid
                     worker = new Thread(new WorkerThread(this).Run);
                     worker.Start();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Crashes.TrackError(ex);
-                    Log.Error(TAG, ex.StackTrace);
-
+                    // Parsing exceptions can include credential-bearing config fragments.
+                    Log.Error(TAG, "VPN setup failed.");
                     StopVPN();
                 }
             }
