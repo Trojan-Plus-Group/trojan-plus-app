@@ -128,3 +128,37 @@ catch (NullReferenceException)
 }
 
 Console.WriteLine("PASS: clone cancel isolation; update references/flags/index; rename references/settings; persistence; QUIC descriptions; JSON null fallbacks and missing deletes.");
+
+// Real config generator deliberately leaves an unquoted FD placeholder for Android.
+foreach (bool enabled in new[] { false, true })
+{
+    var fixture = Host("loopback-log-regression");
+    fixture.HostAddress = "127.0.0.1";
+    fixture.EnableDebugLog = enabled;
+    string template = fixture.PrepareConfig(viewModel);
+    Check(template.Contains("${tun.tun_fd}"), "Fixture must retain actual FD placeholder");
+    bool oldParseFailed = false;
+    try { Newtonsoft.Json.Linq.JObject.Parse(template); }
+    catch (Newtonsoft.Json.JsonReaderException) { oldParseFailed = true; }
+    Check(oldParseFailed, "Pre-fix parser must fail for enabled and disabled logs");
+    string resolved = TrojanPlusApp.Droid.VpnRunConfig.Resolve(template, 42);
+    Check(!resolved.Contains("${tun.tun_fd}"), "FD must resolve before parsing");
+    Check((TrojanPlusApp.Droid.VpnRunConfig.GetDebugLogPath(resolved, fixture.HostName) != null) == enabled,
+        "Capture requires explicit metadata and detailed native level");
+    Check(TrojanPlusApp.Droid.VpnRunConfig.GetDebugLogPath(resolved, "") == null, "Missing metadata disables capture");
+    foreach (string invalid in new[] { template, "{", "[]" })
+    {
+        bool rejected = false;
+        try { TrojanPlusApp.Droid.VpnRunConfig.GetDebugLogPath(invalid, fixture.HostName); }
+        catch (Newtonsoft.Json.JsonException) { rejected = true; }
+        Check(rejected, "Invalid or unfinished config must fail closed");
+    }
+}
+bool invalidFd = false;
+try { TrojanPlusApp.Droid.VpnRunConfig.Resolve("{}", -1); }
+catch (ArgumentOutOfRangeException) { invalidFd = true; }
+Check(invalidFd, "Invalid FD must be rejected");
+Check(TrojanPlusApp.Droid.VpnRunConfig.GetDebugLogPath("{}", "host") == null, "Absent level disables capture");
+Check(TrojanPlusApp.Droid.VpnRunConfig.GetDebugLogPath("{\"log_level\":\"0\"}", "host") == null, "Noninteger level disables capture");
+Console.WriteLine("PASS: real unresolved VPN template fails before fix; resolved opt-in on/off, missing metadata, invalid JSON/FD and level checks.");
+Directory.Delete(TrojanPlusApp.App.Instance.DataPathParent, true);

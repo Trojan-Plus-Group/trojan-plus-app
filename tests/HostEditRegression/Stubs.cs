@@ -42,7 +42,7 @@ namespace TrojanPlusApp
     {
         public static App Instance { get; } = new();
         public StarterStub Starter => null;
-        public string DataPathParent => throw new NotSupportedException();
+        public string DataPathParent { get; } = Path.Combine(Path.GetTempPath(), "HostEditRegression-" + Guid.NewGuid().ToString("N"));
         public bool IsVpnServiceRunning => false;
         public bool IsStartBtnEnabled => true;
     }
@@ -60,8 +60,8 @@ namespace TrojanPlusApp.Resx
         public const string Hosts_BtnDisconnect = "Disconnect";
         public const string Hosts_BtnConnect = "Connect";
         public const string Menu_HostsViewTitle = "Hosts";
-        public static string gfwlist => throw new NotSupportedException();
-        public static string cn_mainland_ips => throw new NotSupportedException();
-        public static string cacert => throw new NotSupportedException();
+        public static string gfwlist => string.Empty;
+        public static string cn_mainland_ips => string.Empty;
+        public static string cacert => string.Empty;
     }
 }
