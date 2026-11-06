@@ -98,29 +98,17 @@ namespace TrojanPlusApp.Views
                 string configContent = host.PrepareConfig(viewModel);
                 File.WriteAllText(App.Instance.ConfigPath, configContent);
 #if ANDROID
-                try
-                {
-                    var extDir = Android.App.Application.Context.GetExternalFilesDir(null);
-                    if (extDir != null)
-                    {
-                        string targetPath = Path.Combine(extDir.AbsolutePath, "config_debug.json");
-                        File.WriteAllText(targetPath, configContent);
-                        Console.WriteLine("DEBUG: Config successfully written to " + targetPath);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("DEBUG: Failed to copy external config: " + ex.Message);
-                }
+                // Private session metadata; never copy credential-bearing config to external storage.
+                File.WriteAllText(App.Instance.ConfigPath + ".log-host", host.EnableDebugLog ? host.HostName : string.Empty);
 #endif
                 App.Instance.Start(viewModel.DataStore.Settings);
 
                 viewModel.IsConnectBtnEnabled = false;
                 viewModel.SetHostGoingToRun(host.HostName);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                Console.WriteLine("VPN configuration preparation failed.");
             }
         }
     }

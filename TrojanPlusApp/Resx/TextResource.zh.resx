@@ -355,4 +355,25 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="Settings_EnableAndroidNotificationDetail" xml:space="preserve">
     <value>在状态栏上面显示一个通知用于标识VPN服务正在运行中</value>
   </data>
+  <data name="New_CopyDebugLog" xml:space="preserve">
+    <value>复制日志</value>
+  </data>
+  <data name="New_ShareDebugLog" xml:space="preserve">
+    <value>分享日志</value>
+  </data>
+  <data name="New_DebugLogPrivacyTitle" xml:space="preserve">
+    <value>调试日志隐私警告</value>
+  </data>
+  <data name="New_DebugLogPrivacyWarning" xml:space="preserve">
+    <value>调试日志可能包含服务器地址、访问目标和连接详情等敏感信息。复制会将这些数据放入剪贴板；分享会将其提供给您选择的应用或接收者。仅在信任接收者时导出。是否继续？</value>
+  </data>
+  <data name="New_DebugLogStopFirst" xml:space="preserve">
+    <value>请先停止整个代理，再导出调试日志。</value>
+  </data>
+  <data name="New_DebugLogEmpty" xml:space="preserve">
+    <value>此主机暂无调试日志。请启用调试日志并保存主机，连接后停止代理，再导出日志。</value>
+  </data>
+  <data name="New_DebugLogExportFailed" xml:space="preserve">
+    <value>无法导出调试日志。请检查可用存储空间后重试。</value>
+  </data>
 </root>
