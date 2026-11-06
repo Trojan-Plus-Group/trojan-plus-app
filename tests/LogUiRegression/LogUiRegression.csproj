@@ -5,9 +5,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <HostsPageSource Condition="'$(HostsPageSource)' == ''">../../TrojanPlusApp/Views/HostsPage.xaml.cs</HostsPageSource>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../TrojanPlusApp/Views/HostEditPage.xaml.cs" Link="HostEditPage.xaml.cs" />
+    <Compile Include="$(HostsPageSource)" Link="HostsPage.xaml.cs" />
     <Compile Include="../../TrojanPlusApp/Services/DebugLogFiles.cs" Link="DebugLogFiles.cs" />
     <Compile Include="../../TrojanPlusApp/Services/RollingLog.cs" Link="RollingLog.cs" />
   </ItemGroup>
