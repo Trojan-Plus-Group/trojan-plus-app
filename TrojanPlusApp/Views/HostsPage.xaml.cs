@@ -95,12 +95,21 @@ namespace TrojanPlusApp.Views
 
             try
             {
+                bool isAndroid = Microsoft.Maui.Devices.DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android;
+                if (isAndroid)
+                {
+                    // Revoke previous host opt-in before any fallible config preparation.
+                    File.Delete(App.Instance.ConfigPath + ".log-host");
+                }
+
                 string configContent = host.PrepareConfig(viewModel);
                 File.WriteAllText(App.Instance.ConfigPath, configContent);
-#if ANDROID
-                // Private session metadata; never copy credential-bearing config to external storage.
-                File.WriteAllText(App.Instance.ConfigPath + ".log-host", host.EnableDebugLog ? host.HostName : string.Empty);
-#endif
+                if (isAndroid)
+                {
+                    // Private session metadata; a failed write must prevent startup.
+                    File.WriteAllText(App.Instance.ConfigPath + ".log-host", host.EnableDebugLog ? host.HostName : string.Empty);
+                }
+
                 App.Instance.Start(viewModel.DataStore.Settings);
 
                 viewModel.IsConnectBtnEnabled = false;

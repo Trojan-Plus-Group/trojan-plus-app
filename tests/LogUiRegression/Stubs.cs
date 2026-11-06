@@ -2,10 +2,11 @@
 // Only platform/UI collaborators are fakes; export handlers and file access are linked production code.
 namespace Microsoft.Maui.Controls
 {
-    public class BindableObject { public object? BindingContext { get; set; } }
+    public class BindableObject { public object BindingContext { get; set; } = null!; }
     public class ToggledEventArgs : EventArgs { }
     public sealed class Dispatcher { public void Dispatch(Action action) => action(); }
-    public sealed class Navigation { public Task PopModalAsync() => Task.CompletedTask; }
+    public sealed class Navigation { public Task PushModalAsync(object page) => Task.CompletedTask; public Task PopModalAsync() => Task.CompletedTask; }
+    public sealed class NavigationPage(object page) { }
     public class ContentPage : BindableObject
     {
         public readonly List<string> Errors = new();
@@ -64,6 +65,9 @@ namespace TrojanPlusApp
     public sealed class App
     {
         public static App Instance { get; } = new();
+        public string ConfigPath { get; set; } = "";
+        public int Starts;
+        public void Start(object settings) { Starts++; }
         public bool IsVpnServiceRunning { get; set; }
         public bool IsStartBtnEnabled { get; set; } = true;
     }
@@ -79,6 +83,8 @@ namespace TrojanPlusApp.Models
         public bool SSLVerify { get; set; }
         public List<string> LoadBalance { get; set; } = new();
         public HostModel Duplicate(string? name) => new() { HostName = name ?? HostName, EnableDebugLog = EnableDebugLog, LoadBalance = new(LoadBalance) };
+        public Func<string> Prepare { get; set; } = () => "{}";
+        public string PrepareConfig(ViewModels.HostsViewModel model) => Prepare();
         public bool IsValid() => true;
     }
 }
@@ -94,6 +100,12 @@ namespace TrojanPlusApp.ViewModels
     {
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
         public Store DataStore { get; } = new();
+        public static HostsViewModel? Latest;
+        public HostsViewModel() { Latest = this; }
+        public Models.HostModel? CurretSelectHost { get; set; }
+        public bool IsConnectBtnEnabled { get; set; }
+        public void SelectedHostItem(string name) { }
+        public void SetHostGoingToRun(string name) { }
         public List<Models.HostModel> Items { get; } = new();
         public Task UpdateItemAsync(string? name, Models.HostModel item) => Task.CompletedTask;
         public Models.HostModel? FindHostByName(string? name) => null;
@@ -101,6 +113,10 @@ namespace TrojanPlusApp.ViewModels
 }
 namespace TrojanPlusApp.Views
 {
+    public partial class HostsPage
+    {
+        private void InitializeComponent() { }
+    }
     public partial class HostEditPage
     {
         private void InitializeComponent() { }
@@ -114,6 +130,8 @@ namespace TrojanPlusApp.Resx
 {
     public static class TextResource
     {
+        public const string Common_AlertTitle = nameof(Common_AlertTitle), Hosts_PleaseAddHost = nameof(Hosts_PleaseAddHost),
+            Hosts_LoadBalanceNodeError = nameof(Hosts_LoadBalanceNodeError);
         public const string New_AddHostTitle = nameof(New_AddHostTitle), New_EditHostTitle = nameof(New_EditHostTitle),
             New_DebugLogPrivacyTitle = nameof(New_DebugLogPrivacyTitle), New_DebugLogPrivacyWarning = nameof(New_DebugLogPrivacyWarning),
             New_ShareDebugLog = nameof(New_ShareDebugLog), New_CopyDebugLog = nameof(New_CopyDebugLog),
@@ -126,4 +144,10 @@ namespace TrojanPlusApp.Resx
             New_HostHasBeenAdded = nameof(New_HostHasBeenAdded), New_LoadBalanceHost_Error = nameof(New_LoadBalanceHost_Error),
             New_LoadBalanceHost_Title = nameof(New_LoadBalanceHost_Title), New_LoadBalanceDelHostAsk = nameof(New_LoadBalanceDelHostAsk);
     }
+}
+
+namespace Microsoft.Maui.Devices
+{
+    public enum DevicePlatform { Android, iOS }
+    public static class DeviceInfo { public static DevicePlatform Platform { get; set; } }
 }

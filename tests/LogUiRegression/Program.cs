@@ -130,3 +130,55 @@ finally
     if (File.Exists(logPath)) File.Delete(logPath);
     if (Directory.Exists(cache)) Directory.Delete(cache, true);
 }
+
+// Compile and invoke actual shared HostsPage path without the ANDROID symbol.
+#if ANDROID
+#error This regression must exercise the net10.0 shared compilation without ANDROID.
+#endif
+string sessionDir = Path.Combine(Path.GetTempPath(), "metadata-regression-" + Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(sessionDir);
+try
+{
+    App.Instance.ConfigPath = Path.Combine(sessionDir, "config.json");
+    string metadata = App.Instance.ConfigPath + ".log-host";
+    Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.Android;
+    var hostsPage = new HostsPage();
+    var hosts = HostsViewModel.Latest!;
+    var selected = new HostModel { HostName = "fixture-a", EnableDebugLog = true };
+    hosts.CurretSelectHost = selected;
+    int starts = App.Instance.Starts;
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(File.Exists(metadata) && File.ReadAllText(metadata) == "fixture-a", "Shared Android path must write opt-in metadata");
+    Check(App.Instance.Starts == ++starts, "Successful metadata write must start VPN");
+    selected.HostName = "fixture-b";
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(File.ReadAllText(metadata) == "fixture-b", "Host switch must replace previous name");
+    Check(App.Instance.Starts == ++starts, "Switched host starts");
+    selected.EnableDebugLog = false;
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(File.ReadAllText(metadata) == "", "Disabled logging must revoke opt-in");
+    Check(App.Instance.Starts == ++starts, "Disabled logging still starts VPN");
+    File.WriteAllText(metadata, "stale-host");
+    selected.Prepare = () => throw new IOException("test-only preparation failure");
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(!File.Exists(metadata) && App.Instance.Starts == starts, "Preparation failure revokes stale metadata and blocks startup");
+    selected.Prepare = () => { Directory.CreateDirectory(metadata); return "{}"; };
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(App.Instance.Starts == starts, "Metadata write failure must prevent startup");
+    Directory.Delete(metadata);
+    File.Delete(App.Instance.ConfigPath);
+    Directory.CreateDirectory(App.Instance.ConfigPath);
+    File.WriteAllText(metadata, "stale-host");
+    selected.Prepare = () => "{}";
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(!File.Exists(metadata) && App.Instance.Starts == starts, "Config write failure revokes stale opt-in and blocks startup");
+    Directory.Delete(App.Instance.ConfigPath);
+    Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.iOS;
+    hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
+    Check(!File.Exists(metadata) && App.Instance.Starts == ++starts, "Non-Android path must not create metadata");
+    Console.WriteLine("PASS: compiled shared HostsPage metadata on/off, host switch, preparation/config/metadata failures and non-Android path.");
+}
+finally
+{
+    Directory.Delete(sessionDir, true);
+}
