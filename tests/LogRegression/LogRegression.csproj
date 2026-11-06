@@ -1,0 +1,13 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../TrojanPlusApp/Services/RollingLog.cs" Link="RollingLog.cs" />
+    <Compile Include="../../TrojanPlusApp/Services/DebugLogFiles.cs" Link="DebugLogFiles.cs" />
+  </ItemGroup>
+</Project>

@@ -24,6 +24,34 @@ namespace TrojanPlusApp.Resx {
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class TextResource {
         
+        public static string New_CopyDebugLog {
+            get { return ResourceManager.GetString("New_CopyDebugLog", resourceCulture); }
+        }
+
+        public static string New_ShareDebugLog {
+            get { return ResourceManager.GetString("New_ShareDebugLog", resourceCulture); }
+        }
+
+        public static string New_DebugLogPrivacyTitle {
+            get { return ResourceManager.GetString("New_DebugLogPrivacyTitle", resourceCulture); }
+        }
+
+        public static string New_DebugLogPrivacyWarning {
+            get { return ResourceManager.GetString("New_DebugLogPrivacyWarning", resourceCulture); }
+        }
+
+        public static string New_DebugLogStopFirst {
+            get { return ResourceManager.GetString("New_DebugLogStopFirst", resourceCulture); }
+        }
+
+        public static string New_DebugLogEmpty {
+            get { return ResourceManager.GetString("New_DebugLogEmpty", resourceCulture); }
+        }
+
+        public static string New_DebugLogExportFailed {
+            get { return ResourceManager.GetString("New_DebugLogExportFailed", resourceCulture); }
+        }
+
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;

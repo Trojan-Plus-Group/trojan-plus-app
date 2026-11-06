@@ -89,6 +89,8 @@ namespace TrojanPlusApp.Droid
         private TrojanPlusNotification notification = null;
         private bool stopping;
         private bool stopped;
+        private NativeDebugLog debugLog;
+        private string debugLogPath;
 
         public static PendingIntent CreatePendingIntent()
         {
@@ -134,13 +136,23 @@ namespace TrojanPlusApp.Droid
             mainHandler.PostDelayed(
                 () =>
                 {
-                    Log.Info(TAG, "VPN teardown complete; resetting native process");
-                    currentService = null;
-
-                    // libtrojan.so requires a fresh process for the next session.
-                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+                    ResetProcessWhenStopped();
                 },
                 500);
+        }
+
+        private void ResetProcessWhenStopped()
+        {
+            if (worker != null)
+            {
+                // Native callback and writer must finish before process reset, even after OnDestroy.
+                mainHandler.PostDelayed(ResetProcessWhenStopped, 500);
+                return;
+            }
+
+            Log.Info(TAG, "VPN teardown complete; resetting native process");
+            currentService = null;
+            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
         }
 
         public override bool OnUnbind(Intent intent)
@@ -247,6 +259,14 @@ namespace TrojanPlusApp.Droid
                 {
                     var configFile = File.ReadAllText(prepareConfigPath);
                     var route = ParseType(configFile);
+                    string metadataPath = prepareConfigPath + ".log-host";
+                    string logHost = File.Exists(metadataPath) ? File.ReadAllText(metadataPath) : string.Empty;
+                    // Require both explicit host opt-in and native detailed level.
+                    var config = Newtonsoft.Json.Linq.JObject.Parse(configFile);
+                    if (logHost.Length > 0 && (int?)config["log_level"] == 0)
+                    {
+                        debugLogPath = TrojanPlusApp.Services.DebugLogFiles.PathForHost(logHost);
+                    }
 
                     Log.Debug(TAG, "VPN Route Type: " + route);
 
@@ -337,19 +357,43 @@ namespace TrojanPlusApp.Droid
                 IntPtr path = JNIEnv.NewString(service.runConfigPath);
                 try
                 {
+                    if (service.debugLogPath != null)
+                    {
+                        // Missing callback ABI fails closed; never silently run without requested capture.
+                        service.debugLog = NativeDebugLog.Start(service.debugLogPath);
+                    }
+
                     service.BroadcastStatus(true);
 
                     var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
                     RunMain(JNIEnv.Handle, jclass, path);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Crashes.TrackError(ex);
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                    // Native startup errors may contain configuration or remote data.
+                    Log.Error(TAG, "Native VPN worker failed.");
                 }
                 finally
                 {
                     JNIEnv.DeleteLocalRef(path);
+                    if (service.debugLog != null)
+                    {
+                        try
+                        {
+                            if (service.debugLog.Stop())
+                            {
+                                service.debugLog = null;
+                            }
+                            else
+                            {
+                                Log.Warn(TAG, "Native log unregister failed; retaining callback until process exit.");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn(TAG, "Detailed log shutdown failed; retaining callback until process exit.");
+                        }
+                    }
                 }
 
                 service.mainHandler.Post(() =>
