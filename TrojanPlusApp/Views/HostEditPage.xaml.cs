@@ -327,31 +327,57 @@ namespace TrojanPlusApp.Views
                     return;
                 }
 
-                if (share)
+                if (!share)
                 {
-                    string directory = Path.Combine(FileSystem.CacheDirectory, "debug-log-exports");
-                    Directory.CreateDirectory(directory);
-
-                    // Keep at most one temporary export; next share revokes old snapshot availability.
-                    foreach (string oldFile in Directory.GetFiles(directory, "debug-log-*.txt"))
+                    try
                     {
-                        File.Delete(oldFile);
+                        bool truncated = await Services.LogClipboard.CopyAsync(
+                            Encoding.UTF8.GetString(snapshot),
+                            Microsoft.Maui.Devices.DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android,
+                            Clipboard.Default.SetTextAsync);
+                        if (truncated)
+                        {
+                            await DisplayAlertAsync(
+                                Resx.TextResource.New_CopyDebugLog,
+                                Resx.TextResource.New_DebugLogCopiedTail,
+                                Resx.TextResource.Common_OK);
+                        }
+
+                        return;
                     }
-
-                    string path = Path.Combine(directory, $"debug-log-{Guid.NewGuid():N}.txt");
-                    File.WriteAllBytes(path, snapshot);
-
-                    // Recipient may read after chooser closes; leave temporary file in OS-managed cache.
-                    await Share.Default.RequestAsync(new ShareFileRequest
+                    catch (Exception)
                     {
-                        Title = Resx.TextResource.New_ShareDebugLog,
-                        File = new ShareFile(path, "text/plain"),
-                    });
+                        // Clipboard IPC may reject a full snapshot; never truncate or overwrite the log.
+                        share = await DisplayAlertAsync(
+                            Resx.TextResource.New_DebugLogPrivacyTitle,
+                            Resx.TextResource.New_DebugLogClipboardFailed,
+                            Resx.TextResource.New_ShareDebugLog,
+                            Resx.TextResource.Common_Cancel);
+                        if (!share || !pageVisible || !CanExportDebugLog)
+                        {
+                            return;
+                        }
+                    }
                 }
-                else
+
+                string directory = Path.Combine(FileSystem.CacheDirectory, "debug-log-exports");
+                Directory.CreateDirectory(directory);
+
+                // Keep at most one temporary export; next share revokes old snapshot availability.
+                foreach (string oldFile in Directory.GetFiles(directory, "debug-log-*.txt"))
                 {
-                    await Clipboard.Default.SetTextAsync(Encoding.UTF8.GetString(snapshot));
+                    File.Delete(oldFile);
                 }
+
+                string path = Path.Combine(directory, $"debug-log-{Guid.NewGuid():N}.txt");
+                File.WriteAllBytes(path, snapshot);
+
+                // Recipient may read after chooser closes; leave temporary file in OS-managed cache.
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = Resx.TextResource.New_ShareDebugLog,
+                    File = new ShareFile(path, "text/plain"),
+                });
             }
             catch (FileNotFoundException)
             {

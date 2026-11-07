@@ -376,4 +376,10 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="New_DebugLogExportFailed" xml:space="preserve">
     <value>无法导出调试日志。请检查可用存储空间后重试。</value>
   </data>
+  <data name="New_DebugLogClipboardFailed" xml:space="preserve">
+    <value>剪贴板无法接收完整日志。日志未被截断。是否改为分享完整日志文件？分享会将日志提供给您选择的应用或接收者。</value>
+  </data>
+  <data name="New_DebugLogCopiedTail" xml:space="preserve">
+    <value>为适应剪贴板容量，仅复制了日志的最新部分。分享日志可导出完整日志文件。</value>
+  </data>
 </root>
