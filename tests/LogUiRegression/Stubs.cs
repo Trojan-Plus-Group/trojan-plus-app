@@ -6,7 +6,7 @@ namespace Microsoft.Maui.Controls
     public class ToggledEventArgs : EventArgs { }
     public sealed class Dispatcher { public void Dispatch(Action action) => action(); }
     public sealed class Navigation { public Task PushModalAsync(object page) => Task.CompletedTask; public Task PopModalAsync() => Task.CompletedTask; }
-    public sealed class NavigationPage(object page) { }
+    public sealed class NavigationPage { public NavigationPage(object page) { _ = page; } }
     public class ContentPage : BindableObject
     {
         public readonly List<string> Errors = new();
@@ -41,7 +41,8 @@ namespace Microsoft.Maui.ApplicationModel.DataTransfer
     {
         public static Clipboard Default { get; } = new();
         public List<string> Copies { get; } = new();
-        public Task SetTextAsync(string text) { Copies.Add(text); return Task.CompletedTask; }
+        public bool Reject { get; set; }
+        public Task SetTextAsync(string text) { if (Reject) throw new IOException("Simulated clipboard rejection"); Copies.Add(text); return Task.CompletedTask; }
     }
     public sealed class Share
     {
@@ -137,6 +138,8 @@ namespace TrojanPlusApp.Resx
             New_ShareDebugLog = nameof(New_ShareDebugLog), New_CopyDebugLog = nameof(New_CopyDebugLog),
             Common_Cancel = nameof(Common_Cancel), Common_ErrorTitle = nameof(Common_ErrorTitle), Common_OK = nameof(Common_OK),
             New_DebugLogStopFirst = nameof(New_DebugLogStopFirst), New_DebugLogEmpty = nameof(New_DebugLogEmpty),
+            New_DebugLogCopiedTail = nameof(New_DebugLogCopiedTail),
+            New_DebugLogClipboardFailed = nameof(New_DebugLogClipboardFailed),
             New_DebugLogExportFailed = nameof(New_DebugLogExportFailed), New_HostErrorNeedName = nameof(New_HostErrorNeedName),
             New_HostNameDuplicate = nameof(New_HostNameDuplicate), New_ErrorAttributes = nameof(New_ErrorAttributes),
             Common_AskTitle = nameof(Common_AskTitle), New_HostDeleteAskText = nameof(New_HostDeleteAskText),
@@ -151,3 +154,5 @@ namespace Microsoft.Maui.Devices
     public enum DevicePlatform { Android, iOS }
     public static class DeviceInfo { public static DevicePlatform Platform { get; set; } }
 }
+
+namespace Android.OS { public sealed class TransactionTooLargeException : Exception { } }

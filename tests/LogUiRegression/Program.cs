@@ -122,6 +122,33 @@ try
     Check(File.ReadAllText(logPath) == text, "Export modified source log.");
     Check(page.Errors.Count == errors && page.IsDebugLogExportEnabled, "Share failed or stayed busy.");
     checks++;
+    // A complete 1 MiB UTF-8 snapshot must survive clipboard rejection unchanged.
+    byte[] full = System.Text.Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("café\n", 174762)) + "tail\n012345");
+    Array.Resize(ref full, RollingLog.Capacity);
+    File.WriteAllBytes(logPath, full);
+    Clipboard.Default.Reject = true;
+    int beforeShares = Share.Default.Requests.Count;
+    int prompt = 0;
+    page.Confirm = () => Task.FromResult(++prompt == 1); // initial privacy yes; fallback no
+    page.Copy();
+    Check(prompt == 2 && Share.Default.Requests.Count == beforeShares, "Rejected copy must offer fallback; cancel must not share.");
+    Check(File.ReadAllBytes(logPath).SequenceEqual(full), "Rejected copy changed original bytes.");
+    page.Confirm = () => Task.FromResult(true);
+    page.Copy();
+    Check(Share.Default.Requests.Count == beforeShares + 1, "Confirmed fallback must share complete snapshot.");
+    Check(File.ReadAllBytes(Share.Default.Requests.Last().File.FullPath).SequenceEqual(full), "Fallback truncated full snapshot.");
+    Check(File.ReadAllBytes(logPath).SequenceEqual(full) && page.IsDebugLogExportEnabled, "Fallback changed source or stayed busy.");
+    Clipboard.Default.Reject = false;
+    Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.iOS;
+    page.Copy();
+    Check(System.Text.Encoding.UTF8.GetBytes(Clipboard.Default.Copies.Last()).SequenceEqual(full), "Successful large copy lost bytes.");
+    Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.Android;
+    page.Copy();
+    Check(Clipboard.Default.Copies.Last().Length <= LogClipboard.CharacterLimit, "Android copy must respect UTF-16 budget");
+    Check(page.Errors.Last() == TextResource.New_DebugLogCopiedTail, "Truncated copy must notify user");
+    page.ShareLog();
+    Check(File.ReadAllBytes(Share.Default.Requests.Last().File.FullPath).SequenceEqual(full), "Share must remain complete after truncated copy");
+    checks += 4;
     Console.WriteLine($"PASS: {checks} production HostEditPage export handler scenarios.");
 }
 finally
@@ -182,3 +209,41 @@ finally
 {
     Directory.Delete(sessionDir, true);
 }
+
+
+foreach (string sample in new[] { "", "small log\n", new string('a', LogClipboard.CharacterLimit),
+    new string('a', 1048576), string.Concat(Enumerable.Repeat("日志 café 😀\n", 100000)),
+    "😀😀😀😀😀", "first line\nsecond line\nlast line\n" })
+{
+    string tail = LogClipboard.Tail(sample, 7);
+    Check(tail.Length <= 7 && sample.EndsWith(tail, StringComparison.Ordinal), "Tail must be bounded newest text");
+    Check(tail.Length == 0 || !char.IsLowSurrogate(tail[0]), "Tail split surrogate pair");
+    string? copied = null;
+    bool truncated = await LogClipboard.CopyAsync(sample, true, value => { copied = value; return Task.CompletedTask; });
+    Check(copied == LogClipboard.Tail(sample, LogClipboard.CharacterLimit), "Android budget mismatch");
+    Check(truncated == (sample.Length > LogClipboard.CharacterLimit), "Truncation notification mismatch");
+}
+Check(LogClipboard.Tail("prefix\nnewest\n", 9) == "newest\n", "Prefer complete newest line");
+int calls = 0;
+string retryText = new string('x', 10000);
+bool retryTruncated = await LogClipboard.CopyAsync(retryText, true, value => {
+    calls++;
+    if (calls < 3) throw new Android.OS.TransactionTooLargeException();
+    Check(value.Length == 2500, "Retries must halve tail");
+    return Task.CompletedTask;
+});
+Check(calls == 3 && retryTruncated, "Bounded retry failed");
+foreach (bool android in new[] { false, true })
+{
+    calls = 0;
+    try
+    {
+        await LogClipboard.CopyAsync(retryText, android, value => { calls++; throw new Android.OS.TransactionTooLargeException(); });
+        throw new Exception("Expected size failure");
+    }
+    catch (Android.OS.TransactionTooLargeException) { Check(calls == (android ? 3 : 1), "Wrong retry bound/platform"); }
+}
+calls = 0;
+try { await LogClipboard.CopyAsync(retryText, true, value => { calls++; throw new IOException(); }); }
+catch (IOException) { Check(calls == 1, "Non-size failures must not retry"); }
+Console.WriteLine("PASS: clipboard ASCII/UTF-8/surrogate/empty/boundary/small/full, line tails, bounded size retries and other failures.");
