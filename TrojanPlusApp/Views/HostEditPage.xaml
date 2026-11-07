@@ -194,9 +194,15 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Item.EnableDebugLog}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
+					<Switch IsToggled="{Binding Item.EnableDebugLog}" Toggled="OnDebugLogToggled" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log_Detail}" FontSize="Small" />
+				<Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding CanExportDebugLog}" IsEnabled="{Binding IsDebugLogExportEnabled}">
+					<Button Text="{x:Static resources:TextResource.New_CopyDebugLog}" Clicked="OnCopyDebugLogClicked"
+						Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />
+					<Button Grid.Column="1" Text="{x:Static resources:TextResource.New_ShareDebugLog}" Clicked="OnShareDebugLogClicked"
+						Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />
+				</Grid>
 
 				<Button Margin="0,20,0,0" Text="{x:Static resources:TextResource.New_HostDuplicateText}" Clicked="OnDuplicateBtnClicked" IsVisible="{Binding ShowDeleteBtn}" 
 					Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />

@@ -95,32 +95,29 @@ namespace TrojanPlusApp.Views
 
             try
             {
+                bool isAndroid = Microsoft.Maui.Devices.DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android;
+                if (isAndroid)
+                {
+                    // Revoke previous host opt-in before any fallible config preparation.
+                    File.Delete(App.Instance.ConfigPath + ".log-host");
+                }
+
                 string configContent = host.PrepareConfig(viewModel);
                 File.WriteAllText(App.Instance.ConfigPath, configContent);
-#if ANDROID
-                try
+                if (isAndroid)
                 {
-                    var extDir = Android.App.Application.Context.GetExternalFilesDir(null);
-                    if (extDir != null)
-                    {
-                        string targetPath = Path.Combine(extDir.AbsolutePath, "config_debug.json");
-                        File.WriteAllText(targetPath, configContent);
-                        Console.WriteLine("DEBUG: Config successfully written to " + targetPath);
-                    }
+                    // Private session metadata; a failed write must prevent startup.
+                    File.WriteAllText(App.Instance.ConfigPath + ".log-host", host.EnableDebugLog ? host.HostName : string.Empty);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("DEBUG: Failed to copy external config: " + ex.Message);
-                }
-#endif
+
                 App.Instance.Start(viewModel.DataStore.Settings);
 
                 viewModel.IsConnectBtnEnabled = false;
                 viewModel.SetHostGoingToRun(host.HostName);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+                Console.WriteLine("VPN configuration preparation failed.");
             }
         }
     }

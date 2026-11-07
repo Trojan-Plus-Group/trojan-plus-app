@@ -89,6 +89,8 @@ namespace TrojanPlusApp.Droid
         private TrojanPlusNotification notification = null;
         private bool stopping;
         private bool stopped;
+        private NativeDebugLog debugLog;
+        private string debugLogPath;
 
         public static PendingIntent CreatePendingIntent()
         {
@@ -134,11 +136,7 @@ namespace TrojanPlusApp.Droid
             mainHandler.PostDelayed(
                 () =>
                 {
-                    Log.Info(TAG, "VPN teardown complete; resetting native process");
-                    currentService = null;
-
-                    // libtrojan.so requires a fresh process for the next session.
-                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+                    ResetProcessWhenStopped();
                 },
                 500);
         }
@@ -153,6 +151,20 @@ namespace TrojanPlusApp.Droid
         {
             Log.Debug(TAG, "TrojanPlusVPNService.onStartCommand");
             return StartCommandResult.Sticky;
+        }
+
+        private void ResetProcessWhenStopped()
+        {
+            if (worker != null)
+            {
+                // Native callback and writer must finish before process reset, even after OnDestroy.
+                mainHandler.PostDelayed(ResetProcessWhenStopped, 500);
+                return;
+            }
+
+            Log.Info(TAG, "VPN teardown complete; resetting native process");
+            currentService = null;
+            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
         }
 
         private void StopVPN()
@@ -185,10 +197,20 @@ namespace TrojanPlusApp.Droid
             stopping = true;
             Log.Info(TAG, "Finishing VPN stop: closing TUN");
             notification?.Destroy();
-            CloseFD();
-            worker = null;
-            StopSelf();
-            BroadcastStatus(false);
+            try
+            {
+                CloseFD();
+            }
+            catch (Exception)
+            {
+                Log.Error(TAG, "VPN cleanup failed.");
+            }
+            finally
+            {
+                worker = null;
+                StopSelf();
+                BroadcastStatus(false);
+            }
         }
 
         private void BroadcastStatus(bool started)
@@ -245,8 +267,17 @@ namespace TrojanPlusApp.Droid
             {
                 try
                 {
+                    // Satisfy foreground startup before config, metadata or TUN setup can fail.
+                    if (showNotification)
+                    {
+                        notification = new TrojanPlusNotification(this);
+                        notification.Show();
+                    }
+
                     var configFile = File.ReadAllText(prepareConfigPath);
                     var route = ParseType(configFile);
+                    string metadataPath = prepareConfigPath + ".log-host";
+                    string logHost = File.Exists(metadataPath) ? File.ReadAllText(metadataPath) : string.Empty;
 
                     Log.Debug(TAG, "VPN Route Type: " + route);
 
@@ -275,26 +306,24 @@ namespace TrojanPlusApp.Droid
                     }
 
                     vpnFD = builder.Establish();
+                    if (vpnFD == null)
+                    {
+                        throw new InvalidOperationException("VPN interface establishment failed.");
+                    }
 
-                    configFile = configFile.Replace("${tun.tun_fd}", vpnFD.Fd.ToString());
+                    configFile = VpnRunConfig.Resolve(configFile, vpnFD.Fd);
+                    debugLogPath = VpnRunConfig.GetDebugLogPath(configFile, logHost);
 
                     runConfigPath = prepareConfigPath + TrojanPlusMainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
 
-                    if (showNotification)
-                    {
-                        notification = new TrojanPlusNotification(this);
-                    }
-
-                    notification?.Show();
                     worker = new Thread(new WorkerThread(this).Run);
                     worker.Start();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Crashes.TrackError(ex);
-                    Log.Error(TAG, ex.StackTrace);
-
+                    // Parsing exceptions can include credential-bearing config fragments.
+                    Log.Error(TAG, "VPN setup failed.");
                     StopVPN();
                 }
             }
@@ -334,22 +363,61 @@ namespace TrojanPlusApp.Droid
 
             public void Run()
             {
-                IntPtr path = JNIEnv.NewString(service.runConfigPath);
+                IntPtr path = IntPtr.Zero;
+                IntPtr jclass = IntPtr.Zero;
                 try
                 {
+                    path = JNIEnv.NewString(service.runConfigPath);
+                    if (path == IntPtr.Zero)
+                    {
+                        throw new InvalidOperationException("Native VPN config path allocation failed.");
+                    }
+
+                    if (service.debugLogPath != null)
+                    {
+                        // Missing callback ABI fails closed; never silently run without requested capture.
+                        service.debugLog = NativeDebugLog.Start(service.debugLogPath);
+                    }
+
                     service.BroadcastStatus(true);
 
-                    var jclass = JNIEnv.FindClass("com.trojan_plus.android.TrojanPlusVPNService");
+                    // FindClass uses JNI binary names and returns an owned global reference.
+                    jclass = JNIEnv.FindClass("com/trojan_plus/android/TrojanPlusVPNService");
+                    if (jclass == IntPtr.Zero)
+                    {
+                        throw new InvalidOperationException("Native VPN service class lookup failed.");
+                    }
+
                     RunMain(JNIEnv.Handle, jclass, path);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Crashes.TrackError(ex);
-                    Log.Error(TAG, ex.Message + "\n" + ex.StackTrace);
+                    // Native startup errors may contain configuration or remote data.
+                    Log.Error(TAG, "Native VPN worker failed.");
                 }
                 finally
                 {
+                    // Core borrows this class until RunMain returns; never release it earlier.
+                    JNIEnv.DeleteGlobalRef(jclass);
                     JNIEnv.DeleteLocalRef(path);
+                    if (service.debugLog != null)
+                    {
+                        try
+                        {
+                            if (service.debugLog.Stop())
+                            {
+                                service.debugLog = null;
+                            }
+                            else
+                            {
+                                Log.Warn(TAG, "Native log unregister failed; retaining callback until process exit.");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn(TAG, "Detailed log shutdown failed; retaining callback until process exit.");
+                        }
+                    }
                 }
 
                 service.mainHandler.Post(() =>
