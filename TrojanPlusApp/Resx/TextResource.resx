@@ -368,6 +368,36 @@ CAUTION: because privacy information controlling is much more strict in Android 
   <data name="Settings_EnableAndroidNotificationDetail" xml:space="preserve">
     <value>Display a notification in status bar to indicate VPN service is running.</value>
   </data>
+  <data name="New_DebugLogLevel" xml:space="preserve">
+    <value>Log level</value>
+  </data>
+  <data name="New_DebugLogLevelWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="New_DebugLogLevelInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="New_DebugLogLevelAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="New_DebugLogSize" xml:space="preserve">
+    <value>Log size</value>
+  </data>
+  <data name="New_DebugLogSize1MB" xml:space="preserve">
+    <value>1 MB</value>
+  </data>
+  <data name="New_DebugLogSize5MB" xml:space="preserve">
+    <value>5 MB</value>
+  </data>
+  <data name="New_DebugLogSize10MB" xml:space="preserve">
+    <value>10 MB</value>
+  </data>
+  <data name="New_DebugLogSize20MB" xml:space="preserve">
+    <value>20 MB</value>
+  </data>
+  <data name="New_DebugLogSize50MB" xml:space="preserve">
+    <value>50 MB</value>
+  </data>
   <data name="New_CopyDebugLog" xml:space="preserve">
     <value>Copy Log</value>
   </data>

@@ -13,6 +13,22 @@ static void Check(bool condition, string message)
     if (!condition) throw new Exception(message);
 }
 
+var xaml = System.Xml.Linq.XDocument.Load(Path.Combine(AppContext.BaseDirectory, "HostEditPage.xaml"));
+System.Xml.Linq.XNamespace maui = "http://schemas.microsoft.com/dotnet/2021/maui";
+foreach (var choice in new[]
+{
+    (Property: "UI_DebugLogLevel", Resources: new[] { "Warning", "Info", "All" }.Select(x => "New_DebugLogLevel" + x).ToArray()),
+    (Property: "UI_DebugLogSize", Resources: new[] { 1, 5, 10, 20, 50 }.Select(x => $"New_DebugLogSize{x}MB").ToArray()),
+})
+{
+    var picker = xaml.Descendants(maui + "Picker").Single(x => (string?)x.Attribute("SelectedIndex") == $"{{Binding Item.{choice.Property}}}");
+    var grid = picker.Parent!;
+    Check(((string?)grid.Attribute("IsVisible"))?.Contains("Switch_EnableDebugLog") == true, "Log choices must follow debug switch visibility.");
+    Check((string?)grid.Attribute("IsEnabled") == "{Binding IsDebugLogSettingsEnabled}", "Log choices must use stopped-proxy gate.");
+    Check(picker.Descendants().Where(x => x.Name.LocalName == "Static").Select(x => (string?)x.Attribute("Member"))
+        .SequenceEqual(choice.Resources.Select(x => "resources:TextResource." + x)), "Log choices must preserve model index order.");
+}
+
 // No SynchronizationContext: completed fake platform tasks run synchronously, including
 // continuations released by SetResult. Calls below enter the actual async-void handlers.
 Check(SynchronizationContext.Current == null, "Run as console app without UI synchronization context.");
@@ -48,6 +64,19 @@ try
     NoTransfer();
     page.Appear();
     Check(page.CanExportDebugLog, "Stopped + option enabled should allow export.");
+    Check(page.IsDebugLogSettingsEnabled, "Stopped proxy must allow log settings.");
+    foreach (var blockedState in new (Action Set, Action Reset)[]
+    {
+        (() => App.Instance.IsVpnServiceRunning = true, () => App.Instance.IsVpnServiceRunning = false),
+        (() => App.Instance.IsStartBtnEnabled = false, () => App.Instance.IsStartBtnEnabled = true),
+        (() => model.DataStore.Settings.HostRunningName = hostName, () => model.DataStore.Settings.HostRunningName = ""),
+    })
+    {
+        blockedState.Set();
+        Check(!page.IsDebugLogSettingsEnabled, "Running or starting proxy must disable log settings.");
+        blockedState.Reset();
+        Check(page.IsDebugLogSettingsEnabled, "Stopped proxy must restore log settings.");
+    }
     Blocked(() => page.Item.EnableDebugLog = false, () => page.Item.EnableDebugLog = true);
     Blocked(() => App.Instance.IsVpnServiceRunning = true, () => App.Instance.IsVpnServiceRunning = false);
     Blocked(() => App.Instance.IsStartBtnEnabled = false, () => App.Instance.IsStartBtnEnabled = true);
@@ -122,7 +151,8 @@ try
     Check(File.ReadAllText(logPath) == text, "Export modified source log.");
     Check(page.Errors.Count == errors && page.IsDebugLogExportEnabled, "Share failed or stayed busy.");
     checks++;
-    byte[] full = System.Text.Encoding.UTF8.GetBytes(new string('x', RollingLog.Capacity));
+    page.Item.DebugLogSizeMB = 5;
+    byte[] full = System.Text.Encoding.UTF8.GetBytes(new string('x', RollingLog.CapacityForSize(page.Item.DebugLogSizeMB)));
     File.WriteAllBytes(logPath, full);
     Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.Android;
     page.Copy();
@@ -161,15 +191,22 @@ try
     Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.Android;
     var hostsPage = new HostsPage();
     var hosts = HostsViewModel.Latest!;
-    var selected = new HostModel { HostName = "fixture-a", EnableDebugLog = true };
+    var selected = new HostModel { HostName = "fixture-a", EnableDebugLog = true, DebugLogSizeMB = 5 };
+    bool MetadataMatches(string name, int sizeMB)
+    {
+        using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(metadata));
+        var root = document.RootElement;
+        return root.GetProperty("HostName").GetString() == name && root.GetProperty("SizeMB").GetInt32() == sizeMB;
+    }
     hosts.CurretSelectHost = selected;
     int starts = App.Instance.Starts;
     hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
-    Check(File.Exists(metadata) && File.ReadAllText(metadata) == "fixture-a", "Shared Android path must write opt-in metadata");
+    Check(File.Exists(metadata) && MetadataMatches("fixture-a", 5), "Shared Android path must write host and size JSON metadata");
     Check(App.Instance.Starts == ++starts, "Successful metadata write must start VPN");
     selected.HostName = "fixture-b";
+    selected.DebugLogSizeMB = 20;
     hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
-    Check(File.ReadAllText(metadata) == "fixture-b", "Host switch must replace previous name");
+    Check(MetadataMatches("fixture-b", 20), "Host switch must replace previous host and size");
     Check(App.Instance.Starts == ++starts, "Switched host starts");
     selected.EnableDebugLog = false;
     hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);

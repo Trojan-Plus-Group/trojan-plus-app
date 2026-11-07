@@ -355,6 +355,36 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="Settings_EnableAndroidNotificationDetail" xml:space="preserve">
     <value>在状态栏上面显示一个通知用于标识VPN服务正在运行中</value>
   </data>
+  <data name="New_DebugLogLevel" xml:space="preserve">
+    <value>日志级别</value>
+  </data>
+  <data name="New_DebugLogLevelWarning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="New_DebugLogLevelInfo" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="New_DebugLogLevelAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="New_DebugLogSize" xml:space="preserve">
+    <value>日志大小</value>
+  </data>
+  <data name="New_DebugLogSize1MB" xml:space="preserve">
+    <value>1 MB</value>
+  </data>
+  <data name="New_DebugLogSize5MB" xml:space="preserve">
+    <value>5 MB</value>
+  </data>
+  <data name="New_DebugLogSize10MB" xml:space="preserve">
+    <value>10 MB</value>
+  </data>
+  <data name="New_DebugLogSize20MB" xml:space="preserve">
+    <value>20 MB</value>
+  </data>
+  <data name="New_DebugLogSize50MB" xml:space="preserve">
+    <value>50 MB</value>
+  </data>
   <data name="New_CopyDebugLog" xml:space="preserve">
     <value>复制日志</value>
   </data>

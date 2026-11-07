@@ -24,6 +24,46 @@ namespace TrojanPlusApp.Resx {
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class TextResource {
         
+        public static string New_DebugLogLevel {
+            get { return ResourceManager.GetString("New_DebugLogLevel", resourceCulture); }
+        }
+
+        public static string New_DebugLogLevelWarning {
+            get { return ResourceManager.GetString("New_DebugLogLevelWarning", resourceCulture); }
+        }
+
+        public static string New_DebugLogLevelInfo {
+            get { return ResourceManager.GetString("New_DebugLogLevelInfo", resourceCulture); }
+        }
+
+        public static string New_DebugLogLevelAll {
+            get { return ResourceManager.GetString("New_DebugLogLevelAll", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize {
+            get { return ResourceManager.GetString("New_DebugLogSize", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize1MB {
+            get { return ResourceManager.GetString("New_DebugLogSize1MB", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize5MB {
+            get { return ResourceManager.GetString("New_DebugLogSize5MB", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize10MB {
+            get { return ResourceManager.GetString("New_DebugLogSize10MB", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize20MB {
+            get { return ResourceManager.GetString("New_DebugLogSize20MB", resourceCulture); }
+        }
+
+        public static string New_DebugLogSize50MB {
+            get { return ResourceManager.GetString("New_DebugLogSize50MB", resourceCulture); }
+        }
+
         public static string New_CopyDebugLog {
             get { return ResourceManager.GetString("New_CopyDebugLog", resourceCulture); }
         }

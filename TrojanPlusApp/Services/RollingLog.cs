@@ -9,27 +9,32 @@ namespace TrojanPlusApp.Services
     public sealed class RollingLog : IDisposable
     {
         public const int Capacity = 1024 * 1024;
-        private const int LowWaterMark = Capacity - (256 * 1024);
+        private readonly int capacity;
         private readonly FileStream stream;
-        private readonly byte[] buffer = new byte[Capacity];
+        private readonly byte[] buffer = new byte[64 * 1024];
 
-        public RollingLog(string path)
+        public RollingLog(string path, int sizeMB = 1)
         {
+            capacity = CapacityForSize(sizeMB);
             string directory = Path.GetDirectoryName(path) ?? ".";
             Directory.CreateDirectory(directory);
             stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            if (stream.Length > Capacity)
+            if (stream.Length > capacity)
             {
                 stream.SetLength(0);
             }
         }
 
+        public static int NormalizeSizeMB(int sizeMB) => sizeMB is 1 or 5 or 10 or 20 or 50 ? sizeMB : 1;
+
+        public static int CapacityForSize(int sizeMB) => NormalizeSizeMB(sizeMB) * Capacity;
+
         public void Write(ReadOnlySpan<byte> bytes)
         {
             // Bound allocations even for a single oversized message.
-            if (bytes.Length > Capacity)
+            if (bytes.Length > capacity)
             {
-                bytes = bytes.Slice(bytes.Length - Capacity);
+                bytes = bytes.Slice(bytes.Length - capacity);
                 while (!bytes.IsEmpty && (bytes[0] & 0xC0) == 0x80)
                 {
                     bytes = bytes.Slice(1);
@@ -39,9 +44,9 @@ namespace TrojanPlusApp.Services
             // Normalize external bytes, including invalid UTF-8, before storing text.
             string text = Encoding.UTF8.GetString(bytes);
             byte[] incoming = Encoding.UTF8.GetBytes(text.Replace('\0', '\uFFFD') + "\n");
-            if (incoming.Length > Capacity)
+            if (incoming.Length > capacity)
             {
-                int start = incoming.Length - Capacity;
+                int start = incoming.Length - capacity;
                 while (start < incoming.Length && (incoming[start] & 0xC0) == 0x80)
                 {
                     start++;
@@ -50,28 +55,53 @@ namespace TrojanPlusApp.Services
                 incoming = incoming.AsSpan(start).ToArray();
             }
 
-            if (stream.Length + incoming.Length > Capacity)
+            if (stream.Length + incoming.Length > capacity)
             {
-                int keep = Math.Min(LowWaterMark, Capacity - incoming.Length);
-                long start = stream.Length - keep;
-                stream.Position = start;
-                stream.ReadExactly(buffer.AsSpan(0, keep));
-                int skip = 0;
-                while (skip < keep && (buffer[skip] & 0xC0) == 0x80)
-                {
-                    skip++;
-                }
+                int keep = Math.Min(capacity * 3 / 4, capacity - incoming.Length);
+                long end = stream.Length;
+                long start = end - keep;
+                long cursor = start;
 
                 // Prefer whole lines, unless retained tail contains no line break.
-                int newline = buffer.AsSpan(skip, keep - skip).IndexOf((byte)'\n');
-                if (newline >= 0)
+                while (cursor < end)
                 {
-                    skip += newline + 1;
+                    int count = (int)Math.Min(buffer.Length, end - cursor);
+                    stream.Position = cursor;
+                    stream.ReadExactly(buffer.AsSpan(0, count));
+                    int skip = 0;
+                    if (cursor == start)
+                    {
+                        while (skip < count && (buffer[skip] & 0xC0) == 0x80)
+                        {
+                            skip++;
+                        }
+
+                        start += skip;
+                    }
+
+                    int newline = buffer.AsSpan(skip, count - skip).IndexOf((byte)'\n');
+                    if (newline >= 0)
+                    {
+                        start = cursor + skip + newline + 1;
+                        break;
+                    }
+
+                    cursor += count;
                 }
 
-                stream.Position = 0;
-                stream.Write(buffer.AsSpan(skip, keep - skip));
-                stream.SetLength(keep - skip);
+                long written = 0;
+                while (start < end)
+                {
+                    int count = (int)Math.Min(buffer.Length, end - start);
+                    stream.Position = start;
+                    stream.ReadExactly(buffer.AsSpan(0, count));
+                    stream.Position = written;
+                    stream.Write(buffer.AsSpan(0, count));
+                    start += count;
+                    written += count;
+                }
+
+                stream.SetLength(written);
             }
 
             stream.Position = stream.Length;

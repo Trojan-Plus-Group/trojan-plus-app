@@ -29,10 +29,10 @@ namespace TrojanPlusApp.Services
             }
         }
 
-        public static byte[] ReadSnapshot(string path)
+        public static byte[] ReadSnapshot(string path, int sizeMB = 1)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
-            if (stream.Length == 0 || stream.Length > RollingLog.Capacity)
+            if (stream.Length == 0 || stream.Length > RollingLog.CapacityForSize(sizeMB))
             {
                 throw new IOException("Log unavailable or exceeds size limit.");
             }

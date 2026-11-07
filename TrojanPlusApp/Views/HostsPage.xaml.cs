@@ -107,7 +107,10 @@ namespace TrojanPlusApp.Views
                 if (isAndroid)
                 {
                     // Private session metadata; a failed write must prevent startup.
-                    File.WriteAllText(App.Instance.ConfigPath + ".log-host", host.EnableDebugLog ? host.HostName : string.Empty);
+                    string metadata = host.EnableDebugLog
+                        ? Newtonsoft.Json.JsonConvert.SerializeObject(new { HostName = host.HostName, SizeMB = host.DebugLogSizeMB })
+                        : string.Empty;
+                    File.WriteAllText(App.Instance.ConfigPath + ".log-host", metadata);
                 }
 
                 App.Instance.Start(viewModel.DataStore.Settings);

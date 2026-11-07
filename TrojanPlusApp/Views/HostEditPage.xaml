@@ -194,7 +194,33 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log}" VerticalOptions="Center"  FontSize="Medium" />
-					<Switch IsToggled="{Binding Item.EnableDebugLog}" Toggled="OnDebugLogToggled" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
+					<Switch x:Name="Switch_EnableDebugLog" IsToggled="{Binding Item.EnableDebugLog}" Toggled="OnDebugLogToggled" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
+				</Grid>
+				<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="10"
+					IsVisible="{Binding Source={x:Reference Switch_EnableDebugLog}, Path=IsToggled, Mode=OneWay, x:DataType=Switch}"
+					IsEnabled="{Binding IsDebugLogSettingsEnabled}">
+					<Label Text="{x:Static resources:TextResource.New_DebugLogLevel}" VerticalOptions="Center" FontSize="Small" />
+					<Picker Grid.Column="1" Title="{x:Static resources:TextResource.New_DebugLogLevel}" SelectedIndex="{Binding Item.UI_DebugLogLevel}" FontSize="Small">
+						<Picker.ItemsSource>
+							<x:Array Type="{x:Type x:String}">
+								<x:Static Member="resources:TextResource.New_DebugLogLevelWarning" />
+								<x:Static Member="resources:TextResource.New_DebugLogLevelInfo" />
+								<x:Static Member="resources:TextResource.New_DebugLogLevelAll" />
+							</x:Array>
+						</Picker.ItemsSource>
+					</Picker>
+					<Label Grid.Row="1" Text="{x:Static resources:TextResource.New_DebugLogSize}" VerticalOptions="Center" FontSize="Small" />
+					<Picker Grid.Row="1" Grid.Column="1" Title="{x:Static resources:TextResource.New_DebugLogSize}" SelectedIndex="{Binding Item.UI_DebugLogSize}" FontSize="Small">
+						<Picker.ItemsSource>
+							<x:Array Type="{x:Type x:String}">
+								<x:Static Member="resources:TextResource.New_DebugLogSize1MB" />
+								<x:Static Member="resources:TextResource.New_DebugLogSize5MB" />
+								<x:Static Member="resources:TextResource.New_DebugLogSize10MB" />
+								<x:Static Member="resources:TextResource.New_DebugLogSize20MB" />
+								<x:Static Member="resources:TextResource.New_DebugLogSize50MB" />
+							</x:Array>
+						</Picker.ItemsSource>
+					</Picker>
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_Output_Debug_Log_Detail}" FontSize="Small" />
 				<Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding CanExportDebugLog}" IsEnabled="{Binding IsDebugLogExportEnabled}">
