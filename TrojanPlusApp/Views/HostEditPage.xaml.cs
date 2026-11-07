@@ -329,35 +329,19 @@ namespace TrojanPlusApp.Views
 
                 if (!share)
                 {
-                    try
+                    string text = Encoding.UTF8.GetString(snapshot);
+                    string copied = Microsoft.Maui.Devices.DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android
+                        ? Services.LogClipboard.Tail(text) : text;
+                    await Clipboard.Default.SetTextAsync(copied);
+                    if (copied.Length != text.Length)
                     {
-                        bool truncated = await Services.LogClipboard.CopyAsync(
-                            Encoding.UTF8.GetString(snapshot),
-                            Microsoft.Maui.Devices.DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android,
-                            Clipboard.Default.SetTextAsync);
-                        if (truncated)
-                        {
-                            await DisplayAlertAsync(
-                                Resx.TextResource.New_CopyDebugLog,
-                                Resx.TextResource.New_DebugLogCopiedTail,
-                                Resx.TextResource.Common_OK);
-                        }
+                        await DisplayAlertAsync(
+                            Resx.TextResource.New_CopyDebugLog,
+                            Resx.TextResource.New_DebugLogCopiedTail,
+                            Resx.TextResource.Common_OK);
+                    }
 
-                        return;
-                    }
-                    catch (Exception)
-                    {
-                        // Clipboard IPC may reject a full snapshot; never truncate or overwrite the log.
-                        share = await DisplayAlertAsync(
-                            Resx.TextResource.New_DebugLogPrivacyTitle,
-                            Resx.TextResource.New_DebugLogClipboardFailed,
-                            Resx.TextResource.New_ShareDebugLog,
-                            Resx.TextResource.Common_Cancel);
-                        if (!share || !pageVisible || !CanExportDebugLog)
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
 
                 string directory = Path.Combine(FileSystem.CacheDirectory, "debug-log-exports");

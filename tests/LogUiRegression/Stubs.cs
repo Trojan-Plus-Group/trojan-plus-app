@@ -139,7 +139,6 @@ namespace TrojanPlusApp.Resx
             Common_Cancel = nameof(Common_Cancel), Common_ErrorTitle = nameof(Common_ErrorTitle), Common_OK = nameof(Common_OK),
             New_DebugLogStopFirst = nameof(New_DebugLogStopFirst), New_DebugLogEmpty = nameof(New_DebugLogEmpty),
             New_DebugLogCopiedTail = nameof(New_DebugLogCopiedTail),
-            New_DebugLogClipboardFailed = nameof(New_DebugLogClipboardFailed),
             New_DebugLogExportFailed = nameof(New_DebugLogExportFailed), New_HostErrorNeedName = nameof(New_HostErrorNeedName),
             New_HostNameDuplicate = nameof(New_HostNameDuplicate), New_ErrorAttributes = nameof(New_ErrorAttributes),
             Common_AskTitle = nameof(Common_AskTitle), New_HostDeleteAskText = nameof(New_HostDeleteAskText),
@@ -154,5 +153,3 @@ namespace Microsoft.Maui.Devices
     public enum DevicePlatform { Android, iOS }
     public static class DeviceInfo { public static DevicePlatform Platform { get; set; } }
 }
-
-namespace Android.OS { public sealed class TransactionTooLargeException : Exception { } }

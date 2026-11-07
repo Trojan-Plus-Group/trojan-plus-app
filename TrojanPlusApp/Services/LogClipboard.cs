@@ -1,27 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 namespace TrojanPlusApp.Services
 {
-    using System;
-    using System.Threading.Tasks;
-
     public static class LogClipboard
     {
-        // Approximate Binder budget, not a guaranteed clipboard limit; reserve parcel overhead.
-        public const int CharacterLimit = (((1024 * 1024 * 4) / 5) - (32 * 1024)) / 2;
+        public const int CharacterLimit = 65536;
 
-        public static string Tail(string text, int limit)
+        public static string Tail(string text)
         {
-            if (limit < 2)
-            {
-                throw new ArgumentOutOfRangeException(nameof(limit));
-            }
-
-            if (text.Length <= limit)
+            if (text.Length <= CharacterLimit)
             {
                 return text;
             }
 
-            int start = text.Length - limit;
+            int start = text.Length - CharacterLimit;
             if (char.IsLowSurrogate(text[start]) && char.IsHighSurrogate(text[start - 1]))
             {
                 start++;
@@ -38,30 +29,6 @@ namespace TrojanPlusApp.Services
             }
 
             return text.Substring(start);
-        }
-
-        public static async Task<bool> CopyAsync(string text, bool android, Func<string, Task> copy)
-        {
-            string candidate = android ? Tail(text, CharacterLimit) : text;
-            for (int attempt = 0; ; attempt++)
-            {
-                try
-                {
-                    await copy(candidate);
-                    return candidate.Length != text.Length;
-                }
-                catch (Exception ex) when (android && attempt < 2 && candidate.Length > 2 && IsTransactionSizeFailure(ex))
-                {
-                    candidate = Tail(candidate, Math.Max(2, candidate.Length / 2));
-                }
-            }
-        }
-
-        private static bool IsTransactionSizeFailure(Exception exception)
-        {
-            // Shared assembly cannot reference Android types; match type identity, never exception text.
-            return exception.GetType().FullName == "Android.OS.TransactionTooLargeException"
-                || (exception.InnerException != null && IsTransactionSizeFailure(exception.InnerException));
         }
     }
 }
