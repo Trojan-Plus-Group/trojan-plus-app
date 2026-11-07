@@ -52,10 +52,6 @@ namespace TrojanPlusApp.Resx {
             get { return ResourceManager.GetString("New_DebugLogCopiedTail", resourceCulture); }
         }
 
-        public static string New_DebugLogClipboardFailed {
-            get { return ResourceManager.GetString("New_DebugLogClipboardFailed", resourceCulture); }
-        }
-
         public static string New_DebugLogExportFailed {
             get { return ResourceManager.GetString("New_DebugLogExportFailed", resourceCulture); }
         }

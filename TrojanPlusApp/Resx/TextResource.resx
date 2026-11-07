@@ -387,10 +387,7 @@ CAUTION: because privacy information controlling is much more strict in Android 
     <value>No debug log is available for this host. Enable debug logging, save the host, connect, then stop the proxy before exporting.</value>
   </data>
   <data name="New_DebugLogExportFailed" xml:space="preserve">
-    <value>Could not export the debug log. Check available storage and try again.</value>
-  </data>
-  <data name="New_DebugLogClipboardFailed" xml:space="preserve">
-    <value>The clipboard could not accept the complete log. Nothing was truncated. Share the complete log file instead? Sharing gives it to the app or recipient you choose.</value>
+    <value>Could not export the debug log. Check available storage and try again. If copying fails, use Share Log for the complete file.</value>
   </data>
   <data name="New_DebugLogCopiedTail" xml:space="preserve">
     <value>Only the newest part of the log was copied to fit the clipboard. Share Log exports the complete log file.</value>
