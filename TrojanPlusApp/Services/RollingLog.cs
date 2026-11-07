@@ -9,6 +9,7 @@ namespace TrojanPlusApp.Services
     public sealed class RollingLog : IDisposable
     {
         public const int Capacity = 1024 * 1024;
+        private const int LowWaterMark = Capacity - (256 * 1024);
         private readonly FileStream stream;
         private readonly byte[] buffer = new byte[Capacity];
 
@@ -49,9 +50,9 @@ namespace TrojanPlusApp.Services
                 incoming = incoming.AsSpan(start).ToArray();
             }
 
-            int keep = (int)Math.Min(stream.Length, Capacity - incoming.Length);
             if (stream.Length + incoming.Length > Capacity)
             {
+                int keep = Math.Min(LowWaterMark, Capacity - incoming.Length);
                 long start = stream.Length - keep;
                 stream.Position = start;
                 stream.ReadExactly(buffer.AsSpan(0, keep));
@@ -75,12 +76,16 @@ namespace TrojanPlusApp.Services
 
             stream.Position = stream.Length;
             stream.Write(incoming);
+        }
+
+        public void Flush()
+        {
             stream.Flush();
         }
 
         public void Dispose()
         {
-            stream.Dispose();
+            stream.Dispose(); // FileStream flushes buffered writes before closing.
         }
     }
 }

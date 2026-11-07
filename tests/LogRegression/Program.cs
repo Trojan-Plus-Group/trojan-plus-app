@@ -8,6 +8,8 @@ var strictUtf8 = new UTF8Encoding(false, true);
 var tests = new (string Name, Action Run)[]
 {
     ("small writes roll beyond 1 MiB", SmallWrites),
+    ("small appends after overflow do not trim again", AmortizedTrim),
+    ("single write beyond low-water room", LargeAppend),
     ("single write beyond 1 MiB", LargeWrite),
     ("invalid UTF-8 and NUL normalization", InvalidUtf8),
     ("multibyte input truncation boundary", MultibyteInput),
@@ -85,7 +87,13 @@ void SmallWrites()
         foreach (string line in lines)
         {
             log.Write(Encoding.UTF8.GetBytes(line[..^1]));
-            Check(new FileInfo(path).Length <= RollingLog.Capacity, "File exceeded capacity during writes.");
+            log.Flush();
+            long length = new FileInfo(path).Length;
+            Check(length <= RollingLog.Capacity, "File exceeded capacity during writes.");
+            if (int.Parse(line.AsSpan(0, 4)) >= 1024)
+            {
+                Check(length >= 768 * 1024, "Overflow retained less than 768 KiB.");
+            }
         }
     }
 
@@ -95,6 +103,36 @@ void SmallWrites()
     string[] retained = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
     int first = int.Parse(retained[0].AsSpan(0, 4));
     Check(text == string.Concat(lines.Skip(first)), "Retained small writes are not a contiguous whole-line tail.");
+}
+
+void AmortizedTrim()
+{
+    string path = LogPath("amortized");
+    File.WriteAllBytes(path, Enumerable.Repeat((byte)'x', RollingLog.Capacity).ToArray());
+    using var log = new RollingLog(path);
+    log.Write("overflow"u8);
+    log.Flush();
+    long trimmedLength = new FileInfo(path).Length;
+    Check(trimmedLength >= 768 * 1024 && trimmedLength < RollingLog.Capacity, "Overflow did not reach low-water range.");
+    for (int i = 1; i <= 1000; i++)
+    {
+        log.Write("small"u8);
+        log.Flush();
+        Check(new FileInfo(path).Length == trimmedLength + (i * 6), "Small append trimmed again instead of growing by input size.");
+    }
+}
+
+void LargeAppend()
+{
+    string path = LogPath("large-append");
+    File.WriteAllBytes(path, Enumerable.Repeat((byte)'x', RollingLog.Capacity).ToArray());
+    string incoming = new string('y', 300 * 1024);
+    using (var log = new RollingLog(path))
+    {
+        log.Write(Encoding.UTF8.GetBytes(incoming));
+    }
+
+    Check(Snapshot(path).EndsWith(incoming + "\n", StringComparison.Ordinal), "Write larger than trim room lost newest bytes.");
 }
 
 void LargeWrite()
@@ -193,14 +231,14 @@ void RestartAndFlush()
     using (var log = new RollingLog(path))
     {
         log.Write("first"u8);
-        Check(new FileInfo(path).Length == 6, "Write not flushed before Dispose.");
+        log.Flush();
+        Check(new FileInfo(path).Length == 6, "Explicit flush did not persist write.");
     }
 
     Check(Snapshot(path) == "first\n", "First session not persisted.");
     using (var log = new RollingLog(path))
     {
         log.Write("second"u8);
-        Check(new FileInfo(path).Length == 13, "Restart write not flushed.");
     }
 
     Check(Snapshot(path) == "first\nsecond\n", "Restart did not append existing log.");

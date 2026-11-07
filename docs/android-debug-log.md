@@ -34,8 +34,9 @@ collect, alter or export logs. Unsaved rename exports original host's file.
 Callback copies at most 16 KiB per message into a 32-entry bounded queue, never
 waits for disk or queue capacity. Oversized messages are truncated; full queue
 messages dropped. Writer emits aggregate dropped/truncated counters, normalizes
-invalid UTF-8 and NUL, and flushes each accepted message. Rolling file never exceeds
-1 MiB; oldest text is removed at line/UTF-8 boundaries where practical. One writer
+invalid UTF-8 and NUL, and flushes after draining currently queued messages and on close.
+Rolling file retains up to the most recent 1 MiB (trimmed in 256 KiB steps); oldest
+text is removed at line/UTF-8 boundaries where practical. One writer
 holds exclusive file access, so concurrent snapshots fail safely. Native return
 precedes unregister (which waits for callbacks), drain/flush, stopped notification
 and delayed process kill. Static delegate and active sink remain rooted if
