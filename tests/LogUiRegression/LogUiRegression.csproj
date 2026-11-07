@@ -9,6 +9,8 @@
     <HostsPageSource Condition="'$(HostsPageSource)' == ''">../../TrojanPlusApp/Views/HostsPage.xaml.cs</HostsPageSource>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <None Include="../../TrojanPlusApp/Views/HostEditPage.xaml" Link="HostEditPage.xaml" CopyToOutputDirectory="PreserveNewest" />
     <Compile Include="$(HostEditPageSource)" Link="HostEditPage.xaml.cs" />
     <Compile Include="$(HostsPageSource)" Link="HostsPage.xaml.cs" />
     <Compile Include="../../TrojanPlusApp/Services/DebugLogFiles.cs" Link="DebugLogFiles.cs" />

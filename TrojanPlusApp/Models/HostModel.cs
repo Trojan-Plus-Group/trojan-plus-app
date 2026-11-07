@@ -67,6 +67,35 @@ namespace TrojanPlusApp.Models
         // Debug Options
         public bool EnableDebugLog { get; set; } = false;
 
+        private int debugLogLevel = 2;
+        private int debugLogSizeMB = 1;
+
+        public int DebugLogLevel
+        {
+            get => debugLogLevel;
+            set => debugLogLevel = value is 0 or 1 or 2 ? value : 2;
+        }
+
+        public int DebugLogSizeMB
+        {
+            get => debugLogSizeMB;
+            set => debugLogSizeMB = Services.RollingLog.NormalizeSizeMB(value);
+        }
+
+        [JsonIgnore]
+        public int UI_DebugLogLevel
+        {
+            get => 2 - DebugLogLevel;
+            set => DebugLogLevel = value is >= 0 and <= 2 ? 2 - value : 2;
+        }
+
+        [JsonIgnore]
+        public int UI_DebugLogSize
+        {
+            get => DebugLogSizeMB switch { 5 => 1, 10 => 2, 20 => 3, 50 => 4, _ => 0 };
+            set => DebugLogSizeMB = value switch { 1 => 5, 2 => 10, 3 => 20, 4 => 50, _ => 1 };
+        }
+
         // For UI display
         [JsonIgnore]
         public string UI_Description
@@ -265,7 +294,7 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${udp_socket_buf}", "16384");
             config = config.Replace("${udp_recv_buf}", "4096");
 
-            config = config.Replace("${log_level}", EnableDebugLog ? "0" : "5");
+            config = config.Replace("${log_level}", EnableDebugLog ? DebugLogLevel.ToString(System.Globalization.CultureInfo.InvariantCulture) : "5");
 
             config = config.Replace("${ssl.verify}", SSLVerify.ToLowerString());
             config = config.Replace("${ssl.verify_hostname}", SSLVerify.ToLowerString());

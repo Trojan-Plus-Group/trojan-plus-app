@@ -34,11 +34,11 @@ namespace TrojanPlusApp.Droid
         [DllImport("trojan.so", EntryPoint = "trojan_set_log_callback", CallingConvention = CallingConvention.Cdecl)]
         private static extern int ClearCallback(IntPtr callback, IntPtr context);
 
-        private NativeDebugLog(string path)
+        private NativeDebugLog(string path, int sizeMB)
         {
             callback = Callback;
             DebugLogFiles.RemoveOtherHosts(path);
-            var sink = new RollingLog(path);
+            var sink = new RollingLog(path, sizeMB);
             writer = Task.Run(async () =>
             {
                 using (sink)
@@ -68,7 +68,7 @@ namespace TrojanPlusApp.Droid
             });
         }
 
-        public static NativeDebugLog Start(string path)
+        public static NativeDebugLog Start(string path, int sizeMB = 1)
         {
             lock (Lifecycle)
             {
@@ -77,7 +77,7 @@ namespace TrojanPlusApp.Droid
                     throw new InvalidOperationException("Native log callback already owned.");
                 }
 
-                var log = new NativeDebugLog(path);
+                var log = new NativeDebugLog(path, sizeMB);
                 try
                 {
                     Volatile.Write(ref active, log);

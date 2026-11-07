@@ -15,6 +15,10 @@ var tests = new (string Name, Action Run)[]
     ("multibyte input truncation boundary", MultibyteInput),
     ("multibyte rolling boundary", MultibyteRolling),
     ("capacity and snapshot bounds", Bounds),
+    ("supported sizes and unknown-size fallback", SizeOptions),
+    ("per-host caps retain newest whole lines", SizedWrites),
+    ("50 MiB construction uses bounded allocation", ConstructionAllocation),
+    ("streamed trim finds distant newline and preserves UTF-8 fallback", StreamedTrim),
     ("restart preserves data and writes flush", RestartAndFlush),
     ("concurrent export rejected while writer owns file", ExclusiveExport),
     ("missing and empty exports rejected", Unavailable),
@@ -69,10 +73,10 @@ void Throws<T>(Action action) where T : Exception
     throw new InvalidOperationException($"Expected {typeof(T).Name}.");
 }
 
-string Snapshot(string path)
+string Snapshot(string path, int sizeMB = 1)
 {
-    byte[] bytes = DebugLogFiles.ReadSnapshot(path);
-    Check(bytes.Length > 0 && bytes.Length <= RollingLog.Capacity, "Snapshot outside bounds.");
+    byte[] bytes = DebugLogFiles.ReadSnapshot(path, sizeMB);
+    Check(bytes.Length > 0 && bytes.Length <= RollingLog.CapacityForSize(sizeMB), "Snapshot outside bounds.");
     Check(!bytes.Contains((byte)0), "Snapshot contains NUL.");
     return strictUtf8.GetString(bytes);
 }
@@ -223,6 +227,132 @@ void Bounds()
     }
 
     Check(Snapshot(path) == "reset\n", "Reset retained oversized file contents.");
+}
+
+void SizeOptions()
+{
+    foreach (int sizeMB in new[] { 1, 5, 10, 20, 50, 0, -1, 2, int.MaxValue })
+    {
+        int normalized = sizeMB is 1 or 5 or 10 or 20 or 50 ? sizeMB : 1;
+        int capacity = normalized * RollingLog.Capacity;
+        Check(RollingLog.NormalizeSizeMB(sizeMB) == normalized, "Unexpected normalized size.");
+        Check(RollingLog.CapacityForSize(sizeMB) == capacity, "Unexpected size capacity.");
+        string path = LogPath("size-" + sizeMB);
+        using (var file = File.Create(path))
+        {
+            file.SetLength(capacity);
+        }
+
+        Check(DebugLogFiles.ReadSnapshot(path, sizeMB).Length == capacity, "Exact per-host cap rejected.");
+        using (var log = new RollingLog(path, sizeMB))
+        {
+            Check(new FileInfo(path).Length == capacity, "Exact per-host cap reset.");
+        }
+
+        using (var file = File.OpenWrite(path))
+        {
+            file.SetLength(capacity + 1L);
+        }
+
+        Throws<IOException>(() => DebugLogFiles.ReadSnapshot(path, sizeMB));
+        using (var log = new RollingLog(path, sizeMB))
+        {
+            Check(new FileInfo(path).Length == 0, "Oversized per-host log not reset.");
+            log.Write("reset"u8);
+        }
+
+        Check(Snapshot(path, sizeMB) == "reset\n", "Per-host reset lost newest write.");
+    }
+}
+
+void SizedWrites()
+{
+    foreach (int sizeMB in new[] { 1, 5 })
+    {
+        int capacity = RollingLog.CapacityForSize(sizeMB);
+        string path = LogPath("sized-writes-" + sizeMB);
+        int count = capacity / 1024 + 400;
+        var lines = Enumerable.Range(0, count).Select(i => $"{i:D5}:" + new string('x', 1017) + "\n").ToArray();
+        Check(lines.Sum(line => line.Length) > capacity, "Sized fixture must exceed cap.");
+        using (var log = new RollingLog(path, sizeMB))
+        {
+            foreach (string line in lines)
+            {
+                log.Write(Encoding.UTF8.GetBytes(line[..^1]));
+                log.Flush();
+                Check(new FileInfo(path).Length <= capacity, "Sized write exceeded cap.");
+            }
+        }
+
+        string text = Snapshot(path, sizeMB);
+        int first = int.Parse(text.AsSpan(0, 5));
+        Check(first > 0 && text == string.Concat(lines.Skip(first)), "Sized writes lost newest whole-line tail.");
+        Check(Encoding.UTF8.GetByteCount(text) >= capacity * 3 / 4, "Sized trim ignored 75% low-water mark.");
+        if (sizeMB > 1)
+        {
+            Throws<IOException>(() => DebugLogFiles.ReadSnapshot(path));
+        }
+
+        byte[] oversized = Encoding.UTF8.GetBytes(new string('z', capacity + 123) + "latest");
+        using (var log = new RollingLog(path, sizeMB))
+        {
+            log.Write(oversized);
+        }
+
+        string expected = Encoding.UTF8.GetString(oversized.AsSpan(oversized.Length - capacity + 1)) + "\n";
+        Check(Snapshot(path, sizeMB) == expected, "Sized oversized message lost bounded newest tail.");
+    }
+}
+
+void ConstructionAllocation()
+{
+    string path = LogPath("allocation");
+    // Warm FileStream setup before measuring only construction, not writes or snapshots.
+    using (var warmup = new RollingLog(path))
+    {
+    }
+
+    long before = GC.GetAllocatedBytesForCurrentThread();
+    using var log = new RollingLog(path, 50);
+    long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+    Check(allocated < 256 * 1024, $"50 MiB construction allocated {allocated} bytes.");
+}
+
+void StreamedTrim()
+{
+    foreach (bool newline in new[] { false, true })
+    {
+        string path = LogPath("streamed-" + newline);
+        // Tail starts inside a multibyte character; first newline lies beyond one trim buffer.
+        string original = "x" + string.Concat(Enumerable.Repeat("é€", (RollingLog.Capacity - 1) / 5));
+        if (newline)
+        {
+            original = original[..160000] + "\n" + original[160001..];
+        }
+
+        byte[] bytes = Encoding.UTF8.GetBytes(original);
+        File.WriteAllBytes(path, bytes);
+        byte[] incoming = Encoding.UTF8.GetBytes("newest\n");
+        int keep = RollingLog.Capacity * 3 / 4;
+        int start = bytes.Length - keep;
+        while ((bytes[start] & 0xC0) == 0x80)
+        {
+            start++;
+        }
+
+        int nextLine = Array.IndexOf(bytes, (byte)'\n', start);
+        if (nextLine >= 0)
+        {
+            start = nextLine + 1;
+        }
+
+        using (var log = new RollingLog(path))
+        {
+            log.Write(incoming.AsSpan(0, incoming.Length - 1));
+        }
+
+        Check(Snapshot(path) == strictUtf8.GetString(bytes.AsSpan(start)) + "newest\n", "Streamed trim changed retained UTF-8 tail.");
+    }
 }
 
 void RestartAndFlush()

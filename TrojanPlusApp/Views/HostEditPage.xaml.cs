@@ -79,6 +79,8 @@ namespace TrojanPlusApp.Views
 
         public bool IsDebugLogExportEnabled => !exportingDebugLog;
 
+        public bool IsDebugLogSettingsEnabled => IsProxyStopped();
+
         public async void Save_Clicked(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(Item.HostName))
@@ -273,6 +275,7 @@ namespace TrojanPlusApp.Views
         {
             OnPropertyChanged(nameof(CanExportDebugLog));
             OnPropertyChanged(nameof(IsDebugLogExportEnabled));
+            OnPropertyChanged(nameof(IsDebugLogSettingsEnabled));
         }
 
         private async void OnCopyDebugLogClicked(object sender, EventArgs e)
@@ -317,7 +320,7 @@ namespace TrojanPlusApp.Views
 
                 // Keep snapshot read synchronous: no UI yield between stopped check and file read.
                 byte[] snapshot = Services.DebugLogFiles.ReadSnapshot(
-                    Services.DebugLogFiles.PathForHost(originalName ?? Item.HostName));
+                    Services.DebugLogFiles.PathForHost(originalName ?? Item.HostName), Item.DebugLogSizeMB);
                 if (snapshot.Length == 0)
                 {
                     await DisplayAlertAsync(

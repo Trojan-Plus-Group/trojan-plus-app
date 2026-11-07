@@ -80,10 +80,11 @@ namespace TrojanPlusApp.Models
     {
         public string HostName { get; set; } = "";
         public bool EnableDebugLog { get; set; }
+        public int DebugLogSizeMB { get; set; } = 1;
         public bool EnablePipeline { get; set; }
         public bool SSLVerify { get; set; }
         public List<string> LoadBalance { get; set; } = new();
-        public HostModel Duplicate(string? name) => new() { HostName = name ?? HostName, EnableDebugLog = EnableDebugLog, LoadBalance = new(LoadBalance) };
+        public HostModel Duplicate(string? name) => new() { HostName = name ?? HostName, EnableDebugLog = EnableDebugLog, DebugLogSizeMB = DebugLogSizeMB, LoadBalance = new(LoadBalance) };
         public Func<string> Prepare { get; set; } = () => "{}";
         public string PrepareConfig(ViewModels.HostsViewModel model) => Prepare();
         public bool IsValid() => true;

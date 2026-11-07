@@ -17,6 +17,7 @@ internal static class Program
         {
             DisabledDoesNotRegister();
             BytesFlushAndRestart();
+            LargerCapPreservesAndAppends();
             BoundedQueueAndCounts();
             CounterOnlyFlush();
             RegistrationFailure();
@@ -68,6 +69,22 @@ internal static class Program
         Check(restarted.Stop(), "Restart stops");
         Check(Read(path) == expected + "restart\n", "Restart appends and flushes");
         Check(Shim.RegisterCalls() == 2 && Shim.UnregisterCalls() == 2, "Restart registers and unregisters once");
+    }
+
+    private static void LargerCapPreservesAndAppends()
+    {
+        Shim.Reset();
+        string path = LogPath("larger-cap");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        string seed = new string('x', 2 * 1024 * 1024) + "\n";
+        File.WriteAllText(path, seed, new UTF8Encoding(false));
+        var log = NativeDebugLog.Start(path, 5);
+        Emit("larger-cap-callback");
+        Check(log.Stop(), "Larger-cap logger stops");
+        Check(Read(path) == seed + "larger-cap-callback\n",
+            "5 MB cap must reach RollingLog: preserve preseeded file over 1 MB and append callback");
+        Check(Shim.RegisterCalls() == 1 && Shim.UnregisterCalls() == 1 && Shim.Registered() == 0,
+            "Larger-cap session registers and unregisters callback");
     }
 
     private static void BoundedQueueAndCounts()

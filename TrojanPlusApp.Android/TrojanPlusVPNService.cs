@@ -91,6 +91,7 @@ namespace TrojanPlusApp.Droid
         private bool stopped;
         private NativeDebugLog debugLog;
         private string debugLogPath;
+        private int debugLogSizeMB = 1;
 
         public static PendingIntent CreatePendingIntent()
         {
@@ -313,6 +314,7 @@ namespace TrojanPlusApp.Droid
 
                     configFile = VpnRunConfig.Resolve(configFile, vpnFD.Fd);
                     debugLogPath = VpnRunConfig.GetDebugLogPath(configFile, logHost);
+                    debugLogSizeMB = VpnRunConfig.GetDebugLogSizeMB(logHost);
 
                     runConfigPath = prepareConfigPath + TrojanPlusMainActivity.RunningConfigSuffix;
                     File.WriteAllText(runConfigPath, configFile);
@@ -376,7 +378,7 @@ namespace TrojanPlusApp.Droid
                     if (service.debugLogPath != null)
                     {
                         // Missing callback ABI fails closed; never silently run without requested capture.
-                        service.debugLog = NativeDebugLog.Start(service.debugLogPath);
+                        service.debugLog = NativeDebugLog.Start(service.debugLogPath, service.debugLogSizeMB);
                     }
 
                     service.BroadcastStatus(true);
