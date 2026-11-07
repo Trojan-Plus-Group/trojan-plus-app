@@ -45,10 +45,15 @@ namespace TrojanPlusApp.Droid
                 {
                     try
                     {
-                        await foreach (byte[] bytes in queue.Reader.ReadAllAsync())
+                        while (await queue.Reader.WaitToReadAsync())
                         {
-                            WriteCounts(sink);
-                            sink.Write(bytes);
+                            while (queue.Reader.TryRead(out byte[] bytes))
+                            {
+                                WriteCounts(sink);
+                                sink.Write(bytes);
+                            }
+
+                            sink.Flush();
                         }
 
                         WriteCounts(sink);
