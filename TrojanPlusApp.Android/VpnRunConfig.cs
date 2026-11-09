@@ -28,6 +28,12 @@ namespace TrojanPlusApp.Droid
                 && (int)config["log_level"] is >= 0 and <= 2 ? DebugLogFiles.PathForHost(host) : null;
         }
 
+        public static bool GetDebugLogClearOnConnect(string metadata)
+        {
+            var session = string.IsNullOrEmpty(metadata) ? new JObject() : JObject.Parse(metadata);
+            return session["ClearOnConnect"]?.Type != JTokenType.Boolean || (bool)session["ClearOnConnect"];
+        }
+
         public static int GetDebugLogSizeMB(string metadata)
         {
             var session = string.IsNullOrEmpty(metadata) ? new JObject() : JObject.Parse(metadata);

@@ -16,6 +16,7 @@ internal static class Program
         try
         {
             DisabledDoesNotRegister();
+            ClearSessions();
             BytesFlushAndRestart();
             LargerCapPreservesAndAppends();
             BoundedQueueAndCounts();
@@ -23,12 +24,61 @@ internal static class Program
             RegistrationFailure();
             UnregistrationFailure();
             Check(Android.Util.Log.Warnings == 0, "No unexpected sink failures");
+            ClearFailureAppends();
             Console.WriteLine("NativeLogRegression: all checks passed.");
         }
         finally
         {
             Directory.Delete(Root, true);
         }
+    }
+
+    private static void ClearSessions()
+    {
+        Shim.Reset();
+        string path = LogPath("clear-session");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, "previous\n");
+        var log = NativeDebugLog.Start(path);
+        Emit("latest");
+        Check(log.Stop() && Read(path) == "latest\n", "Default session must delete previous log before opening");
+        // New overload is checked via reflection so pre-feature sources still compile.
+        var start = typeof(NativeDebugLog).GetMethod("Start", new[] { typeof(string), typeof(int), typeof(bool) });
+        Check(start != null, "Start must accept clear option");
+        foreach (bool clear in new[] { false, true })
+        {
+            File.WriteAllText(path, "previous\n");
+            log = (NativeDebugLog)start!.Invoke(null, new object[] { path, 1, clear })!;
+            Emit("latest");
+            Check(log.Stop() && Read(path) == (clear ? "" : "previous\n") + "latest\n",
+                "Each restart must honor clear option");
+        }
+        Console.WriteLine("PASS: native start defaults to fresh file; true clears and false appends on restart.");
+    }
+
+    private static void ClearFailureAppends()
+    {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Deletion failure fixture requires Linux");
+        Shim.Reset();
+        string path = LogPath("clear-failure");
+        string directory = Path.GetDirectoryName(path)!;
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(path, "previous\n");
+        var mode = File.GetUnixFileMode(directory);
+        int warnings = Android.Util.Log.Warnings;
+        try
+        {
+            File.SetUnixFileMode(directory, UnixFileMode.UserRead | UnixFileMode.UserExecute);
+            var log = NativeDebugLog.Start(path);
+            Emit("fallback");
+            Check(log.Stop() && Read(path) == "previous\nfallback\n", "Failed deletion must keep working append log");
+            Check(Android.Util.Log.Warnings == warnings + 1, "Failed deletion must emit exactly one warning");
+        }
+        finally
+        {
+            File.SetUnixFileMode(directory, mode);
+        }
+        Console.WriteLine("PASS: real deletion denial warns once, does not throw and keeps logging.");
     }
 
     private static void DisabledDoesNotRegister()
@@ -51,20 +101,20 @@ internal static class Program
         Check(Shim.RegisterCalls() == 1 && Shim.Registered() == 1, "Start registers native callback");
         GC.Collect();
         GC.WaitForPendingFinalizers();
-        Emit("Tiếng Việt / 中文 / 😀");
+        Emit("Tiếng Việt / \u4E2D\u6587 / 😀");
         Shim.Emit(new byte[] { 65, 0, 66, 0xFF, 67 }, (UIntPtr)5);
         Shim.Emit(Array.Empty<byte>(), UIntPtr.Zero);
         // Explicit byte length must ignore bytes beyond it, including a NUL terminator.
         Shim.Emit(Encoding.UTF8.GetBytes("only-secret"), (UIntPtr)4);
         Check(log.Stop(), "Stop succeeds");
-        string expected = "Tiếng Việt / 中文 / 😀\nA\uFFFDB\uFFFDC\n\nonly\n";
+        string expected = "Tiếng Việt / \u4E2D\u6587 / 😀\nA\uFFFDB\uFFFDC\n\nonly\n";
         Check(Read(path) == expected, "Callback preserves UTF-8, normalizes NUL/invalid UTF-8, honors byte count; Stop drains queue");
         Check(Shim.UnregisterCalls() == 1 && Shim.Registered() == 0, "Stop unregisters callback");
         Emit("after-stop");
         Check(Read(path) == expected, "Stopped callback cannot write");
         Check(DebugLogFiles.ReadSnapshot(path).Length == Encoding.UTF8.GetByteCount(expected), "Stop releases exclusive file handle");
 
-        var restarted = NativeDebugLog.Start(path);
+        var restarted = NativeDebugLog.Start(path, clearOnConnect: false);
         Emit("restart");
         Check(restarted.Stop(), "Restart stops");
         Check(Read(path) == expected + "restart\n", "Restart appends and flushes");
@@ -78,7 +128,7 @@ internal static class Program
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         string seed = new string('x', 2 * 1024 * 1024) + "\n";
         File.WriteAllText(path, seed, new UTF8Encoding(false));
-        var log = NativeDebugLog.Start(path, 5);
+        var log = NativeDebugLog.Start(path, 5, clearOnConnect: false);
         Emit("larger-cap-callback");
         Check(log.Stop(), "Larger-cap logger stops");
         Check(Read(path) == seed + "larger-cap-callback\n",

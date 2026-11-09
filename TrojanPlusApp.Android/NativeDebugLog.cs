@@ -34,10 +34,15 @@ namespace TrojanPlusApp.Droid
         [DllImport("trojan.so", EntryPoint = "trojan_set_log_callback", CallingConvention = CallingConvention.Cdecl)]
         private static extern int ClearCallback(IntPtr callback, IntPtr context);
 
-        private NativeDebugLog(string path, int sizeMB)
+        private NativeDebugLog(string path, int sizeMB, bool clearOnConnect)
         {
             callback = Callback;
             DebugLogFiles.RemoveOtherHosts(path);
+            if (!DebugLogFiles.ClearForSession(path, true, clearOnConnect))
+            {
+                Android.Util.Log.Warn("NativeDebugLog", "Detailed log clear failed; appending existing log.");
+            }
+
             var sink = new RollingLog(path, sizeMB);
             writer = Task.Run(async () =>
             {
@@ -68,7 +73,7 @@ namespace TrojanPlusApp.Droid
             });
         }
 
-        public static NativeDebugLog Start(string path, int sizeMB = 1)
+        public static NativeDebugLog Start(string path, int sizeMB = 1, bool clearOnConnect = true)
         {
             lock (Lifecycle)
             {
@@ -77,7 +82,7 @@ namespace TrojanPlusApp.Droid
                     throw new InvalidOperationException("Native log callback already owned.");
                 }
 
-                var log = new NativeDebugLog(path, sizeMB);
+                var log = new NativeDebugLog(path, sizeMB, clearOnConnect);
                 try
                 {
                     Volatile.Write(ref active, log);

@@ -21,8 +21,9 @@ that integration. No source or submodule changes in core are needed by app code.
 
 Native logs still reach logcat under `trojan`. Only explicit enabled host sessions
 also register a C callback in `:vpn_remote`; no logcat reader is used. Private
-`config.json.log-host` JSON metadata carries `HostName` and `SizeMB` through the
-existing config-file handoff. `:vpn_remote` passes the validated size to
+`config.json.log-host` JSON metadata carries `HostName`, `SizeMB` and boolean
+`ClearOnConnect` through the existing config-file handoff. Missing or nonboolean
+`ClearOnConnect` defaults to true. `:vpn_remote` passes the flag and validated size to
 `NativeDebugLog` and `RollingLog`; native configuration must also have `log_level`
 0 (All), 1 (Info), or 2 (Warning, default). Disabled logging uses 5 (OFF).
 No credentials are copied into this metadata. Removed previous
@@ -31,8 +32,14 @@ Previously created external copies are not automatically deleted by this change.
 
 Private storage uses `Environment.SpecialFolder.Personal/debug-log/<SHA256(host-name)>.log`.
 Only latest logged host's file remains; exporting another host reports no file.
-Same host's enabled sessions append after process restart. Disabled sessions do not
-collect, alter or export logs. Unsaved rename exports original host's file.
+Per-host "Clear log on each connection" defaults to ON, including old saved hosts.
+Its switch shares Copy/Share visibility and the stopped-proxy settings gate.
+Every enabled service session (including reconnect/restart) clears only that host's
+`DebugLogFiles.PathForHost(host)` file in `NativeDebugLog` before `RollingLog` opens it.
+Deletion failure warns once in Android logcat and falls back to appending.
+OFF preserves append-after-restart and size-based rolling trim. Existing removal of
+other hosts' logs is unchanged. Disabled sessions do not create, remove, collect or
+export logs. Unsaved rename exports original host's file.
 
 Callback copies at most 16 KiB per message into a 32-entry bounded queue, never
 waits for disk or queue capacity. Oversized messages are truncated; full queue
@@ -50,6 +57,7 @@ unregistration fails, until native process exits.
 ## Export/privacy
 
 Buttons require stopped state, no pending start/stop, and checked host option.
+With clear-on-connect ON, the exported latest file contains only the last connection.
 Both exports warn that logs include sensitive browsing metadata. Reads are bounded,
 exclusive snapshots; repeated clicks are guarded. Share uses MAUI `ShareFile` from
 private cache with platform FileProvider URI permissions, not raw file URLs.

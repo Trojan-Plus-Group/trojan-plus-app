@@ -64,6 +64,14 @@ namespace TrojanPlusApp.Resx {
             get { return ResourceManager.GetString("New_DebugLogSize50MB", resourceCulture); }
         }
 
+        public static string Settings_NoOptions {
+            get { return ResourceManager.GetString("Settings_NoOptions", resourceCulture); }
+        }
+
+        public static string New_DebugLogClearOnConnect {
+            get { return ResourceManager.GetString("New_DebugLogClearOnConnect", resourceCulture); }
+        }
+
         public static string New_CopyDebugLog {
             get { return ResourceManager.GetString("New_CopyDebugLog", resourceCulture); }
         }

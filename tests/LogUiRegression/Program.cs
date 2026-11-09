@@ -29,6 +29,18 @@ foreach (var choice in new[]
         .SequenceEqual(choice.Resources.Select(x => "resources:TextResource." + x)), "Log choices must preserve model index order.");
 }
 
+var clearSwitch = xaml.Descendants(maui + "Switch").SingleOrDefault(x =>
+    (string?)x.Attribute("IsToggled") == "{Binding Item.DebugLogClearOnConnect}");
+Check(clearSwitch != null, "Clear switch must bind per-host option");
+Check((string?)clearSwitch!.Parent!.Attribute("IsVisible") == "{Binding CanExportDebugLog}",
+    "Clear switch must share Copy/Share visibility binding");
+Check((string?)clearSwitch.Parent.Attribute("IsEnabled") == "{Binding IsDebugLogSettingsEnabled}",
+    "Clear switch must use stopped settings gate");
+Check(clearSwitch.Parent.Elements(maui + "Label").Any(x =>
+    (string?)x.Attribute("Text") == "{x:Static resources:TextResource.New_DebugLogClearOnConnect}"),
+    "Clear switch must have localized label");
+Console.WriteLine("PASS: clear switch binding, visibility, stopped gate and localized label.");
+
 // No SynchronizationContext: completed fake platform tasks run synchronously, including
 // continuations released by SetResult. Calls below enter the actual async-void handlers.
 Check(SynchronizationContext.Current == null, "Run as console app without UI synchronization context.");
@@ -192,11 +204,12 @@ try
     var hostsPage = new HostsPage();
     var hosts = HostsViewModel.Latest!;
     var selected = new HostModel { HostName = "fixture-a", EnableDebugLog = true, DebugLogSizeMB = 5 };
-    bool MetadataMatches(string name, int sizeMB)
+    bool MetadataMatches(string name, int sizeMB, bool clear = true)
     {
         using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(metadata));
         var root = document.RootElement;
-        return root.GetProperty("HostName").GetString() == name && root.GetProperty("SizeMB").GetInt32() == sizeMB;
+        return root.GetProperty("HostName").GetString() == name && root.GetProperty("SizeMB").GetInt32() == sizeMB
+            && root.GetProperty("ClearOnConnect").GetBoolean() == clear && root.EnumerateObject().Count() == 3;
     }
     hosts.CurretSelectHost = selected;
     int starts = App.Instance.Starts;
@@ -205,8 +218,9 @@ try
     Check(App.Instance.Starts == ++starts, "Successful metadata write must start VPN");
     selected.HostName = "fixture-b";
     selected.DebugLogSizeMB = 20;
+    selected.DebugLogClearOnConnect = false;
     hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);
-    Check(MetadataMatches("fixture-b", 20), "Host switch must replace previous host and size");
+    Check(MetadataMatches("fixture-b", 20, false), "Host switch must replace previous host and size");
     Check(App.Instance.Starts == ++starts, "Switched host starts");
     selected.EnableDebugLog = false;
     hostsPage.OnConnectBtnClicked(hostsPage, EventArgs.Empty);

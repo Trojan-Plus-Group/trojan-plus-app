@@ -230,6 +230,13 @@
 						Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />
 				</Grid>
 
+				<Grid Margin="0,10,0,0" ColumnDefinitions="Auto,*" ColumnSpacing="10"
+					IsVisible="{Binding CanExportDebugLog}" IsEnabled="{Binding IsDebugLogSettingsEnabled}">
+					<Label Text="{x:Static resources:TextResource.New_DebugLogClearOnConnect}" VerticalOptions="Center" FontSize="Small" />
+					<Switch IsToggled="{Binding Item.DebugLogClearOnConnect}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"
+						SemanticProperties.Description="{x:Static resources:TextResource.New_DebugLogClearOnConnect}" />
+				</Grid>
+
 				<Button Margin="0,20,0,0" Text="{x:Static resources:TextResource.New_HostDuplicateText}" Clicked="OnDuplicateBtnClicked" IsVisible="{Binding ShowDeleteBtn}" 
 					Style="{StaticResource buttonStyle}" FontSize="Large" HorizontalOptions="FillAndExpand" />
 

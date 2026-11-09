@@ -16,7 +16,7 @@
 			<StackLayout Spacing="10" Padding="10">
 
 				<!-- iOS Platform Note -->
-				<Label Text="当前没有什么需要设置的"
+				<Label Text="{x:Static resources:TextResource.Settings_NoOptions}"
 					   HorizontalOptions="Center"
 					   VerticalOptions="Center"
 					   FontSize="Medium"

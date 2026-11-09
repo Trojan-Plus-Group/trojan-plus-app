@@ -398,6 +398,12 @@ CAUTION: because privacy information controlling is much more strict in Android 
   <data name="New_DebugLogSize50MB" xml:space="preserve">
     <value>50 MB</value>
   </data>
+  <data name="Settings_NoOptions" xml:space="preserve">
+    <value>No settings available.</value>
+  </data>
+  <data name="New_DebugLogClearOnConnect" xml:space="preserve">
+    <value>Clear log on each connection</value>
+  </data>
   <data name="New_CopyDebugLog" xml:space="preserve">
     <value>Copy Log</value>
   </data>

@@ -66,6 +66,7 @@ namespace TrojanPlusApp.Models
 
         // Debug Options
         public bool EnableDebugLog { get; set; } = false;
+        public bool DebugLogClearOnConnect { get; set; } = true;
 
         private int debugLogLevel = 2;
         private int debugLogSizeMB = 1;

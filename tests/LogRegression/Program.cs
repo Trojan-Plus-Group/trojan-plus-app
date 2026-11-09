@@ -23,6 +23,7 @@ var tests = new (string Name, Action Run)[]
     ("concurrent export rejected while writer owns file", ExclusiveExport),
     ("missing and empty exports rejected", Unavailable),
     ("CanExport truth table", ExportGate),
+    ("session clear scope and failure", SessionClear),
 };
 int failures = 0;
 try
@@ -407,6 +408,40 @@ void Unavailable()
     Throws<IOException>(() => DebugLogFiles.ReadSnapshot(path));
     File.WriteAllText(path, "available\n");
     Check(Snapshot(path) == "available\n", "Failed export leaked handle.");
+}
+
+void SessionClear()
+{
+    var method = typeof(DebugLogFiles).GetMethod("ClearForSession");
+    Check(method != null, "Session clearing helper must exist");
+    string host = "clear-test-" + Guid.NewGuid().ToString("N");
+    string path = DebugLogFiles.PathForHost(host);
+    string other = DebugLogFiles.PathForHost(host + "-other");
+    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+    bool Clear(string target, bool enabled, bool clear) =>
+        (bool)method!.Invoke(null, new object[] { DebugLogFiles.PathForHost(target), enabled, clear })!;
+    try
+    {
+        File.WriteAllText(path, "old");
+        File.WriteAllText(other, "other");
+        Check(Clear(host, false, true) && File.ReadAllText(path) == "old", "Disabled logging must not delete");
+        Check(Clear(host, true, false) && File.ReadAllText(path) == "old", "Clear off must not delete");
+        Check(Clear(host, true, true) && !File.Exists(path), "Clear on must delete selected host");
+        Check(File.ReadAllText(other) == "other", "Clear must not touch other host");
+        Check(Clear(host, false, true) && !File.Exists(path), "Disabled logging must not create file");
+        // A directory at exact target forces deletion failure on Linux and Android.
+        Directory.CreateDirectory(path);
+        Check(!Clear(host, true, true), "Deletion failure must return without throwing");
+        Directory.Delete(path);
+        using (var log = new RollingLog(path)) log.Write("recovered"u8);
+        Check(Snapshot(path) == "recovered\n", "Logging must remain usable after failure");
+    }
+    finally
+    {
+        if (Directory.Exists(path)) Directory.Delete(path);
+        if (File.Exists(path)) File.Delete(path);
+        File.Delete(other);
+    }
 }
 
 void ExportGate()
