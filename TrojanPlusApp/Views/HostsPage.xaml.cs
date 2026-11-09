@@ -108,7 +108,7 @@ namespace TrojanPlusApp.Views
                 {
                     // Private session metadata; a failed write must prevent startup.
                     string metadata = host.EnableDebugLog
-                        ? Newtonsoft.Json.JsonConvert.SerializeObject(new { HostName = host.HostName, SizeMB = host.DebugLogSizeMB })
+                        ? Newtonsoft.Json.JsonConvert.SerializeObject(new { HostName = host.HostName, SizeMB = host.DebugLogSizeMB, ClearOnConnect = host.DebugLogClearOnConnect })
                         : string.Empty;
                     File.WriteAllText(App.Instance.ConfigPath + ".log-host", metadata);
                 }

@@ -16,6 +16,27 @@ namespace TrojanPlusApp.Services
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "debug-log", id + ".log");
         }
 
+        public static bool ClearForSession(string path, bool enabled, bool clearOnConnect)
+        {
+            if (enabled && clearOnConnect)
+            {
+                try
+                {
+                    File.Delete(path);
+                }
+                catch (IOException)
+                {
+                    return false;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static void RemoveOtherHosts(string path)
         {
             string directory = Path.GetDirectoryName(path) ?? ".";

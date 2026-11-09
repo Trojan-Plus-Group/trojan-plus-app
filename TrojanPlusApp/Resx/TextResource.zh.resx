@@ -385,6 +385,12 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="New_DebugLogSize50MB" xml:space="preserve">
     <value>50 MB</value>
   </data>
+  <data name="Settings_NoOptions" xml:space="preserve">
+    <value>当前没有什么需要设置的</value>
+  </data>
+  <data name="New_DebugLogClearOnConnect" xml:space="preserve">
+    <value>每次连接前清空日志</value>
+  </data>
   <data name="New_CopyDebugLog" xml:space="preserve">
     <value>复制日志</value>
   </data>

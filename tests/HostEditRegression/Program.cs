@@ -21,6 +21,38 @@ static HostModel Host(string name) => new()
     Password = "test-only",
 };
 
+// Reflection keeps pre-feature checks runnable against production sources.
+var clearProperty = typeof(HostModel).GetProperty("DebugLogClearOnConnect");
+Check(clearProperty != null, "Host must persist DebugLogClearOnConnect");
+Check((bool)clearProperty!.GetValue(new HostModel())!, "New host must clear by default");
+var oldHost = Newtonsoft.Json.JsonConvert.DeserializeObject<HostModel>("{\"HostName\":\"old\"}")!;
+Check((bool)clearProperty.GetValue(oldHost)!, "Saved host without field must clear by default");
+foreach (bool clear in new[] { true, false })
+{
+    var options = Host("clear-options");
+    clearProperty.SetValue(options, clear);
+    var saved = new DataStore();
+    await saved.AddItemAsync(options);
+    var loaded = new List<HostModel>();
+    new DataStore().FillHosts(loaded);
+    Check((bool)clearProperty.GetValue(loaded.Single(h => h.HostName == options.HostName))! == clear,
+        "Save/load must retain both clear values");
+    Check((bool)clearProperty.GetValue(options.Duplicate("copy"))! == clear, "Clone must retain clear option");
+    await saved.DeleteItemAsync(options.HostName);
+}
+var clearParser = typeof(TrojanPlusApp.Droid.VpnRunConfig).GetMethod("GetDebugLogClearOnConnect");
+Check(clearParser != null, "Metadata must parse ClearOnConnect");
+foreach (string value in new[] { "true", "false", "null", "\"false\"", "0", "1", "[]", "{}" })
+{
+    bool parsed = (bool)clearParser!.Invoke(null, new object[] { "{\"ClearOnConnect\":" + value + "}" })!;
+    Check(parsed == (value != "false"), "Only boolean false may disable clearing");
+}
+foreach (string metadata in new[] { "", "{}", "{\"HostName\":\"old\",\"SizeMB\":5}" })
+{
+    Check((bool)clearParser!.Invoke(null, new object[] { metadata })!, "Missing metadata field defaults true");
+}
+Console.WriteLine("PASS: clear defaults, legacy data, save/load and clone true/false; strict metadata boolean/default parsing.");
+
 var viewModel = new HostsViewModel();
 var store = viewModel.DataStore;
 var first = Host("first");

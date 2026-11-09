@@ -42,7 +42,9 @@ dotnet run --project tests/HostEditRegression/HostEditRegression.csproj
 - User-visible strings go in both `TextResource.resx` and `TextResource.zh.resx`, plus `TextResource.Designer.cs`.
 - Never log passwords or full configs. Keep SSL verification on by default.
 - Debug logs: per-host Warning/Info/All and 1/5/10/20/50 MB cap (defaults Warning/1 MB).
-  Existing `.log-host` JSON carries host and size to `:vpn_remote`; keep trimming buffer bounded.
+  Clear-on-connect defaults ON; `.log-host` JSON carries host, size and boolean `ClearOnConnect`
+  (missing/nonboolean means true) to `:vpn_remote`. Clear only the selected host before opening its log;
+  disabled sessions never alter files. Keep trimming buffer bounded.
 
 ## Style
 - Follow `.editorconfig` and StyleCop (runs in the build). Match the surrounding file: most files put `using`
