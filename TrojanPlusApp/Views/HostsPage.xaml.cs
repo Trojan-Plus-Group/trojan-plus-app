@@ -99,6 +99,7 @@ namespace TrojanPlusApp.Views
                 if (isAndroid)
                 {
                     // Revoke previous host opt-in before any fallible config preparation.
+                    Directory.CreateDirectory(Path.GetDirectoryName(App.Instance.ConfigPath) ?? ".");
                     File.Delete(App.Instance.ConfigPath + ".log-host");
                 }
 

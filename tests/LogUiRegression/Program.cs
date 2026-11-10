@@ -194,6 +194,28 @@ finally
 #if ANDROID
 #error This regression must exercise the net10.0 shared compilation without ANDROID.
 #endif
+// First install: the config directory does not exist yet; Connect must create it.
+string firstRunRoot = Path.Combine(Path.GetTempPath(), "firstrun-regression-" + Guid.NewGuid().ToString("N"));
+string firstRunConfig = Path.Combine(firstRunRoot, "Documents", "config.json");
+try
+{
+    Check(!Directory.Exists(Path.GetDirectoryName(firstRunConfig)), "First-run fixture directory must be absent");
+    App.Instance.ConfigPath = firstRunConfig;
+    Microsoft.Maui.Devices.DeviceInfo.Platform = Microsoft.Maui.Devices.DevicePlatform.Android;
+    var firstRunPage = new HostsPage();
+    var firstRunHosts = HostsViewModel.Latest!;
+    firstRunHosts.CurretSelectHost = new HostModel { HostName = "first-run" };
+    int firstRunStarts = App.Instance.Starts;
+    firstRunPage.OnConnectBtnClicked(firstRunPage, EventArgs.Empty);
+    Check(App.Instance.Starts == firstRunStarts + 1, "First run must start VPN");
+    Check(File.Exists(firstRunConfig), "First run must write config.json");
+    Check(File.Exists(firstRunConfig + ".log-host"), "First run must write metadata");
+}
+finally
+{
+    if (Directory.Exists(firstRunRoot)) Directory.Delete(firstRunRoot, true);
+}
+
 string sessionDir = Path.Combine(Path.GetTempPath(), "metadata-regression-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(sessionDir);
 try
