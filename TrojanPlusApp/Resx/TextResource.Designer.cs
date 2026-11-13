@@ -473,6 +473,24 @@ namespace TrojanPlusApp.Resx {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Enable QUIC GSO.
+        /// </summary>
+        public static string New_EnableQuicGso {
+            get {
+                return ResourceManager.GetString("New_EnableQuicGso", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string describing QUIC GSO.
+        /// </summary>
+        public static string New_EnableQuicGsoDetail {
+            get {
+                return ResourceManager.GetString("New_EnableQuicGsoDetail", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Only Quic For Debug.
         /// </summary>
         public static string New_EnableOnlyQuicForDebug {

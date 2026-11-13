@@ -61,7 +61,15 @@ namespace TrojanPlusApp.Models
 
         public bool EnableTCPFastOpen { get; set; }
 
-        public bool EnableQuic { get; set; }
+        private bool enableQuic;
+
+        public bool EnableQuic
+        {
+            get => enableQuic;
+            set => SetProperty(ref enableQuic, value);
+        }
+
+        public bool EnableQuicGso { get; set; } = true;
         public bool EnableOnlyQuicForDebug { get; set; }
 
         // Debug Options
@@ -220,6 +228,7 @@ namespace TrojanPlusApp.Models
         "    },\n" +
         "    \"quic\": {\n" +
         "        \"enabled\": ${quic.enabled},\n" +
+        "        \"udp_gso\": ${quic.udp_gso},\n" +
         "        \"debug_disable_tcp\": ${quic.debug_disable_tcp}\n" +
         "    },\n" +
         "    \"experimental\": {\n" +
@@ -307,6 +316,7 @@ namespace TrojanPlusApp.Models
             config = config.Replace("${tcp.connect_time_out}", "5");
 
             config = config.Replace("${quic.enabled}", EnableQuic ? "true" : "false");
+            config = config.Replace("${quic.udp_gso}", EnableQuic && EnableQuicGso ? "true" : "false");
             config = config.Replace("${quic.debug_disable_tcp}", EnableOnlyQuicForDebug ? "true" : "false");
 
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");

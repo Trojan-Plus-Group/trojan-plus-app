@@ -415,4 +415,10 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="New_DebugLogCopiedTail" xml:space="preserve">
     <value>为适应剪贴板容量，仅复制了日志的最新部分。分享日志可导出完整日志文件。</value>
   </data>
+  <data name="New_EnableQuicGso" xml:space="preserve">
+    <value>启用 QUIC GSO</value>
+  </data>
+  <data name="New_EnableQuicGsoDetail" xml:space="preserve">
+    <value>使用 UDP GSO 批量发送 QUIC 数据包，降低 CPU 占用并提升吞吐。如果所在网络 QUIC 不稳定，可以关闭。</value>
+  </data>
 </root>
