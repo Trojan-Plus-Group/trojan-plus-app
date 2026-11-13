@@ -1,12 +1,12 @@
 {
-  "core_sha": "2f523f4e3b8230f20c5b40227f2383bc0976e582",
-  "core_branch": "master",
+  "core_sha": "b8e332fac6d9f6a70cad5a1800d0d3fde3a20649",
+  "core_branch": "fix/android-quic-close-log",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "detached core worktree with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 2; core 2f523f4; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
+  "build": "core worktree on fix/android-quic-close-log with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core b8e332f; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "1b3763703b7399b7958638770fdb560121317cf732f3116249c20b3b15e16320",
-    "x86_64": "d1979469f298024b38f6a770bfffe2d710690b05cc60190e5a1cc69a90bd3fae"
+    "arm64-v8a": "e1eca57a3095a87bb57c61f983a19a120153e658499a7fca7be8814d04da287b",
+    "x86_64": "237ded351743a5cc11943d6fc635116fc70623f5b4ce9d2ed0df778876b29e91"
   }
 }
