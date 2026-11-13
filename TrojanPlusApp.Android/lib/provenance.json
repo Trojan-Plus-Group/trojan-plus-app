@@ -1,12 +1,12 @@
 {
-  "core_sha": "d9384fa83b090c81927031c70511c8ead8662e8e",
+  "core_sha": "2f523f4e3b8230f20c5b40227f2383bc0976e582",
   "core_branch": "master",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "detached core worktree with recursive submodules; out-of-tree build_android_so.sh copy uses isolated per-ABI build/output directories, native Linux host detection (linux-x86_64 prefix), nice -n 19 and --parallel 2; core d9384fa (TUN session callback lifetime fix); Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF; original core working tree and submodules verified unchanged before/after",
+  "build": "detached core worktree with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 2; core 2f523f4; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "7e24234beae9bb8d8f09363451b740ca4de86a14050014007fe5cfb6bca64b45",
-    "x86_64": "8caa2d582b99b6aff3fe26fb8aaa7b9f020e44f1bb06fd083b6635d564d8b8d8"
+    "arm64-v8a": "1b3763703b7399b7958638770fdb560121317cf732f3116249c20b3b15e16320",
+    "x86_64": "d1979469f298024b38f6a770bfffe2d710690b05cc60190e5a1cc69a90bd3fae"
   }
 }
