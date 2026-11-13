@@ -53,7 +53,24 @@ foreach (string metadata in new[] { "", "{}", "{\"HostName\":\"old\",\"SizeMB\":
 }
 Console.WriteLine("PASS: clear defaults, legacy data, save/load and clone true/false; strict metadata boolean/default parsing.");
 
+var gsoProperty = typeof(HostModel).GetProperty("EnableQuicGso");
+Check(gsoProperty != null, "Host must persist EnableQuicGso");
+Check((bool)gsoProperty!.GetValue(new HostModel())!, "New host must enable GSO by default");
+Check((bool)gsoProperty.GetValue(oldHost)!, "Old host JSON must enable GSO by default");
 var viewModel = new HostsViewModel();
+foreach (bool quic in new[] { false, true })
+foreach (bool gso in new[] { false, true })
+{
+    var host = Host("gso");
+    host.EnableQuic = quic;
+    gsoProperty.SetValue(host, gso);
+    var imported = Newtonsoft.Json.JsonConvert.DeserializeObject<HostModel>(Newtonsoft.Json.JsonConvert.SerializeObject(host))!;
+    Check((bool)gsoProperty.GetValue(imported)! == gso, "Shared host JSON must retain GSO option");
+    Check((bool)gsoProperty.GetValue(host.Duplicate("copy"))! == gso, "Duplicate must retain GSO option");
+    var config = Newtonsoft.Json.Linq.JObject.Parse(TrojanPlusApp.Droid.VpnRunConfig.Resolve(imported.PrepareConfig(viewModel), 42));
+    Check((bool)config["quic"]!["udp_gso"]! == (quic && gso), "Config GSO must require QUIC and GSO");
+}
+Console.WriteLine("PASS: GSO defaults, legacy/imported JSON, duplicate and config combinations.");
 var store = viewModel.DataStore;
 var first = Host("first");
 var original = Host("original");

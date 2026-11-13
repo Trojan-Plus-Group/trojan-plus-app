@@ -428,4 +428,10 @@ CAUTION: because privacy information controlling is much more strict in Android 
   <data name="New_DebugLogCopiedTail" xml:space="preserve">
     <value>Only the newest part of the log was copied to fit the clipboard. Share Log exports the complete log file.</value>
   </data>
+  <data name="New_EnableQuicGso" xml:space="preserve">
+    <value>Enable QUIC GSO</value>
+  </data>
+  <data name="New_EnableQuicGsoDetail" xml:space="preserve">
+    <value>Send QUIC packets in batches (UDP GSO) to lower CPU use and raise throughput. Turn off if QUIC is unstable on your network.</value>
+  </data>
 </root>

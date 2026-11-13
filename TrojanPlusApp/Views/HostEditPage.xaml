@@ -166,6 +166,16 @@
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_EnableQuicDetail}" FontSize="Small" />
 
+				<Grid Margin="0,10,0,0" IsVisible="{Binding Item.EnableQuic}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Label Text="{x:Static resources:TextResource.New_EnableQuicGso}" VerticalOptions="Center" FontSize="Medium" />
+					<Switch IsToggled="{Binding Item.EnableQuicGso}" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
+				</Grid>
+				<Label Text="{x:Static resources:TextResource.New_EnableQuicGsoDetail}" FontSize="Small" IsVisible="{Binding Item.EnableQuic}" />
+
 				<!-- Only Quic For Debug -->
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">
