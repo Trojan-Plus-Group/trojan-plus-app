@@ -1,12 +1,12 @@
 {
-  "core_sha": "b8e332fac6d9f6a70cad5a1800d0d3fde3a20649",
-  "core_branch": "fix/android-quic-close-log",
+  "core_sha": "21226e179e82c73e7e91c91ed2c10080b1ce8e3d",
+  "core_branch": "fix/tun-padding-retry-recursion",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "core worktree on fix/android-quic-close-log with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core b8e332f; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
+  "build": "core worktree on fix/tun-padding-retry-recursion with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 21226e1; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "e1eca57a3095a87bb57c61f983a19a120153e658499a7fca7be8814d04da287b",
-    "x86_64": "237ded351743a5cc11943d6fc635116fc70623f5b4ce9d2ed0df778876b29e91"
+    "arm64-v8a": "c93a3c00b03350008ed07086adccf3bb5f7a3bf97dc980ec0cf910282247413f",
+    "x86_64": "11a37fa9b756c20d616b728b743a2ea4a3abdcc492ec311ff129d1160b62d375"
   }
 }
