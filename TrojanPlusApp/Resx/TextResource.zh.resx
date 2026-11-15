@@ -421,4 +421,22 @@ Android 10+ 注意， 由于用户隐私更加严格，无法得到 SSID， 所�
   <data name="New_EnableQuicGsoDetail" xml:space="preserve">
     <value>使用 UDP GSO 批量发送 QUIC 数据包，降低 CPU 占用并提升吞吐。如果所在网络 QUIC 不稳定，可以关闭。</value>
   </data>
+  <data name="New_QuicTxUdpPayload" xml:space="preserve">
+    <value>自定义 QUIC UDP 包长</value>
+  </data>
+  <data name="New_QuicTxUdpPayloadDefault" xml:space="preserve">
+    <value>默认（Chrome，1250）</value>
+  </data>
+  <data name="New_QuicTxUdpPayloadCustom" xml:space="preserve">
+    <value>自定义</value>
+  </data>
+  <data name="New_QuicTxUdpPayloadHolder" xml:space="preserve">
+    <value>1200-1452</value>
+  </data>
+  <data name="New_QuicTxUdpPayloadDetail" xml:space="preserve">
+    <value>客户端通过 QUIC 发送的最大 UDP 数据报长度。如果在某些网络下 QUIC 无法连接，可以调小。默认值与 Chrome 一致。服务端需要单独设置（服务端配置中的同名选项）。</value>
+  </data>
+  <data name="New_QuicTxUdpPayloadInvalid" xml:space="preserve">
+    <value>自定义 QUIC UDP 包长必须是 1200 到 1452 之间的数字。</value>
+  </data>
 </root>

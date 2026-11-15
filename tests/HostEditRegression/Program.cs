@@ -71,6 +71,58 @@ foreach (bool gso in new[] { false, true })
     Check((bool)config["quic"]!["udp_gso"]! == (quic && gso), "Config GSO must require QUIC and GSO");
 }
 Console.WriteLine("PASS: GSO defaults, legacy/imported JSON, duplicate and config combinations.");
+
+var txProperty = typeof(HostModel).GetProperty("QuicTxUdpPayloadSize");
+Check(txProperty != null && txProperty.PropertyType == typeof(int), "Host must persist QuicTxUdpPayloadSize");
+Check((int)txProperty!.GetValue(new HostModel())! == 0, "New host must default tx payload to 0");
+Check(oldHost.QuicTxUdpPayloadSize == 0 && oldHost.UI_QuicTxUdpPayloadIndex == 0 && !oldHost.UI_QuicTxUdpPayloadIsCustom,
+    "Old host JSON must load tx payload as 0/Default");
+foreach (int size in new[] { 0, 1400, 9999 })
+{
+    var host = Host("tx");
+    host.QuicTxUdpPayloadSize = size;
+    host.EnableQuic = true;
+    var imported = Newtonsoft.Json.JsonConvert.DeserializeObject<HostModel>(Newtonsoft.Json.JsonConvert.SerializeObject(host))!;
+    Check(imported.QuicTxUdpPayloadSize == size && host.Duplicate("copy").QuicTxUdpPayloadSize == size, "JSON/Duplicate must retain tx payload");
+    var config = Newtonsoft.Json.Linq.JObject.Parse(TrojanPlusApp.Droid.VpnRunConfig.Resolve(imported.PrepareConfig(viewModel), 42));
+    Check((int)config["quic"]!["tx_udp_payload_size"]! == (size == 9999 ? 0 : size), "Config tx payload must be 0, valid value, or 0 for out of range");
+    Check((bool)config["quic"]!["udp_gso"]!, "Config must keep valid quic object with GSO");
+}
+int[] txPresets = { 0, 1200, 1280, 1350, 1400, 1452 };
+for (int index = 0; index < txPresets.Length; index++)
+{
+    var host = Host("tx-index");
+    host.QuicTxUdpPayloadSize = txPresets[index];
+    Check(host.UI_QuicTxUdpPayloadIndex == index && !host.UI_QuicTxUdpPayloadIsCustom, "Preset must map to picker index");
+    host.UI_QuicTxUdpPayloadIndex = index;
+    Check(host.QuicTxUdpPayloadSize == txPresets[index] && host.IsQuicTxUdpPayloadValid(), "Picker index must map to preset");
+}
+var txHost = Host("tx-custom");
+txHost.QuicTxUdpPayloadSize = 1300;
+Check(txHost.UI_QuicTxUdpPayloadIndex == txPresets.Length && txHost.UI_QuicTxUdpPayloadIsCustom &&
+    txHost.UI_QuicTxUdpPayloadCustom == "1300" && txHost.IsQuicTxUdpPayloadValid(), "1300 must open as Custom with 1300");
+var raised = new List<string>();
+txHost.PropertyChanged += (_, e) => raised.Add(e.PropertyName!);
+txHost.UI_QuicTxUdpPayloadIndex = 2;
+Check(txHost.QuicTxUdpPayloadSize == 1280 && !txHost.UI_QuicTxUdpPayloadIsCustom &&
+    raised.Contains("UI_QuicTxUdpPayloadIsCustom") && raised.Contains("UI_QuicTxUdpPayloadCustom"), "Picker change must raise helper PropertyChanged");
+txHost.UI_QuicTxUdpPayloadIndex = txPresets.Length;
+Check(txHost.UI_QuicTxUdpPayloadIsCustom && txHost.UI_QuicTxUdpPayloadCustom == string.Empty && !txHost.IsQuicTxUdpPayloadValid(),
+    "Custom with empty value must be invalid");
+foreach (string text in new[] { "1199", "1453", "99999999999", "abc", "-1", "" })
+{
+    txHost.UI_QuicTxUdpPayloadCustom = text;
+    Check(txHost.UI_QuicTxUdpPayloadIsCustom && !txHost.IsQuicTxUdpPayloadValid(), $"Custom '{text}' must be invalid");
+}
+foreach (string text in new[] { "1200", "1400", "1452" })
+{
+    txHost.UI_QuicTxUdpPayloadCustom = text;
+    Check(txHost.UI_QuicTxUdpPayloadIsCustom && txHost.IsQuicTxUdpPayloadValid() &&
+        txHost.QuicTxUdpPayloadSize == int.Parse(text) && txHost.UI_QuicTxUdpPayloadIndex == txPresets.Length, $"Custom '{text}' must be valid and stay Custom");
+}
+Check(!Newtonsoft.Json.JsonConvert.SerializeObject(txHost).Contains("UI_QuicTxUdpPayload"), "Tx payload UI helpers must not persist");
+Console.WriteLine("PASS: QUIC tx UDP payload default, legacy JSON, config 0/1400/9999, picker/custom round-trips, validation.");
+
 var store = viewModel.DataStore;
 var first = Host("first");
 var original = Host("original");

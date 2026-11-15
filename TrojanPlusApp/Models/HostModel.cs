@@ -70,6 +70,10 @@ namespace TrojanPlusApp.Models
         }
 
         public bool EnableQuicGso { get; set; } = true;
+
+        // 0 = core default (Chrome, 1250); otherwise 1200..1452.
+        public int QuicTxUdpPayloadSize { get; set; } = 0;
+
         public bool EnableOnlyQuicForDebug { get; set; }
 
         // Debug Options
@@ -104,6 +108,87 @@ namespace TrojanPlusApp.Models
             get => DebugLogSizeMB switch { 5 => 1, 10 => 2, 20 => 3, 50 => 4, _ => 0 };
             set => DebugLogSizeMB = value switch { 1 => 5, 2 => 10, 3 => 20, 4 => 50, _ => 1 };
         }
+
+        public const int QuicTxUdpPayloadMin = 1200;
+        public const int QuicTxUdpPayloadMax = 1452;
+
+        // Picker order: Default, presets..., then Custom (index == length).
+        private static readonly int[] QuicTxUdpPayloadPresets = { 0, 1200, 1280, 1350, 1400, 1452 };
+
+        [JsonIgnore]
+        private bool quicTxUdpPayloadCustom;
+
+        [JsonIgnore]
+        private string quicTxUdpPayloadText = string.Empty;
+
+        [JsonIgnore]
+        public bool UI_QuicTxUdpPayloadIsCustom =>
+            quicTxUdpPayloadCustom || System.Array.IndexOf(QuicTxUdpPayloadPresets, QuicTxUdpPayloadSize) < 0;
+
+        [JsonIgnore]
+        public int UI_QuicTxUdpPayloadIndex
+        {
+            get => UI_QuicTxUdpPayloadIsCustom
+                ? QuicTxUdpPayloadPresets.Length
+                : System.Array.IndexOf(QuicTxUdpPayloadPresets, QuicTxUdpPayloadSize);
+            set
+            {
+                if (value < 0 || value > QuicTxUdpPayloadPresets.Length)
+                {
+                    return;
+                }
+
+                quicTxUdpPayloadCustom = value == QuicTxUdpPayloadPresets.Length;
+                if (quicTxUdpPayloadCustom)
+                {
+                    // Keep a stored non-preset value (e.g. 1300) visible; otherwise start empty.
+                    if (System.Array.IndexOf(QuicTxUdpPayloadPresets, QuicTxUdpPayloadSize) >= 0)
+                    {
+                        QuicTxUdpPayloadSize = 0;
+                        quicTxUdpPayloadText = string.Empty;
+                    }
+                    else
+                    {
+                        quicTxUdpPayloadText = QuicTxUdpPayloadSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                }
+                else
+                {
+                    QuicTxUdpPayloadSize = QuicTxUdpPayloadPresets[value];
+                }
+
+                OnPropertyChanged(nameof(UI_QuicTxUdpPayloadIndex));
+                OnPropertyChanged(nameof(UI_QuicTxUdpPayloadIsCustom));
+                OnPropertyChanged(nameof(UI_QuicTxUdpPayloadCustom));
+            }
+        }
+
+        [JsonIgnore]
+        public string UI_QuicTxUdpPayloadCustom
+        {
+            get => quicTxUdpPayloadCustom ? quicTxUdpPayloadText
+                : (UI_QuicTxUdpPayloadIsCustom ? QuicTxUdpPayloadSize.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty);
+            set
+            {
+                quicTxUdpPayloadCustom = true;
+                quicTxUdpPayloadText = value ?? string.Empty;
+                if (int.TryParse(quicTxUdpPayloadText, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int size)
+                    && size is >= QuicTxUdpPayloadMin and <= QuicTxUdpPayloadMax)
+                {
+                    QuicTxUdpPayloadSize = size;
+                }
+                else
+                {
+                    QuicTxUdpPayloadSize = 0;
+                }
+
+                OnPropertyChanged(nameof(UI_QuicTxUdpPayloadCustom));
+            }
+        }
+
+        // False only when Custom is selected with an empty or out-of-range value.
+        public bool IsQuicTxUdpPayloadValid() =>
+            !UI_QuicTxUdpPayloadIsCustom || QuicTxUdpPayloadSize is >= QuicTxUdpPayloadMin and <= QuicTxUdpPayloadMax;
 
         // For UI display
         [JsonIgnore]
@@ -229,6 +314,7 @@ namespace TrojanPlusApp.Models
         "    \"quic\": {\n" +
         "        \"enabled\": ${quic.enabled},\n" +
         "        \"udp_gso\": ${quic.udp_gso},\n" +
+        "        \"tx_udp_payload_size\": ${quic.tx_udp_payload_size},\n" +
         "        \"debug_disable_tcp\": ${quic.debug_disable_tcp}\n" +
         "    },\n" +
         "    \"experimental\": {\n" +
@@ -317,6 +403,7 @@ namespace TrojanPlusApp.Models
 
             config = config.Replace("${quic.enabled}", EnableQuic ? "true" : "false");
             config = config.Replace("${quic.udp_gso}", EnableQuic && EnableQuicGso ? "true" : "false");
+            config = config.Replace("${quic.tx_udp_payload_size}", (QuicTxUdpPayloadSize == 0 || IsQuicTxUdpPayloadValid() ? QuicTxUdpPayloadSize : 0).ToString(System.Globalization.CultureInfo.InvariantCulture));
             config = config.Replace("${quic.debug_disable_tcp}", EnableOnlyQuicForDebug ? "true" : "false");
 
             config = config.Replace("${experimental.pipeline_num}", EnablePipeline ? "5" : "0");

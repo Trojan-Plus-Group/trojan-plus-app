@@ -491,6 +491,60 @@ namespace TrojanPlusApp.Resx {
         }
 
         /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayload.
+        /// </summary>
+        public static string New_QuicTxUdpPayload {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayload", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayloadDefault.
+        /// </summary>
+        public static string New_QuicTxUdpPayloadDefault {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayloadDefault", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayloadCustom.
+        /// </summary>
+        public static string New_QuicTxUdpPayloadCustom {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayloadCustom", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayloadHolder.
+        /// </summary>
+        public static string New_QuicTxUdpPayloadHolder {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayloadHolder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayloadDetail.
+        /// </summary>
+        public static string New_QuicTxUdpPayloadDetail {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayloadDetail", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for New_QuicTxUdpPayloadInvalid.
+        /// </summary>
+        public static string New_QuicTxUdpPayloadInvalid {
+            get {
+                return ResourceManager.GetString("New_QuicTxUdpPayloadInvalid", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Only Quic For Debug.
         /// </summary>
         public static string New_EnableOnlyQuicForDebug {

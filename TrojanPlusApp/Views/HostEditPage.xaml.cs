@@ -110,6 +110,15 @@ namespace TrojanPlusApp.Views
                 return;
             }
 
+            if (Item.EnableQuic && !Item.IsQuicTxUdpPayloadValid())
+            {
+                await DisplayAlertAsync(
+                    Resx.TextResource.Common_ErrorTitle,
+                    Resx.TextResource.New_QuicTxUdpPayloadInvalid,
+                    Resx.TextResource.Common_OK);
+                return;
+            }
+
             Item.LoadBalance.Clear();
             Item.LoadBalance.AddRange(LoadBalance);
             LoadBalance.Clear();

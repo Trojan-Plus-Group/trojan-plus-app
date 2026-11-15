@@ -1,12 +1,12 @@
 {
-  "core_sha": "7a03fb2a9271ceac6a6c527f8c788e53f0308581",
-  "core_branch": "fix/quic-cancel-pending-read",
+  "core_sha": "5b9eb2396194f9ae01a8a516b6bac6832f76edb0",
+  "core_branch": "feat/qmtu",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "core worktree on fix/quic-cancel-pending-read with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 7a03fb2; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
+  "build": "core worktree on feat/qmtu with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 5b9eb23; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "3b61109e687e72cd7398f4155bc8945eecb5feb57cf3147e7bc861372d71433d",
-    "x86_64": "a081042d67805bddfc3e68dec8183ac5cfcd2404ff3d2be5055fe3acffc5f0c6"
+    "arm64-v8a": "a51bf87f4d8fc81f5e34957ff94daec2a8a76303486fd04a689bf433b90b1423",
+    "x86_64": "689d17241d115ca4e6939a5246f98bba2136df8ff9077eb8576b0d0cf3df9cc1"
   }
 }
