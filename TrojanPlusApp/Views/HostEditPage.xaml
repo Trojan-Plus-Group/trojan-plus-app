@@ -176,6 +176,33 @@
 				</Grid>
 				<Label Text="{x:Static resources:TextResource.New_EnableQuicGsoDetail}" FontSize="Small" IsVisible="{Binding Item.EnableQuic}" />
 
+				<Grid Margin="0,10,0,0" IsVisible="{Binding Item.EnableQuic}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Label Text="{x:Static resources:TextResource.New_QuicTxUdpPayload}" VerticalOptions="Center" FontSize="Medium" />
+					<Picker Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" SelectedIndex="{Binding Item.UI_QuicTxUdpPayloadIndex}" FontSize="Small">
+						<Picker.ItemsSource>
+							<x:Array Type="{x:Type x:String}">
+								<x:Static Member="resources:TextResource.New_QuicTxUdpPayloadDefault"/>
+								<x:String>1200</x:String>
+								<x:String>1280</x:String>
+								<x:String>1350</x:String>
+								<x:String>1400</x:String>
+								<x:String>1452</x:String>
+								<x:Static Member="resources:TextResource.New_QuicTxUdpPayloadCustom"/>
+							</x:Array>
+						</Picker.ItemsSource>
+					</Picker>
+					<Entry Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Item.UI_QuicTxUdpPayloadCustom}" IsVisible="{Binding Item.UI_QuicTxUdpPayloadIsCustom}" Keyboard="Numeric" MaxLength="4" Placeholder="{x:Static resources:TextResource.New_QuicTxUdpPayloadHolder}" FontSize="Small" />
+				</Grid>
+				<Label Text="{x:Static resources:TextResource.New_QuicTxUdpPayloadDetail}" FontSize="Small" IsVisible="{Binding Item.EnableQuic}" />
+
 				<!-- Only Quic For Debug -->
 				<BoxView Color="Gray" WidthRequest="1" HeightRequest="1"/>
 				<Grid Margin="0,10,0,0">
