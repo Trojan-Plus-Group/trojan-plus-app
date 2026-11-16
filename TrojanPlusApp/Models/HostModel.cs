@@ -170,6 +170,12 @@ namespace TrojanPlusApp.Models
                 : (UI_QuicTxUdpPayloadIsCustom ? QuicTxUdpPayloadSize.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty);
             set
             {
+                // Only the Picker selects Custom; the Entry's two-way binding may write back "" at any time.
+                if (!UI_QuicTxUdpPayloadIsCustom || (value ?? string.Empty) == UI_QuicTxUdpPayloadCustom)
+                {
+                    return;
+                }
+
                 quicTxUdpPayloadCustom = true;
                 quicTxUdpPayloadText = value ?? string.Empty;
                 if (int.TryParse(quicTxUdpPayloadText, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int size)
@@ -259,6 +265,8 @@ namespace TrojanPlusApp.Models
             newOne.HostName = newHostName ?? string.Empty;
             newOne.uiSelected = false;
             newOne.uiNotRunning = true;
+            newOne.quicTxUdpPayloadCustom = false;
+            newOne.quicTxUdpPayloadText = string.Empty;
             newOne.LoadBalance = new List<string>();
             newOne.LoadBalance.AddRange(LoadBalance);
             return newOne;
