@@ -123,6 +123,36 @@ foreach (string text in new[] { "1200", "1400", "1452" })
 Check(!Newtonsoft.Json.JsonConvert.SerializeObject(txHost).Contains("UI_QuicTxUdpPayload"), "Tx payload UI helpers must not persist");
 Console.WriteLine("PASS: QUIC tx UDP payload default, legacy JSON, config 0/1400/9999, picker/custom round-trips, validation.");
 
+// Entry write-back must never switch the mode; edit copies must not inherit transient UI state.
+var entryHost = Host("tx-entry");
+entryHost.UI_QuicTxUdpPayloadCustom = string.Empty;
+Check(entryHost.UI_QuicTxUdpPayloadIndex == 0 && !entryHost.UI_QuicTxUdpPayloadIsCustom && entryHost.IsQuicTxUdpPayloadValid(),
+    "Entry write-back of '' must keep Default");
+foreach (int preset in new[] { 0, 1400 })
+{
+    var saved = Host("tx-flow");
+    saved.QuicTxUdpPayloadSize = preset;
+    var edit = saved.Duplicate("tx-flow");
+    edit.UI_QuicTxUdpPayloadCustom = string.Empty;
+    Check(edit.UI_QuicTxUdpPayloadIndex == Array.IndexOf(txPresets, preset), $"Preset {preset} must survive Entry write-back");
+    var reopened = edit.Duplicate("tx-flow");
+    Check(reopened.UI_QuicTxUdpPayloadIndex == Array.IndexOf(txPresets, preset) && !reopened.UI_QuicTxUdpPayloadIsCustom &&
+        reopened.IsQuicTxUdpPayloadValid() && reopened.QuicTxUdpPayloadSize == preset, $"Preset {preset} must reopen as preset");
+}
+var storedCustom = Host("tx-stored");
+storedCustom.QuicTxUdpPayloadSize = 1300;
+var storedCopy = storedCustom.Duplicate("tx-stored");
+Check(storedCopy.UI_QuicTxUdpPayloadIsCustom && storedCopy.UI_QuicTxUdpPayloadCustom == "1300" && storedCopy.IsQuicTxUdpPayloadValid(),
+    "Stored 1300 must reopen as Custom with 1300");
+var flowHost = Host("tx-picker");
+flowHost.UI_QuicTxUdpPayloadIndex = txPresets.Length;
+flowHost.UI_QuicTxUdpPayloadCustom = "1350";
+Check(flowHost.QuicTxUdpPayloadSize == 1350 && flowHost.UI_QuicTxUdpPayloadIsCustom, "Custom then Entry 1350 must set size");
+flowHost.UI_QuicTxUdpPayloadIndex = 0;
+Check(flowHost.QuicTxUdpPayloadSize == 0 && !flowHost.UI_QuicTxUdpPayloadIsCustom, "Picker Default must write 0 and leave Custom");
+Check(flowHost.Duplicate("tx-picker").UI_QuicTxUdpPayloadIndex == 0, "Default must reopen as Default after Custom");
+Console.WriteLine("PASS: QUIC tx UDP payload Entry write-back and edit-copy state.");
+
 var store = viewModel.DataStore;
 var first = Host("first");
 var original = Host("original");
