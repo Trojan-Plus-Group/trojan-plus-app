@@ -1,12 +1,12 @@
 {
-  "core_sha": "5b9eb2396194f9ae01a8a516b6bac6832f76edb0",
-  "core_branch": "feat/qmtu",
+  "core_sha": "960996b6ab0b1cd360b82a6baef4066d421a87b2",
+  "core_branch": "fix/tun-pipeline-loss-stall",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "core worktree on feat/qmtu with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 5b9eb23; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
+  "build": "core worktree on fix/tun-pipeline-loss-stall with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 960996b; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "a51bf87f4d8fc81f5e34957ff94daec2a8a76303486fd04a689bf433b90b1423",
-    "x86_64": "689d17241d115ca4e6939a5246f98bba2136df8ff9077eb8576b0d0cf3df9cc1"
+    "arm64-v8a": "695469608e89a53f912cd8dd00932f5ea6ff138f986b77a948584f453d8df498",
+    "x86_64": "f682fdfcefb07c4010bfd42ffa57b8fd543fdc13646724967a461a3ea731e846"
   }
 }
