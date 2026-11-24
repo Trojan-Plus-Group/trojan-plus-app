@@ -1,12 +1,12 @@
 {
-  "core_sha": "960996b6ab0b1cd360b82a6baef4066d421a87b2",
-  "core_branch": "fix/tun-pipeline-loss-stall",
+  "core_sha": "d70b8052e34f82f0015676fb00d49297599d9f9d",
+  "core_branch": "master",
   "ndk": "27.2.12479018",
   "android_api": 31,
   "ssl_keylog": "OFF",
-  "build": "core worktree on fix/tun-pipeline-loss-stall with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core 960996b; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
+  "build": "core worktree at master with recursive submodules; isolated per-ABI build/output directories, linux-x86_64 NDK prefix, nice -n 19 and --parallel 3; core d70b805; Release, static libc++, Android logging, 16 KiB pages, QUIC ON, SSL key logging OFF",
   "libs": {
-    "arm64-v8a": "695469608e89a53f912cd8dd00932f5ea6ff138f986b77a948584f453d8df498",
-    "x86_64": "f682fdfcefb07c4010bfd42ffa57b8fd543fdc13646724967a461a3ea731e846"
+    "arm64-v8a": "63c936da48dc25e812df16eb87d3a9b9ad6e72e18ba29f90068c8bc33580c534",
+    "x86_64": "9f6210934248b9184df2c4e755839f0ca6e13da65c1cb9290d92a6ed936d9298"
   }
 }
